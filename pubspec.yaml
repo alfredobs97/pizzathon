@@ -7,8 +7,14 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
+  equatable: ^2.0.8
+  exif: ^3.3.0
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
+  image_picker: ^1.2.1
+  intl: ^0.20.2
+  png_chunks_extract: ^1.0.2
 
 dev_dependencies:
   flutter_test:
