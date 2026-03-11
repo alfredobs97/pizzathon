@@ -42,7 +42,7 @@ class PizzaValidationView extends StatelessWidget {
                   case PizzaValidationStatus.loading:
                     return _buildLoadingState();
                   case PizzaValidationStatus.success:
-                    return _buildSuccessState(state);
+                    return _buildSuccessState(context, state);
                   case PizzaValidationStatus.rejected:
                     return _buildRejectedState(context, state);
                   case PizzaValidationStatus.unsure:
@@ -93,7 +93,7 @@ class PizzaValidationView extends StatelessWidget {
     );
   }
 
-  Widget _buildSuccessState(PizzaValidationState state) {
+  Widget _buildSuccessState(BuildContext context, PizzaValidationState state) {
     final dateFormat = DateFormat("dd MMM yyyy / HH:mm 'h'");
     final metadata = state.metadata;
     final dateText = metadata is DetailedImageMetadata && metadata.creationDate != null
@@ -102,7 +102,7 @@ class PizzaValidationView extends StatelessWidget {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
@@ -116,6 +116,19 @@ class PizzaValidationView extends StatelessWidget {
         Text(
           'Imagen creada el $dateText',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: ElevatedButton(
+            onPressed: () => context.read<PizzaValidationCubit>().reset(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C6381),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('Aceptar'),
+          ),
         ),
       ],
     );
@@ -136,10 +149,45 @@ class PizzaValidationView extends StatelessWidget {
     return _buildResultState(
       context,
       state,
-      title: 'Pizza en revisión',
+      title: 'No estamos seguros...',
       subtitle: 'REVISIÓN MANUAL REQUERIDA',
       color: Colors.orange,
       icon: Icons.help_outline,
+      extraChildren: (state.unsureResults?.isNotEmpty ?? false)
+          ? [
+              const SizedBox(height: 16),
+              ...state.unsureResults!.map(
+                (result) => Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        result.ruleName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.orange.shade900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        result.reason,
+                        style: TextStyle(fontSize: 13, color: Colors.orange.shade800),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ]
+          : null,
     );
   }
 
@@ -150,63 +198,70 @@ class PizzaValidationView extends StatelessWidget {
     required String subtitle,
     required Color color,
     required IconData icon,
+    List<Widget>? extraChildren,
   }) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(color.withValues(alpha: 0.6), BlendMode.srcOver),
-                child: kIsWeb
-                    ? Image.network(
-                        state.imageFile!.path,
-                        width: 250,
-                        height: 250,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.file(
-                        File(state.imageFile!.path),
-                        width: 250,
-                        height: 250,
-                        fit: BoxFit.cover,
-                      ),
+    return FractionallySizedBox(
+      widthFactor: 0.6,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(color.withValues(alpha: 0.6), BlendMode.srcOver),
+                  child: kIsWeb
+                      ? Image.network(
+                          state.imageFile!.path,
+                          width: 250,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          File(state.imageFile!.path),
+                          width: 250,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 32),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                child: Icon(icon, color: color, size: 32),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          if (state.status == PizzaValidationStatus.rejected) ...[
+            const SizedBox(height: 4),
+            Text(
+              state.errorMessage ?? 'No cumple con los requisitos',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ],
-        ),
-        const SizedBox(height: 16),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const SizedBox(height: 4),
-        Text(
-          state.errorMessage ?? 'No cumple con los requisitos',
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 4),
-        Text(subtitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        const SizedBox(height: 24),
-        Center(
-          child: ElevatedButton(
-            onPressed: () => context.read<PizzaValidationCubit>().reset(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6C6381),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          if (extraChildren != null) ...extraChildren,
+          const SizedBox(height: 4),
+          Text(subtitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton(
+              onPressed: () => context.read<PizzaValidationCubit>().reset(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C6381),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Aceptar'),
             ),
-            child: const Text('Aceptar'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
