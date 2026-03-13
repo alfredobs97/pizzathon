@@ -44,36 +44,12 @@ class PizzaValidationCubit extends Cubit<PizzaValidationState> {
 
       switch (validationResult) {
         case ValidationSuccess():
-          emit(
-            state.copyWith(
-              status: PizzaValidationStatus.success,
-              metadata: metadata,
-              unsureResults: null,
-            ),
-          );
+          emit(state.copyWith(status: PizzaValidationStatus.success, metadata: metadata));
         case ValidationRejected(:final reason):
           emit(
             state.copyWith(
               status: PizzaValidationStatus.rejected,
               errorMessage: reason,
-              metadata: metadata,
-              unsureResults: null,
-            ),
-          );
-        case ValidationUnsure():
-          // This should normally be wrapped in a ValidationCompositeUnsure by the validator
-          emit(
-            state.copyWith(
-              status: PizzaValidationStatus.unsure,
-              unsureResults: [validationResult],
-              metadata: metadata,
-            ),
-          );
-        case ValidationUnsureList(:final results):
-          emit(
-            state.copyWith(
-              status: PizzaValidationStatus.unsure,
-              unsureResults: results,
               metadata: metadata,
             ),
           );

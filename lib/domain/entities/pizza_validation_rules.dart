@@ -25,8 +25,7 @@ class RequireExifDataRule extends PizzaValidationRule {
   @override
   ValidationResult validate(PizzaImageMetadata metadata) {
     if (!metadata.hasExif) {
-      return ValidationUnsure(
-        name,
+      return ValidationRejected(
         'La imagen no contiene metadata EXIF. Es posible que sea un screenshot o una imagen descargada.',
       );
     }
@@ -64,7 +63,7 @@ class MaxAgeRule extends PizzaValidationRule {
   @override
   ValidationResult validate(PizzaImageMetadata metadata) {
     if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
-      return ValidationUnsure(name, 'No se pudo determinar la fecha de creación de la imagen.');
+      return ValidationRejected('No se pudo determinar la fecha de creación de la imagen.');
     }
     final age = DateTime.now().difference(metadata.creationDate!);
     if (age > maxAge) {
@@ -86,8 +85,7 @@ class RequireCameraMetadataRule extends PizzaValidationRule {
   @override
   ValidationResult validate(PizzaImageMetadata metadata) {
     if (metadata is! DetailedImageMetadata || (metadata.make == null && metadata.model == null)) {
-      return ValidationUnsure(
-        name,
+      return ValidationRejected(
         'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil.',
       );
     }

@@ -21,22 +21,12 @@ class PizzaValidator {
           ];
 
   ValidationResult validate(PizzaImageMetadata metadata) {
-    final unsureResults = <ValidationUnsure>[];
-
     for (final rule in rules) {
       final result = rule.validate(metadata);
 
       if (result is ValidationRejected) {
         return result;
       }
-
-      if (result is ValidationUnsure) {
-        unsureResults.add(result);
-      }
-    }
-
-    if (unsureResults.isNotEmpty) {
-      return ValidationUnsureList(unsureResults);
     }
 
     return const ValidationSuccess();

@@ -153,41 +153,6 @@ class PizzaValidationView extends StatelessWidget {
       subtitle: 'REVISIÓN MANUAL REQUERIDA',
       color: Colors.orange,
       icon: Icons.help_outline,
-      extraChildren: (state.unsureResults?.isNotEmpty ?? false)
-          ? [
-              const SizedBox(height: 16),
-              ...state.unsureResults!.map(
-                (result) => Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.shade200),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        result.ruleName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: Colors.orange.shade900,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        result.reason,
-                        style: TextStyle(fontSize: 13, color: Colors.orange.shade800),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ]
-          : null,
     );
   }
 
@@ -198,7 +163,6 @@ class PizzaValidationView extends StatelessWidget {
     required String subtitle,
     required Color color,
     required IconData icon,
-    List<Widget>? extraChildren,
   }) {
     return FractionallySizedBox(
       widthFactor: 0.6,
@@ -244,7 +208,6 @@ class PizzaValidationView extends StatelessWidget {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ],
-          if (extraChildren != null) ...extraChildren,
           const SizedBox(height: 4),
           Text(subtitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
           const SizedBox(height: 24),
