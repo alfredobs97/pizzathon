@@ -12,9 +12,9 @@ class PizzaValidator {
     : rules =
           rules ??
           const [
-            MaxAgeRule(),
             DisallowC2paAIGeneratedRule(),
             DisallowAIGeneratedRule(),
+            MaxAgeRule(),
             DisallowScreenshotsRule(),
             RequireCameraMetadataRule(),
             RequireExifDataRule(),
