@@ -17,7 +17,7 @@ class ImageMetadataService {
       final pngTextData = _extractPngText(fileBytes);
 
       if (exifData.isEmpty && pngTextData == null) {
-        return EmptyImageMetadata(c2paData: c2paData);
+        return EmptyImageMetadata(c2paData: c2paData, bytes: fileBytes);
       }
 
       final creationDate = _parseCreationDate(exifData);
@@ -33,6 +33,7 @@ class ImageMetadataService {
         software: software,
         hasExif: exifData.isNotEmpty,
         c2paData: c2paData,
+        bytes: fileBytes,
       );
     } catch (e) {
       debugPrint('Error extracting metadata: $e');

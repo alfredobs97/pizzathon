@@ -12,6 +12,7 @@ class PizzaValidator {
     : rules =
           rules ??
           const [
+            DisallowMoireRule(),
             DisallowC2paAIGeneratedRule(),
             DisallowAIGeneratedRule(),
             MaxAgeRule(),
@@ -20,9 +21,9 @@ class PizzaValidator {
             RequireExifDataRule(),
           ];
 
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     for (final rule in rules) {
-      final result = rule.validate(metadata);
+      final result = await rule.validate(metadata);
 
       if (result is ValidationRejected) {
         return result;

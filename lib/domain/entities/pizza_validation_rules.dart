@@ -1,5 +1,7 @@
 import 'package:pizzathon/domain/entities/pizza_image_metadata.dart';
 import 'package:pizzathon/domain/entities/validation_result.dart';
+import 'package:pizzathon/data/services/moire/moire_service.dart';
+import 'dart:typed_data';
 
 /// Base sealed class for all pizza validation rules.
 /// Each subclass encapsulates a single validation rule.
@@ -11,7 +13,7 @@ sealed class PizzaValidationRule {
   String get name;
 
   /// Returns ValidationSuccess if the image passes, or ValidationRejected/ValidationUnsure.
-  ValidationResult validate(PizzaImageMetadata metadata);
+  Future<ValidationResult> validate(PizzaImageMetadata metadata);
 }
 
 /// Requires the image to have EXIF data.
@@ -23,7 +25,7 @@ class RequireExifDataRule extends PizzaValidationRule {
   String get name => 'Metadatos EXIF';
 
   @override
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (!metadata.hasExif) {
       return ValidationRejected(
         'La imagen no contiene metadata EXIF. Es posible que sea un screenshot o una imagen descargada.',
@@ -41,7 +43,7 @@ class DisallowScreenshotsRule extends PizzaValidationRule {
   String get name => 'Captura de pantalla';
 
   @override
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is DetailedImageMetadata && metadata.isLikelyScreenshot) {
       return const ValidationRejected(
         'La imagen parece ser una captura de pantalla según el software de creación.',
@@ -61,7 +63,7 @@ class MaxAgeRule extends PizzaValidationRule {
   String get name => 'Antigüedad de la foto';
 
   @override
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
       return ValidationRejected('No se pudo determinar la fecha de creación de la imagen.');
     }
@@ -83,7 +85,7 @@ class RequireCameraMetadataRule extends PizzaValidationRule {
   String get name => 'Información de cámara';
 
   @override
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is! DetailedImageMetadata || (metadata.make == null && metadata.model == null)) {
       return ValidationRejected(
         'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil.',
@@ -101,7 +103,7 @@ class DisallowAIGeneratedRule extends PizzaValidationRule {
   String get name => 'Generada por IA';
 
   @override
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata.isC2paAiGenerated) {
       return const ValidationRejected(
         'La imagen ha sido identificada como generada por IA mediante Credenciales de Contenido (C2PA).',
@@ -126,7 +128,7 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
   String get name => 'Credenciales de Contenido (C2PA)';
 
   @override
-  ValidationResult validate(PizzaImageMetadata metadata) {
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata.isC2paAiGenerated) {
       return const ValidationRejected(
         'La imagen contiene credenciales de contenido (C2PA) indicando que fue generada por IA.',
@@ -138,3 +140,30 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
     return const ValidationSuccess();
   }
 }
+
+/// Rejects images displaying Moire patterns, often indicative of re-photographing a screen.
+class DisallowMoireRule extends PizzaValidationRule {
+  const DisallowMoireRule();
+
+  @override
+  String get name => 'Patrones de Moiré';
+
+  @override
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
+    final bytes = metadata.bytes;
+    if (bytes == null || bytes.isEmpty) {
+      // If no bytes, we can't check for Moire, but we don't necessarily reject.
+      // Or maybe we should be unsure? For now, success if check not possible.
+      return const ValidationSuccess();
+    }
+
+    final isMoire = await MoireService().detectMoireFromBytes(Uint8List.fromList(bytes));
+    if (isMoire) {
+      return const ValidationRejected(
+        'Se detectaron patrones de Moiré en la imagen. Esto sugiere que la foto es de una pantalla.',
+      );
+    }
+    return const ValidationSuccess();
+  }
+}
+

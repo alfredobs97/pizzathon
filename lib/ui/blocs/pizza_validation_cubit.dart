@@ -40,7 +40,7 @@ class PizzaValidationCubit extends Cubit<PizzaValidationState> {
       await Future.delayed(const Duration(seconds: 1));
 
       final metadata = await _metadataService.extractMetadata(imagePath);
-      final validationResult = _validator.validate(metadata);
+      final validationResult = await _validator.validate(metadata);
 
       switch (validationResult) {
         case ValidationSuccess():

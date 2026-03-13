@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+
 sealed class PizzaImageMetadata {
   final Map<String, dynamic>? c2paData;
-  const PizzaImageMetadata({this.c2paData});
+  final Uint8List? bytes;
+
+  const PizzaImageMetadata({this.c2paData, this.bytes});
 
   bool get hasExif => false;
 
@@ -68,6 +72,7 @@ class DetailedImageMetadata extends PizzaImageMetadata {
     this.software,
     required bool hasExif,
     super.c2paData,
+    super.bytes,
   }) : _hasExif = hasExif;
 
   @override
@@ -95,5 +100,5 @@ class DetailedImageMetadata extends PizzaImageMetadata {
 }
 
 class EmptyImageMetadata extends PizzaImageMetadata {
-  const EmptyImageMetadata({super.c2paData});
+  const EmptyImageMetadata({super.c2paData, super.bytes});
 }
