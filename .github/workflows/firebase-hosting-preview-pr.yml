@@ -1,20 +1,26 @@
-name: Deploy to Firebase Hosting on Merge
+name: Deploy Preview to Firebase Hosting
 on:
-  push:
+  pull_request:
     branches:
       - main
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
 jobs:
-  build_and_deploy:
+  build_and_preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           flutter-version-file: .fvm/fvm_config.json
-          
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -24,10 +30,9 @@ jobs:
       - name: Build Web
         run: flutter build web --release --dart-define-from-file secrets.json
 
-      - name: Deploy to Firebase Hosting (Live)
+      - name: Deploy Preview to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}'
           projectId: pizzathon-app-88888
-          channelId: live
