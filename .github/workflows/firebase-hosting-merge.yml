@@ -1,0 +1,30 @@
+name: Deploy to Firebase Hosting on Merge
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create secrets.json
+        run: echo '${{ secrets.APP_SECRETS_JSON }}' > secrets.json
+
+      - name: Build Web
+        run: flutter build web --release --dart-define-from-file secrets.json
+
+      - name: Deploy to Firebase Hosting (Live)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PIZZATHON_APP_88888 }}'
+          projectId: pizzathon-app-88888
+          channelId: live
