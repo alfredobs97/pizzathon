@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "727941411451-b4j5ejfp5n4l0ok58ab5ulc17vq6ec74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pizzathon.app",
+            "certificate_hash": "0da696af4ddd117c549144b2ce8ad8f2948c32b0"
+          }
+        },
+        {
           "client_id": "727941411451-45isi3s3c1gupgfp2p4o9talm60bhn7c.apps.googleusercontent.com",
           "client_type": 3
         }
