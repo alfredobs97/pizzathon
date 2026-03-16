@@ -13,37 +13,39 @@ sealed class PizzaImageMetadata {
     if (c2paData == null) return false;
 
     try {
-      final activeManifestLabel = c2paData!['active_manifest'] as String?;
       final manifests = c2paData!['manifests'] as Map<String, dynamic>?;
+      if (manifests == null) return false;
 
-      if (activeManifestLabel == null || manifests == null) return false;
+      // Check all manifests in the tree, not just the active one.
+      // High-end AI tools like ChatGPT/OpenAI often place the AI indicator
+      // in an ingredient manifest rather than the top-level active manifest.
+      for (final manifestEntry in manifests.values) {
+        if (manifestEntry is! Map<String, dynamic>) continue;
 
-      final activeManifest = manifests[activeManifestLabel] as Map<String, dynamic>?;
-      if (activeManifest == null) return false;
+        final assertions = manifestEntry['assertions'] as List<dynamic>?;
+        if (assertions == null) continue;
 
-      final assertions = activeManifest['assertions'] as List<dynamic>?;
-      if (assertions == null) return false;
-
-      for (final assertion in assertions) {
-        if (assertion is Map<String, dynamic> && assertion['label'] == 'c2pa.actions.v2') {
-          final data = assertion['data'] as Map<String, dynamic>?;
-          final actions = data?['actions'] as List<dynamic>?;
-          if (actions != null) {
-            for (final action in actions) {
-              if (action is Map<String, dynamic>) {
-                final digitalSourceType = action['digitalSourceType'] as String?;
-                // trainedAlgorithmicMedia is the IPTC standard for AI-generated content
-                if (digitalSourceType != null &&
-                    digitalSourceType.contains('trainedAlgorithmicMedia')) {
-                  return true;
-                }
-                final description = action['description'] as String?;
-                if (description != null) {
-                  final descLower = description.toLowerCase();
-                  if (descLower.contains('generative ai') ||
-                      descLower.contains('ai generated') ||
-                      descLower.contains('synthid')) {
+        for (final assertion in assertions) {
+          if (assertion is Map<String, dynamic> && assertion['label'] == 'c2pa.actions.v2') {
+            final data = assertion['data'] as Map<String, dynamic>?;
+            final actions = data?['actions'] as List<dynamic>?;
+            if (actions != null) {
+              for (final action in actions) {
+                if (action is Map<String, dynamic>) {
+                  final digitalSourceType = action['digitalSourceType'] as String?;
+                  // trainedAlgorithmicMedia is the IPTC standard for AI-generated content
+                  if (digitalSourceType != null &&
+                      digitalSourceType.contains('trainedAlgorithmicMedia')) {
                     return true;
+                  }
+                  final description = action['description'] as String?;
+                  if (description != null) {
+                    final descLower = description.toLowerCase();
+                    if (descLower.contains('generative ai') ||
+                        descLower.contains('ai generated') ||
+                        descLower.contains('synthid')) {
+                      return true;
+                    }
                   }
                 }
               }
