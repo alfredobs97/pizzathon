@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pizzathon/domain/entities/pizza_image_metadata.dart';
 
-enum PizzaValidationStatus { initial, loading, success, rejected, unsure }
+enum PizzaValidationStatus { initial, loading, success, rejected, disqualified }
 
 class PizzaValidationState extends Equatable {
   final PizzaValidationStatus status;

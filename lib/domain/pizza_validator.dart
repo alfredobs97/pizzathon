@@ -24,7 +24,7 @@ class PizzaValidator {
     for (final rule in rules) {
       final result = await rule.validate(metadata);
 
-      if (result is ValidationRejected) {
+      if (result is ValidationRejected || result is ValidationDisqualified) {
         return result;
       }
     }

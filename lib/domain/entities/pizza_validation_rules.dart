@@ -10,7 +10,7 @@ sealed class PizzaValidationRule {
   /// A descriptive name for the rule.
   String get name;
 
-  /// Returns ValidationSuccess if the image passes, or ValidationRejected/ValidationUnsure.
+  /// Returns ValidationSuccess if the image passes, or ValidationRejected/ValidationDisqualified.
   Future<ValidationResult> validate(PizzaImageMetadata metadata);
 }
 
@@ -103,13 +103,13 @@ class DisallowAIGeneratedRule extends PizzaValidationRule {
   @override
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata.isC2paAiGenerated) {
-      return const ValidationRejected(
+      return const ValidationDisqualified(
         'La imagen ha sido identificada como generada por IA mediante Credenciales de Contenido (C2PA).',
       );
     }
 
     if (metadata is DetailedImageMetadata && metadata.isLikelyAIGenerated) {
-      return const ValidationRejected(
+      return const ValidationDisqualified(
         'La imagen parece haber sido generada por Inteligencia Artificial según su metadata.',
       );
     }
@@ -128,7 +128,7 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
   @override
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata.isC2paAiGenerated) {
-      return const ValidationRejected(
+      return const ValidationDisqualified(
         'La imagen contiene credenciales de contenido (C2PA) indicando que fue generada por IA.',
       );
     }

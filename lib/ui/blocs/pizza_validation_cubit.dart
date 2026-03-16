@@ -53,6 +53,14 @@ class PizzaValidationCubit extends Cubit<PizzaValidationState> {
               metadata: metadata,
             ),
           );
+        case ValidationDisqualified(:final reason):
+          emit(
+            state.copyWith(
+              status: PizzaValidationStatus.disqualified,
+              errorMessage: reason,
+              metadata: metadata,
+            ),
+          );
       }
     } catch (e) {
       emit(

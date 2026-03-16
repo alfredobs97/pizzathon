@@ -45,8 +45,8 @@ class PizzaValidationView extends StatelessWidget {
                     return _buildSuccessState(context, state);
                   case PizzaValidationStatus.rejected:
                     return _buildRejectedState(context, state);
-                  case PizzaValidationStatus.unsure:
-                    return _buildUnsureState(context, state);
+                  case PizzaValidationStatus.disqualified:
+                    return _buildDisqualifiedState(context, state);
                 }
               },
             ),
@@ -111,7 +111,10 @@ class PizzaValidationView extends StatelessWidget {
               : Image.file(File(state.imageFile!.path), width: 250, height: 250, fit: BoxFit.cover),
         ),
         const SizedBox(height: 16),
-        const Text('Pizza aprobada', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text(
+          'Foto válida para subir',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         const SizedBox(height: 4),
         Text(
           'Imagen creada el $dateText',
@@ -138,21 +141,20 @@ class PizzaValidationView extends StatelessWidget {
     return _buildResultState(
       context,
       state,
-      title: 'Pizza NO aprobada',
-      subtitle: 'USUARIO DESCALIFICADO',
+      title: 'No puedes participar con esta foto',
       color: Colors.red,
       icon: Icons.priority_high,
     );
   }
 
-  Widget _buildUnsureState(BuildContext context, PizzaValidationState state) {
+  Widget _buildDisqualifiedState(BuildContext context, PizzaValidationState state) {
     return _buildResultState(
       context,
       state,
-      title: 'No estamos seguros...',
-      subtitle: 'REVISIÓN MANUAL REQUERIDA',
-      color: Colors.orange,
-      icon: Icons.help_outline,
+      title: '¡Estás descalificado!',
+      color: Colors.red.shade900,
+      icon: Icons.block,
+      isDisqualified: true,
     );
   }
 
@@ -160,9 +162,9 @@ class PizzaValidationView extends StatelessWidget {
     BuildContext context,
     PizzaValidationState state, {
     required String title,
-    required String subtitle,
     required Color color,
     required IconData icon,
+    bool isDisqualified = false,
   }) {
     return FractionallySizedBox(
       widthFactor: 0.6,
@@ -208,9 +210,16 @@ class PizzaValidationView extends StatelessWidget {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ],
-          const SizedBox(height: 4),
-          Text(subtitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
           const SizedBox(height: 24),
+          if (isDisqualified) ...[
+            const Text(
+              'Hemos detectado que has intentado usar IA para participar. Las trampas no están permitidas y no podrás volver a participar en el concurso.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+          ],
+
           Center(
             child: ElevatedButton(
               onPressed: () => context.read<PizzaValidationCubit>().reset(),
