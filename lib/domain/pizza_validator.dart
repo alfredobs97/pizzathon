@@ -12,7 +12,6 @@ class PizzaValidator {
     : rules =
           rules ??
           const [
-            DisallowMoireRule(),
             DisallowC2paAIGeneratedRule(),
             DisallowAIGeneratedRule(),
             MaxAgeRule(),

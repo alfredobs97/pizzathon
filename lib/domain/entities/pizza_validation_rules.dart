@@ -1,7 +1,5 @@
-import 'package:pizzathon/data/services/moire/hugging_face_spoof_service.dart';
 import 'package:pizzathon/domain/entities/pizza_image_metadata.dart';
 import 'package:pizzathon/domain/entities/validation_result.dart';
-import 'dart:typed_data';
 
 /// Base sealed class for all pizza validation rules.
 /// Each subclass encapsulates a single validation rule.
@@ -137,39 +135,6 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
 
     // If it has C2PA but is not AI, maybe we should be unsure?
     // For now, if it's not AI, we allow it to continue to other rules.
-    return const ValidationSuccess();
-  }
-}
-
-/// Rejects images displaying Moire patterns, often indicative of re-photographing a screen.
-class DisallowMoireRule extends PizzaValidationRule {
-  final HuggingFaceSpoofService? _spoofService;
-  final double threshold;
-
-  const DisallowMoireRule({HuggingFaceSpoofService? spoofService, this.threshold = 0.6})
-    : _spoofService = spoofService;
-
-  @override
-  String get name => 'Patrones de Moiré';
-
-  @override
-  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
-    final bytes = metadata.bytes;
-    if (bytes == null || bytes.isEmpty) {
-      return const ValidationSuccess();
-    }
-
-    final service = _spoofService ?? HuggingFaceSpoofService();
-    final isMoire = await service.detectSpoofFromBytes(
-      Uint8List.fromList(bytes),
-      threshold: threshold,
-    );
-
-    if (isMoire) {
-      return const ValidationRejected(
-        'Se detectaron patrones de Moiré en la imagen. Esto sugiere que la foto es de una pantalla.',
-      );
-    }
     return const ValidationSuccess();
   }
 }
