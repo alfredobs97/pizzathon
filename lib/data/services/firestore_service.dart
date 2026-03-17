@@ -5,7 +5,7 @@ class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> saveUser(User user) async {
-    final userRef = _db.collection('users').doc(user.uid);
+    final userRef = _db.collection('users_2026_05').doc(user.uid);
     final doc = await userRef.get();
 
     if (!doc.exists) {
