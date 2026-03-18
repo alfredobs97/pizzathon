@@ -48,3 +48,7 @@ app.*.map.json
 
 # Secrets
 secrets.json
+
+# Tooling
+.firebase/
+devtools_options.yaml

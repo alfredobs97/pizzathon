@@ -21,7 +21,7 @@ class ProfilePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => context.read<AuthCubit>().logout(),
-          )
+          ),
         ],
       ),
       body: Center(
@@ -30,15 +30,25 @@ class ProfilePage extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-              child: user.photoURL == null ? const Icon(Icons.person, size: 50) : null,
+              backgroundImage: user.photoURL != null
+                  ? NetworkImage(user.photoURL!)
+                  : null,
+              child: user.photoURL == null
+                  ? const Icon(Icons.person, size: 50)
+                  : null,
             ),
             const SizedBox(height: 20),
-            Text('Nombre: $firstName', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              'Nombre: $firstName',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
             Text('Apellido: $lastName', style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 10),
-            Text('Email: ${user.email}', style: const TextStyle(color: Colors.grey)),
+            Text(
+              'Email: ${user.email}',
+              style: const TextStyle(color: Colors.grey),
+            ),
           ],
         ),
       ),

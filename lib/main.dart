@@ -3,13 +3,14 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/data/services/firestore_service.dart';
 
 import 'firebase_options.dart';
 import 'data/services/auth_service.dart';
 import 'ui/blocs/auth_cubit.dart';
 import 'ui/blocs/auth_state.dart';
-import 'ui/pages/login_page.dart';  
-import 'ui/pages/profile_page.dart';  
+import 'ui/pages/login_page.dart';
+import 'ui/pages/home/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +26,11 @@ void main() async {
   }
 
   runApp(
-    RepositoryProvider(
-      create: (context) => AuthService(),
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(create: (context) => AuthService()),
+        RepositoryProvider(create: (context) => FirestoreService()),
+      ],
       child: BlocProvider(
         create: (context) => AuthCubit(context.read<AuthService>())..checkAuth(),
         child: const MainApp(),
@@ -53,7 +57,7 @@ class MainApp extends StatelessWidget {
             return const Scaffold(body: Center(child: CircularProgressIndicator()));
           }
           if (state is AuthAuthenticated) {
-            return ProfilePage(user: state.user);
+            return const HomePage();
           }
           return const LoginPage();
         },
