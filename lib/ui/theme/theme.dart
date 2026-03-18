@@ -31,6 +31,8 @@ class AppTheme {
         titleLarge: GoogleFonts.archivo(fontSize: 20, fontWeight: FontWeight.w400),
         bodyLarge: GoogleFonts.archivoBlack(fontSize: 16, fontWeight: FontWeight.w400),
         bodyMedium: GoogleFonts.archivo(fontSize: 16, fontWeight: FontWeight.w500),
+        bodySmall: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
+        labelMedium: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
       ),
     );
   }
