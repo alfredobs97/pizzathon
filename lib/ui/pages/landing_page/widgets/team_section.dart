@@ -9,46 +9,48 @@ class TeamSection extends StatelessWidget {
     final isMobile = screenWidth < 800;
 
     return Container(
-      width: double.infinity,
       color: const Color(0xFFF8EEE3),
-      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (190 / 1440)),
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: isMobile ? 40 : 20, horizontal: 20),
+      constraints: BoxConstraints(minHeight: isMobile ? 0 : 180),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'El equipo de Pizzathon está especializado en Pizza y Tecnología',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+            textAlign: TextAlign.left,
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
               color: Theme.of(context).colorScheme.secondary,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.15,
               height: 26 / 24,
             ),
           ),
-          const SizedBox(height: 40),
-          const Wrap(
-            spacing: 40,
-            runSpacing: 30,
-            alignment: WrapAlignment.center,
-            children: [
-              _ProfileItem(
-                name: 'SALVATORE PIZZALOVER',
-                role: 'Divulgador y Formador\nde pizzeros caseros',
-                imagePath: 'assets/images/Salvatore.jpg',
-              ),
-              _ProfileItem(
-                name: 'ALFREDO BAUTISTA',
-                role: 'Senior Frontend Developer\n& Google Developer Expert',
-                imagePath: 'assets/images/Alfredo.jpg',
-              ),
-              _ProfileItem(
-                name: 'JORGE BALDIZZONE',
-                role: 'Hacker',
-                imagePath: 'assets/images/Jorge.jpg',
-              ),
-            ],
+          const SizedBox(height: 18),
+          SizedBox(
+            width: 700,
+            child: const Wrap(
+              spacing: 50,
+              runSpacing: 30,
+              alignment: WrapAlignment.start,
+              children: [
+                _ProfileItem(
+                  name: 'SALVATORE PIZZALOVER',
+                  role: 'Divulgador y Formador\nde pizzeros caseros',
+                  imagePath: 'assets/images/Salvatore.jpg',
+                ),
+                _ProfileItem(
+                  name: 'ALFREDO BAUTISTA',
+                  role: 'Senior Frontend Developer\n& Google Developer Expert',
+                  imagePath: 'assets/images/Alfredo.jpg',
+                ),
+                _ProfileItem(
+                  name: 'JORGE BALDIZZONE',
+                  role: 'Hacker',
+                  imagePath: 'assets/images/Jorge.jpg',
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -83,21 +85,26 @@ class _ProfileItem extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               name,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w300,
+                color: const Color(0xFF7E4F15),
+                letterSpacing: 0.15,
+                height: 18 / 10,
+              ),
             ),
             Text(
               role,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: Colors.black54, height: 1.2),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: const Color(0xFF7E4F15),
+                height: 12 / 10,
+                letterSpacing: 0.15,
+              ),
             ),
           ],
         ),
