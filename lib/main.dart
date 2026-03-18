@@ -8,8 +8,9 @@ import 'firebase_options.dart';
 import 'data/services/auth_service.dart';
 import 'ui/blocs/auth_cubit.dart';
 import 'ui/blocs/auth_state.dart';
-import 'ui/pages/login_page.dart';  
-import 'ui/pages/profile_page.dart';  
+import 'ui/pages/profile_page.dart';
+import 'ui/pages/landing_page/landing_page.dart';
+import 'ui/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,10 +44,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pizzathon',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.theme,
       home: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is AuthLoading || state is AuthInitial) {
@@ -55,7 +53,7 @@ class MainApp extends StatelessWidget {
           if (state is AuthAuthenticated) {
             return ProfilePage(user: state.user);
           }
-          return const LoginPage();
+          return const LandingPage(); 
         },
       ),
     );

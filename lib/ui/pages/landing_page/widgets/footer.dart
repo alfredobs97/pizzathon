@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class Footer extends StatelessWidget {
+  const Footer({super.key});
+
+  Future<void> _launchInstagram() async {
+    final Uri url = Uri.parse('https://www.instagram.com/salva.pizzalover/');
+    if (!await launchUrl(url)) {
+      debugPrint('No se pudo abrir $url');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 800;
+
+    return Container(
+      width: double.infinity,
+      color: Theme.of(context).colorScheme.secondary,
+      constraints: BoxConstraints(
+        minHeight: isMobile ? 0 : screenWidth * (162 / 1440),
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : 20,
+        horizontal: 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Sigue las novedades de Pizzathon',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.archivo(
+              fontWeight: FontWeight.w900, 
+              fontSize: 14,
+              height: 20 / 14, 
+              letterSpacing: 0.15,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: _launchInstagram,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/Salvatore.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '@salva.pizzalover',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const Text(
+                          'Ver en Instagram',
+                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 24),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        'Seguir',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
