@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatelessWidget {
@@ -20,26 +19,20 @@ class Footer extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: Theme.of(context).colorScheme.secondary,
-      constraints: BoxConstraints(
-        minHeight: isMobile ? 0 : screenWidth * (162 / 1440),
-      ),
+      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (162 / 1440)),
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 40 : 20,
-        horizontal: 20,
-      ),
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 40 : 20, horizontal: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Sigue las novedades de Pizzathon',
             textAlign: TextAlign.center,
-            style: GoogleFonts.archivo(
-              fontWeight: FontWeight.w900, 
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
               fontSize: 14,
-              height: 20 / 14, 
+              height: 20 / 14,
               letterSpacing: 0.15,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
           const SizedBox(height: 20),
@@ -48,10 +41,7 @@ class Footer extends StatelessWidget {
             child: GestureDetector(
               onTap: _launchInstagram,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12),
@@ -91,10 +81,7 @@ class Footer extends StatelessWidget {
                     ),
                     const SizedBox(width: 24),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),

@@ -20,10 +20,12 @@ class TeamSection extends StatelessWidget {
           Text(
             'El equipo de Pizzathon está especializado en Pizza y Tecnología',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.15,
+              height: 26 / 24,
+            ),
           ),
           const SizedBox(height: 40),
           const Wrap(
@@ -87,17 +89,15 @@ class _ProfileItem extends StatelessWidget {
           children: [
             Text(
               name,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             Text(
               role,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.black54,
-                    height: 1.2,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black54, height: 1.2),
             ),
           ],
         ),

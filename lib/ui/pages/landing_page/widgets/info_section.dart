@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class InfoSection extends StatelessWidget {
   const InfoSection({super.key});
@@ -14,17 +13,15 @@ class InfoSection extends StatelessWidget {
       width: isMobile ? double.infinity : 450,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment:
-            CrossAxisAlignment.start, 
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Estás entre los 100 mejores',
-            style: GoogleFonts.archivoBlack(
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
               fontWeight: FontWeight.w400,
-              fontSize: 24,
-              height: 26 / 24, 
+              height: 26 / 24,
               letterSpacing: 0.15,
-              color: const Color(0xFF7E4F15), 
+              color: const Color(0xFF7E4F15),
             ),
             textAlign: TextAlign.left,
           ),
@@ -34,12 +31,11 @@ class InfoSection extends StatelessWidget {
           // TEXTO 2: DEMUESTRA TU TALENTO...
           Text(
             'DEMUESTRA TU TALENTO\nDESDE CASA HACIENDO PIZZA\nY CONSIGUE PREMIOS',
-            style: GoogleFonts.archivoBlack(
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
               fontWeight: FontWeight.w400,
-              fontSize: 24,
-              height: 30 / 24, 
+              height: 30 / 24,
               letterSpacing: 0.15,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             textAlign: TextAlign.left,
           ),
@@ -49,12 +45,11 @@ class InfoSection extends StatelessWidget {
           // TEXTO 3: Pizzathon te dará la oportunidad...
           Text(
             'Pizzathon te dará la oportunidad\ndurante una semana de demostrar\ntodo lo que puedes conseguir\nhaciendo pizza en casa.',
-            style: GoogleFonts.archivo(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w400,
-              fontSize: 20, 
-              height: 24 / 20, 
+              height: 24 / 20,
               letterSpacing: 0.15,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             textAlign: TextAlign.left,
           ),
@@ -77,18 +72,12 @@ class InfoSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: Theme.of(context).colorScheme.primary,
-      constraints: BoxConstraints(
-        minHeight: isMobile ? 0 : screenWidth * (326 / 1440),
-      ),
-      padding: const EdgeInsets.symmetric(
-        vertical: 35,
-        horizontal: 20, 
-      ),
+      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (326 / 1440)),
+      padding: const EdgeInsets.symmetric(vertical: 35, horizontal: 20),
       child: Center(
         child: isMobile
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment
-                    .start, 
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [textBlock, const SizedBox(height: 25), imageBlock],
               )
             : Row(

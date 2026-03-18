@@ -28,35 +28,34 @@ class HeroSection extends StatelessWidget {
         children: [
           Text(
             'Primera edición - 11 / 17 Mayo 2026',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
-          
+
           // --- TÍTULO AUTO-AJUSTABLE ---
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20), 
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox(
-              width: isMobile ? screenWidth * 0.9 : 800, 
+              width: isMobile ? screenWidth * 0.9 : 800,
               child: FittedBox(
-                fit: BoxFit.scaleDown, 
+                fit: BoxFit.scaleDown,
                 child: Text(
                   'PIZZATHON',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.climateCrisis(
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
-                    fontSize: 120, 
-                    letterSpacing: -0.5,
-                    height: 0.9, 
+                    fontSize: 40,
+                    letterSpacing: 1,
+                    height: 24 / 40,
                   ),
                 ),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 30),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -81,7 +80,10 @@ class HeroSection extends StatelessWidget {
                 ),
               );
             },
-            child: const Text('Próximamente', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            child: const Text(
+              'Próximamente',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
