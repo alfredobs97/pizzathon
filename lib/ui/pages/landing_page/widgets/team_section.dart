@@ -46,7 +46,7 @@ class TeamSection extends StatelessWidget {
                 ),
                 _ProfileItem(
                   name: 'JORGE BALDIZZONE',
-                  role: 'Hacker',
+                  role: 'Junior Developer \n& 42 Outer Core',
                   imagePath: 'assets/images/Jorge.jpg',
                 ),
               ],
