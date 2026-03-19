@@ -47,9 +47,9 @@ class HeroSection extends StatelessWidget {
                   style: GoogleFonts.climateCrisis(
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
-                    fontSize: 40,
-                    letterSpacing: 1,
-                    height: 24 / 40,
+                    fontSize: 120,
+                    letterSpacing: -0.5,
+                    height: 0.9,
                   ),
                 ),
               ),
