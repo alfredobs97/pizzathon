@@ -25,7 +25,7 @@ class SponsorSection extends StatelessWidget {
             style: Theme.of(context).textTheme.displayLarge?.copyWith(
               height: 26 / 24,
               letterSpacing: 0.15,
-              color: const Color(0xFF7E4F15),
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
 
