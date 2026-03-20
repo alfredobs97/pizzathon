@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SponsorSection extends StatelessWidget {
@@ -9,6 +11,14 @@ class SponsorSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 800;
+
+    final String subject = Uri.encodeComponent('Interés en Patrocinar Pizzathon 🍕');
+    final String body = Uri.encodeComponent(
+      'Hola Salva,\n\nMe gustaría obtener más información sobre las opciones de patrocinio para la Pizzathon.\n\n¡Un saludo!',
+    );
+    final Uri emailLaunchUri = Uri.parse(
+      'mailto:salvapizzalover@gmail.com?subject=$subject&body=$body',
+    );
 
     return Container(
       width: double.infinity,
@@ -49,25 +59,35 @@ class SponsorSection extends StatelessWidget {
           SizedBox(
             height: 56,
             width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              ),
-              onPressed: () => _launchEmail(context),
-              child: Text(
-                'Me interesa',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  height: 24 / 16,
-                  letterSpacing: 0.15,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            ),
+            child: kIsWeb
+                ? Link(
+                    uri: emailLaunchUri,
+                    target: LinkTarget.blank,
+                    builder: (context, followLink) => _buildButton(context, followLink),
+                  )
+                : _buildButton(context, () => _launchEmail(context)),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildButton(BuildContext context, VoidCallback? onPressed) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        'Me interesa',
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          height: 24 / 16,
+          letterSpacing: 0.15,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
     );
   }
