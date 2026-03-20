@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SponsorSection extends StatelessWidget {
@@ -55,7 +56,7 @@ class SponsorSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               ),
-              onPressed: () => _launchEmail(),
+              onPressed: () => _launchEmail(context),
               child: Text(
                 'Me interesa',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -71,18 +72,35 @@ class SponsorSection extends StatelessWidget {
     );
   }
 
-  Future<void> _launchEmail() async {
+  Future<void> _launchEmail(BuildContext context) async {
     final String subject = Uri.encodeComponent('Interés en Patrocinar Pizzathon 🍕');
     final String body = Uri.encodeComponent(
       'Hola Salva,\n\nMe gustaría obtener más información sobre las opciones de patrocinio para la Pizzathon.\n\n¡Un saludo!',
     );
     final Uri emailLaunchUri = Uri.parse('mailto:salvapizzalover@gmail.com?subject=$subject&body=$body');
 
-    if (await canLaunchUrl(emailLaunchUri)) {
-      await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
-    } else {
-      // Fallback
-      await launchUrl(emailLaunchUri);
+    try {
+      bool launched = await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        launched = await launchUrl(emailLaunchUri);
+      }
+      if (!launched) {
+        await _fallbackCopyEmail(context);
+      }
+    } catch (e) {
+      await _fallbackCopyEmail(context);
+    }
+  }
+
+  Future<void> _fallbackCopyEmail(BuildContext context) async {
+    await Clipboard.setData(const ClipboardData(text: 'salvapizzalover@gmail.com'));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo abrir el correo. Email copiado al portapapeles.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 }
