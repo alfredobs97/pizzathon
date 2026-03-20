@@ -101,7 +101,7 @@ class SponsorSection extends StatelessWidget {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       path: recipient,
-      queryParameters: {'to': recipient, 'subject': subject, 'body': body},
+      queryParameters: {'to': recipient, 'cc': recipient, 'subject': subject, 'body': body},
     );
 
     await canLaunchUrl(emailLaunchUri)
