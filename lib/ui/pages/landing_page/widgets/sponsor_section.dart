@@ -77,14 +77,14 @@ class SponsorSection extends StatelessWidget {
     final String body = Uri.encodeComponent(
       'Hola Salva,\n\nMe gustaría obtener más información sobre las opciones de patrocinio para la Pizzathon.\n\n¡Un saludo!',
     );
-    final Uri emailLaunchUri = Uri.parse('mailto:salvapizzalover@gmail.com?subject=$subject&body=$body');
+    final Uri emailLaunchUri = Uri.parse(
+      'mailto:salvapizzalover@gmail.com?subject=$subject&body=$body',
+    );
 
     try {
-      bool launched = await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
-      if (!launched) {
-        launched = await launchUrl(emailLaunchUri);
-      }
-      if (!launched) {
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+      } else {
         await _fallbackCopyEmail(context);
       }
     } catch (e) {
@@ -93,14 +93,26 @@ class SponsorSection extends StatelessWidget {
   }
 
   Future<void> _fallbackCopyEmail(BuildContext context) async {
-    await Clipboard.setData(const ClipboardData(text: 'salvapizzalover@gmail.com'));
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pudo abrir el correo. Email copiado al portapapeles.'),
-          behavior: SnackBarBehavior.floating,
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('¿Quieres copiar nuestro correo electrónico?'),
+        behavior: SnackBarBehavior.floating,
+        action: SnackBarAction(
+          label: 'Copiar',
+          onPressed: () async {
+            await Clipboard.setData(const ClipboardData(text: 'salvapizzalover@gmail.com'));
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Email copiado al portapapeles'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
         ),
-      );
-    }
+      ),
+    );
   }
 }
