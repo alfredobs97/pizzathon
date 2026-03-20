@@ -72,25 +72,17 @@ class SponsorSection extends StatelessWidget {
   }
 
   Future<void> _launchEmail() async {
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: 'salvapizzalover@gmail.com',
-      query: _encodeQueryParameters(<String, String>{
-        'subject': 'Interés en Patrocinar Pizzathon 🍕',
-        'body':
-            'Hola Salva,\n\nMe gustaría obtener más información sobre las opciones de patrocinio para la Pizzathon.\n\n¡Un saludo!',
-      }),
+    final String subject = Uri.encodeComponent('Interés en Patrocinar Pizzathon 🍕');
+    final String body = Uri.encodeComponent(
+      'Hola Salva,\n\nMe gustaría obtener más información sobre las opciones de patrocinio para la Pizzathon.\n\n¡Un saludo!',
     );
+    final Uri emailLaunchUri = Uri.parse('mailto:salvapizzalover@gmail.com?subject=$subject&body=$body');
 
     if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+    } else {
+      // Fallback
       await launchUrl(emailLaunchUri);
     }
-  }
-
-  String? _encodeQueryParameters(Map<String, String> params) {
-    return params.entries
-        .map((MapEntry<String, String> e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
   }
 }
