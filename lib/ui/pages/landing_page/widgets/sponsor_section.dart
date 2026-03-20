@@ -105,7 +105,7 @@ class SponsorSection extends StatelessWidget {
     );
 
     await canLaunchUrl(emailLaunchUri)
-        ? launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication)
+        ? launchUrl(emailLaunchUri, webOnlyWindowName: '_self')
         // ignore: use_build_context_synchronously
         : _fallbackCopyEmail(context);
   }
