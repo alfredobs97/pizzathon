@@ -81,19 +81,15 @@ class SponsorSection extends StatelessWidget {
       'mailto:salvapizzalover@gmail.com?subject=$subject&body=$body',
     );
 
-    try {
-      if (await canLaunchUrl(emailLaunchUri)) {
-        await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
-      } else {
-        await _fallbackCopyEmail(context);
-      }
-    } catch (e) {
-      await _fallbackCopyEmail(context);
-    }
+    await canLaunchUrl(emailLaunchUri)
+        ? launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication)
+        // ignore: use_build_context_synchronously
+        : _fallbackCopyEmail(context);
   }
 
   Future<void> _fallbackCopyEmail(BuildContext context) async {
     if (!context.mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('¿Quieres copiar nuestro correo electrónico?'),
@@ -102,14 +98,6 @@ class SponsorSection extends StatelessWidget {
           label: 'Copiar',
           onPressed: () async {
             await Clipboard.setData(const ClipboardData(text: 'salvapizzalover@gmail.com'));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Email copiado al portapapeles'),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
           },
         ),
       ),
