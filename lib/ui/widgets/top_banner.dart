@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TopBanner extends StatelessWidget {
+class TopBanner extends StatelessWidget implements PreferredSizeWidget {
   const TopBanner({super.key});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {

@@ -17,6 +17,7 @@ class Footer extends StatelessWidget {
     final isMobile = screenWidth < 800;
 
     return Container(
+      height: 160,
       width: double.infinity,
       color: Theme.of(context).colorScheme.secondary,
       constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (162 / 1440)),
