@@ -29,6 +29,7 @@ class AppTheme {
         displayLarge: GoogleFonts.archivoBlack(fontSize: 24, fontWeight: FontWeight.w900),
         displayMedium: GoogleFonts.archivoBlack(fontSize: 20, fontWeight: FontWeight.w900),
         titleLarge: GoogleFonts.archivo(fontSize: 20, fontWeight: FontWeight.w400),
+        titleMedium: GoogleFonts.archivo(fontSize: 14, fontWeight: FontWeight.w900),
         bodyLarge: GoogleFonts.archivoBlack(fontSize: 16, fontWeight: FontWeight.w400),
         bodyMedium: GoogleFonts.archivo(fontSize: 16, fontWeight: FontWeight.w500),
         bodySmall: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
