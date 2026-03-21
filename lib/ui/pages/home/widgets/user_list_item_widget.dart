@@ -10,7 +10,7 @@ class UserListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      tileColor: const Color(0xFFF2DDC6),
+      tileColor: Theme.of(context).colorScheme.onSecondaryContainer,
       leading: CircleAvatar(
         radius: 16,
         backgroundColor: Colors.white,
@@ -19,10 +19,9 @@ class UserListItemWidget extends StatelessWidget {
       ),
       title: Text(
         user.displayName,
-        style: const TextStyle(
-          color: Color(0xFF7B4E22), // Brown text color
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          color: Theme.of(context).colorScheme.secondary,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

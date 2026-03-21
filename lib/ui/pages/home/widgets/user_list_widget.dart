@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pizzathon/ui/pages/home/widgets/user_list_item_widget.dart';
 import '../../../blocs/user_list/users_list_cubit.dart';
 import '../../../blocs/user_list/users_list_state.dart';
@@ -65,27 +66,26 @@ class _UserListWidgetState extends State<UserListWidget> {
               // Header
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 20),
+                  padding: const EdgeInsets.only(top: 50),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Los participantes',
-                        style: TextStyle(
-                          color: Color(0xFF420B0B),
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
-                      const Text(
+                      Text(
                         'PIZZATHON',
-                        style: TextStyle(
-                          color: Color(0xFFFF6B00),
-                          fontSize: 64,
-                          fontWeight: FontWeight.w900,
+                        style: GoogleFonts.climateCrisis(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w400,
                           height: 1.0,
+                          letterSpacing: 1,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -93,27 +93,24 @@ class _UserListWidgetState extends State<UserListWidget> {
 
               // User List
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index >= state.users.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Center(
-                        child: SizedBox(
-                          width: 260,
-                          child: UserListItemWidget(user: state.users[index]),
-                        ),
-                      ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  if (index >= state.users.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24.0),
+                      child: Center(child: CircularProgressIndicator()),
                     );
-                  },
-                  childCount: state.users.length + (state.hasReachedMax ? 0 : 1),
-                ),
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Center(
+                      child: SizedBox(
+                        width: 360,
+                        child: UserListItemWidget(user: state.users[index]),
+                      ),
+                    ),
+                  );
+                }, childCount: state.users.length + (state.hasReachedMax ? 0 : 1)),
               ),
 
               const SliverToBoxAdapter(child: SizedBox(height: 40)),
