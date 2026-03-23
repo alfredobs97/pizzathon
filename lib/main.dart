@@ -3,18 +3,18 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/ui/app_router.dart';
 
 import 'firebase_options.dart';
 import 'data/services/auth_service.dart';
 import 'ui/blocs/auth_cubit.dart';
-import 'ui/blocs/auth_state.dart';
-import 'ui/pages/home/home_page.dart';
-import 'ui/pages/landing_page/landing_page.dart';
 import 'ui/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -45,21 +45,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Pizzathon',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: BlocBuilder<AuthCubit, AuthState>(
-        builder: (context, state) {
-          if (state is AuthLoading || state is AuthInitial) {
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
-          }
-          if (state is AuthAuthenticated) {
-            return const HomePage();
-          }
-          return const LandingPage();
-        },
-      ),
+      routerConfig: AppRouter().router,
     );
   }
 }
