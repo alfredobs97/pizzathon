@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -17,7 +18,7 @@ class HeroSection extends StatelessWidget {
       height: heroHeight,
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/background_pizza.jpg'),
+          image: CachedNetworkImageProvider('https://i.ibb.co/Zp8bj1WH/background-pizza.jpg'),
           fit: BoxFit.cover,
           alignment: Alignment.center,
           colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
