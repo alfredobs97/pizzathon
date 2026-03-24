@@ -36,7 +36,6 @@ class DefaultFirebaseOptions {
     appId: String.fromEnvironment('FIREBASE_WEB_APP_ID'),
     messagingSenderId: '727941411451',
     projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
-    authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN'),
     storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
   );
 
