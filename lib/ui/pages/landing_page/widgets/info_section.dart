@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class InfoSection extends StatelessWidget {
@@ -60,8 +61,8 @@ class InfoSection extends StatelessWidget {
     // --- BLOQUE DE IMAGEN ---
     Widget imageBlock = ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        'assets/images/manita_mazita.jpg',
+      child: CachedNetworkImage(
+        imageUrl: 'https://i.ibb.co/TB2rS0zd/Foto-buscamos-100.png',
         width: isMobile ? double.infinity : 320,
         height: isMobile ? 200 : 220,
         fit: BoxFit.cover,
