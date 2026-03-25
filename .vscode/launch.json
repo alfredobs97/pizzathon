@@ -36,7 +36,9 @@
             "type": "dart",
             "toolArgs": [
                 "--dart-define-from-file",
-                "secrets.json"
+                "secrets.json",
+                "--web-port",
+                "8080"
             ]
         },
         {
