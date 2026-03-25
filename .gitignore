@@ -50,7 +50,6 @@ app.*.map.json
 secrets.json
 secrets-dev.json
 
-.env
 # Tooling
 .firebase/
 devtools_options.yaml

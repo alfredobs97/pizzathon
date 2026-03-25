@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "pizzathon-app-dev",
-    "dev": "pizzathon-app-dev"
+    "default": "pizzathon-app-88888",
+      "dev": "pizzathon-app-dev"
   },
   "targets": {
     "pizzathon-app-dev": {
