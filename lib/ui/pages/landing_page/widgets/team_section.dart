@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class TeamSection extends StatelessWidget {
@@ -37,17 +38,17 @@ class TeamSection extends StatelessWidget {
                 _ProfileItem(
                   name: 'SALVATORE PIZZALOVER',
                   role: 'Divulgador y Formador\nde pizzeros caseros',
-                  imagePath: 'assets/images/Salvatore.jpg',
+                  imageUrl: 'https://i.ibb.co/qL3Zhr1c/salva.png',
                 ),
                 _ProfileItem(
                   name: 'ALFREDO BAUTISTA',
                   role: 'Senior Frontend Developer\n& Google Developer Expert',
-                  imagePath: 'assets/images/Alfredo.jpg',
+                  imageUrl: 'https://i.ibb.co/fY2wdFG9/alfredo.png',
                 ),
                 _ProfileItem(
                   name: 'JORGE BALDIZZONE',
                   role: 'Junior Developer \n& 42 Outer Core',
-                  imagePath: 'assets/images/Jorge.jpg',
+                  imageUrl: 'https://i.ibb.co/SXK5DzBr/jorge.png',
                 ),
               ],
             ),
@@ -61,9 +62,9 @@ class TeamSection extends StatelessWidget {
 class _ProfileItem extends StatelessWidget {
   final String name;
   final String role;
-  final String imagePath;
+  final String imageUrl;
 
-  const _ProfileItem({required this.name, required this.role, required this.imagePath});
+  const _ProfileItem({required this.name, required this.role, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +73,12 @@ class _ProfileItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Image.asset(
-            imagePath,
+          child: CachedNetworkImage(
+            imageUrl: imageUrl,
             width: 60,
             height: 60,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
+            errorWidget: (context, error, stackTrace) => Container(
               width: 60,
               height: 60,
               color: Colors.grey,

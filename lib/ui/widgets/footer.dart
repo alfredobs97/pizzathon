@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -57,7 +58,7 @@ class Footer extends StatelessWidget {
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: AssetImage('assets/images/Salvatore.jpg'),
+                          image: CachedNetworkImageProvider('https://i.ibb.co/qL3Zhr1c/salva.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
