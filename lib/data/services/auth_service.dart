@@ -3,7 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: const String.fromEnvironment('GOOGLE_CLIENT_ID'),
   );
@@ -20,7 +20,7 @@ class AuthService {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      
+
       return await _auth.signInWithCredential(credential);
     } catch (e) {
       print("Error en Google Sign-In: $e");

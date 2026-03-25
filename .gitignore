@@ -51,3 +51,6 @@ secrets.json
 secrets-dev.json
 
 .env
+# Tooling
+.firebase/
+devtools_options.yaml
