@@ -15,20 +15,7 @@ class EnrollButton extends StatelessWidget {
         final isEnrolled = state is EnrollmentStatusChecked && state.isEnrolled;
 
         return ElevatedButton(
-          onPressed: isEnrolled
-              ? null
-              : () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => BlocProvider.value(
-                      value: context.read<EnrollmentCubit>(),
-                      child: BlocProvider.value(
-                        value: context.read<UsersListCubit>(),
-                        child: const EnrollModal(),
-                      ),
-                    ),
-                  );
-                },
+          onPressed: isEnrolled ? null : () => _showEnrollModal(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: isEnrolled
                 ? Theme.of(context).colorScheme.primary
@@ -44,6 +31,19 @@ class EnrollButton extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _showEnrollModal(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<EnrollmentCubit>()),
+          BlocProvider.value(value: context.read<UsersListCubit>()),
+        ],
+        child: const EnrollModal(),
+      ),
     );
   }
 }
