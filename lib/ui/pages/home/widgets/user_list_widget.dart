@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pizzathon/ui/pages/home/widgets/user_list_item_widget.dart';
 import '../../../blocs/user_list/users_list_cubit.dart';
 import '../../../blocs/user_list/users_list_state.dart';
@@ -66,7 +65,7 @@ class _UserListWidgetState extends State<UserListWidget> {
               // Header
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 50),
+                  padding: const EdgeInsets.only(top: 24),
                   child: Column(
                     children: [
                       Text(
@@ -75,17 +74,6 @@ class _UserListWidgetState extends State<UserListWidget> {
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
-                      Text(
-                        'PIZZATHON',
-                        style: GoogleFonts.climateCrisis(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w400,
-                          height: 1.0,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

@@ -35,6 +35,10 @@ class AppTheme {
         bodySmall: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
         labelMedium: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
       ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: const Color(0xFFF8EEE3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
     );
   }
 }

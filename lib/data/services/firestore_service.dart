@@ -22,6 +22,11 @@ class FirestoreService {
     }
   }
 
+  Future<bool> isUserEnrolled(String uid) async {
+    final doc = await _db.collection(_userCollectionName).doc(uid).get();
+    return doc.exists;
+  }
+
   Future<({List<UserModel> users, DocumentSnapshot? lastDocument})> getUsersPaginated({
     DocumentSnapshot? lastDocument,
     int limit = 10,
