@@ -23,7 +23,7 @@ class AuthService {
       
     } catch (e, stackTrace) {
       log("Error en Google Sign-In (Web)", error: e, stackTrace: stackTrace, name: 'AuthService');
-      rethrow; 
+      return null; 
     }
   }
 
@@ -32,7 +32,6 @@ class AuthService {
       await _auth.signOut();
     } catch (e, stackTrace) {
       log("Error al cerrar sesión", error: e, stackTrace: stackTrace, name: 'AuthService');
-      rethrow;
     }
   }
 }
