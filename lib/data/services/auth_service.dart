@@ -16,7 +16,6 @@ class AuthService {
 
       provider.setCustomParameters({
         'hl': 'es', 
-        'prompt': 'select_account' 
       });
 
       return await _auth.signInWithPopup(provider);
