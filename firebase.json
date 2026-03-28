@@ -16,6 +16,10 @@
       ],
       "rewrites": [
         {
+          "source": "/privacy",
+          "destination": "/privacy.html"
+        },
+        {
           "source": "**",
           "destination": "/index.html"
         }
@@ -30,6 +34,10 @@
         "**/node_modules/**"
       ],
       "rewrites": [
+        {
+          "source": "/privacy",
+          "destination": "/privacy.html"
+        },
         {
           "source": "**",
           "destination": "/index.html"
