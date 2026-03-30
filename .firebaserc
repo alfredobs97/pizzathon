@@ -4,6 +4,13 @@
       "dev": "pizzathon-app-dev"
   },
   "targets": {
+    "pizzathon-app-88888": {
+      "hosting": {
+        "prod": [
+          "pizzathon-app-88888"
+        ]
+      }
+    },
     "pizzathon-app-dev": {
       "hosting": {
         "preview-site": [
