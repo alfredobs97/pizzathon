@@ -28,3 +28,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PIZZATHON_APP_88888 }}'
           projectId: pizzathon-app-88888
           channelId: live
+          target: prod
