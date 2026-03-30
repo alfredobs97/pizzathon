@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
 
 import 'firebase_options.dart';
@@ -33,6 +34,7 @@ void main() async {
         RepositoryProvider(create: (context) => AuthService()),
         RepositoryProvider(create: (context) => FirestoreService()),
         RepositoryProvider(create: (context) => LocalStorageService()),
+        RepositoryProvider(create: (context) => RemoteConfigService()..init()),
       ],
       child: BlocProvider(
         create: (context) => AuthCubit(context.read<AuthService>())..checkAuth(),

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
 import '../../data/services/auth_service.dart';
 import '../../data/services/firestore_service.dart';
 import 'enrollment_state.dart';
@@ -8,16 +9,19 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
   final FirestoreService _firestoreService;
   final AuthService _authService;
   final LocalStorageService _localStorageService;
+  final RemoteConfigService _remoteConfigService;
 
-  EnrollmentCubit(this._firestoreService, this._authService, this._localStorageService)
+  EnrollmentCubit(this._firestoreService, this._authService, this._localStorageService, this._remoteConfigService)
     : super(EnrollmentInitial());
 
   final _enrollmentDelay = Duration(seconds: 2);
 
   Future<void> checkEnrollmentStatus() async {
     final user = _authService.currentUser;
+    final isActive =  _remoteConfigService.isEnrollmentOpen;
+
     if (user == null) {
-      emit(const EnrollmentStatusChecked(false));
+      emit(EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: false));
       return;
     }
 
@@ -25,7 +29,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
       final isEnrolledInCache = await _localStorageService.isUserEnrolled(user.uid);
 
       if (isEnrolledInCache) {
-        emit(const EnrollmentStatusChecked(true));
+        emit(EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: true));
         return;
       }
 
@@ -33,7 +37,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
 
       if (isEnrolledInFirestore) {
         await _localStorageService.saveEnrollment(user.uid);
-        emit(const EnrollmentStatusChecked(true));
+        emit(EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: true));
       }
     } catch (e) {
       emit(EnrollmentError(e.toString()));
@@ -55,7 +59,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
         Future.delayed(_enrollmentDelay),
       ]);
 
-      emit(const EnrollmentStatusChecked(true));
+      emit(EnrollmentStatusChecked(isEnrollmentActive: _remoteConfigService.isEnrollmentOpen, isEnrolled: true));
     } catch (e) {
       emit(EnrollmentError(e.toString()));
     }

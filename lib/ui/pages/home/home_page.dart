@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
 import 'package:pizzathon/ui/pages/home/widgets/enroll_section_widget.dart';
 import 'package:pizzathon/ui/widgets/footer.dart';
 import 'package:pizzathon/ui/widgets/top_banner.dart';
@@ -25,6 +26,7 @@ class HomePage extends StatelessWidget {
             context.read<FirestoreService>(),
             context.read<AuthService>(),
             context.read<LocalStorageService>(),
+            context.read<RemoteConfigService>(),
           )..checkEnrollmentStatus(),
         ),
       ],

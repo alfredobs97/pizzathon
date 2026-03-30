@@ -12,10 +12,15 @@ class EnrollButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<EnrollmentCubit, EnrollmentState>(
       builder: (context, state) {
+        if(state is EnrollmentLoading) {
+          return CircularProgressIndicator();
+        }
+
         final isEnrolled = state is EnrollmentStatusChecked && state.isEnrolled;
+        final isActive = state is EnrollmentStatusChecked && state.isEnrollmentActive;
 
         return ElevatedButton(
-          onPressed: isEnrolled ? null : () => _showEnrollModal(context),
+          onPressed: isEnrolled ? null : isActive ? () => _showEnrollModal(context) : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: isEnrolled
                 ? Theme.of(context).colorScheme.primary
@@ -26,7 +31,7 @@ class EnrollButton extends StatelessWidget {
             elevation: 0,
           ),
           child: Text(
-            isEnrolled ? 'Inscrito' : 'Inscribirme',
+            isEnrolled ? 'Inscrito' : isActive ? 'Inscribirme' : '¡Plazas cerradas!',
             style: Theme.of(context).textTheme.titleMedium,
           ),
         );
