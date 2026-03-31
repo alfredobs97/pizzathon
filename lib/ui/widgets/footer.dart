@@ -19,12 +19,12 @@ class Footer extends StatelessWidget {
     final isMobile = screenWidth < 800;
 
     return Container(
-      height: 160,
+      height: isMobile ? 210 : 180,
       width: double.infinity,
       color: Theme.of(context).colorScheme.secondary,
       constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (162 / 1440)),
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: isMobile ? 40 : 20, horizontal: 20),
+      padding: EdgeInsets.only(top: 20, left: 20, right: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
