@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
@@ -21,6 +22,12 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
   final _enrollmentDelay = Duration(seconds: 2);
 
   Future<void> checkEnrollmentStatus() async {
+    try {
+      await _remoteConfigService.init();
+    } catch (e) {
+      debugPrint('Error al inicializar remote config: $e');
+    }
+
     final user = _authService.currentUser;
     final isActive = _remoteConfigService.isEnrollmentOpen;
 
