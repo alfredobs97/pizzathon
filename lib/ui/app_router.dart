@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
@@ -14,6 +15,14 @@ class AppRouter {
     routes: [
       GoRoute(path: landingRoute, builder: (context, state) => LandingPage()),
       GoRoute(path: participantsRoute, builder: (context, state) => HomePage()),
+      GoRoute(
+        path: '/__/auth/handler', // Captura la ruta conflictiva
+        builder: (context, state) {
+          // Devuelve una pantalla en blanco o de carga.
+          // Firebase cerrará este popup automáticamente en un segundo.
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        },
+      ),
     ],
     redirect: (context, state) {
       final authState = context.read<AuthCubit>().state;
