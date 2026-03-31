@@ -34,7 +34,7 @@ void main() async {
         RepositoryProvider(create: (context) => AuthService()),
         RepositoryProvider(create: (context) => FirestoreService()),
         RepositoryProvider(create: (context) => LocalStorageService()),
-        RepositoryProvider(create: (context) => RemoteConfigService()),
+        RepositoryProvider(create: (context) => RemoteConfigService()..init()),
       ],
       child: BlocProvider(
         create: (context) => AuthCubit(context.read<AuthService>())..checkAuth(),

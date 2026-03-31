@@ -23,9 +23,9 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
 
   Future<void> checkEnrollmentStatus() async {
     try {
-      await _remoteConfigService.init();
+      await _remoteConfigService.forceFetch();
     } catch (e) {
-      debugPrint('Error al inicializar remote config: $e');
+      debugPrint('Error al obtener el estado del remote config: $e');
     }
 
     final user = _authService.currentUser;
