@@ -53,3 +53,10 @@ secrets-dev.json
 # Tooling
 .firebase/
 devtools_options.yaml
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
