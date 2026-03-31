@@ -2,16 +2,47 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "pizzathon",
+            "name": "pizzathon (Dev)",
             "request": "launch",
             "type": "dart",
             "toolArgs": [
                 "--dart-define-from-file",
-                "secrets.json"
+                "secrets-dev.json"
             ]
         },
         {
-            "name": "pizzathon (profile mode)",
+            "name": "pizzathon (Dev - profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--dart-define-from-file",
+                "secrets-dev.json"
+            ]
+        },
+        {
+            "name": "pizzathon (Dev - release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--dart-define-from-file",
+                "secrets-dev.json"
+            ]
+        },
+        {
+            "name": "pizzathon (Prod)",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define-from-file",
+                "secrets.json",
+                "--web-port",
+                "8080"
+            ]
+        },
+        {
+            "name": "pizzathon (Prod - profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
@@ -21,7 +52,7 @@
             ]
         },
         {
-            "name": "pizzathon (release mode)",
+            "name": "pizzathon (Prod - release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",

@@ -1,39 +1,36 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: const String.fromEnvironment('GOOGLE_CLIENT_ID'),
-  );
+
+  AuthService() {
+    _auth.setLanguageCode('es');
+  }
 
   User? get currentUser => _auth.currentUser;
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+      final GoogleAuthProvider provider = GoogleAuthProvider();
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+      provider.setCustomParameters({
+        'hl': 'es', 
+      });
+
+      return await _auth.signInWithPopup(provider);
       
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      print("Error en Google Sign-In: $e");
-      return null;
+    } catch (e, stackTrace) {
+      log("Error en Google Sign-In (Web)", error: e, stackTrace: stackTrace, name: 'AuthService');
+      return null; 
     }
   }
 
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
       await _auth.signOut();
-    } catch (e) {
-      print("Error al cerrar sesión: $e");
+    } catch (e, stackTrace) {
+      log("Error al cerrar sesión", error: e, stackTrace: stackTrace, name: 'AuthService');
     }
   }
 }

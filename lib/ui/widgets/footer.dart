@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatelessWidget {
@@ -18,6 +19,7 @@ class Footer extends StatelessWidget {
     final isMobile = screenWidth < 800;
 
     return Container(
+      height: 160,
       width: double.infinity,
       color: Theme.of(context).colorScheme.secondary,
       constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (162 / 1440)),
@@ -100,6 +102,17 @@ class Footer extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 8),
+          Link(
+            uri: Uri.parse('https://pizzathon.es/privacy.html'),
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              return TextButton(
+                onPressed: followLink,
+                child: Text('Política de Privacidad', style: Theme.of(context).textTheme.bodySmall),
+              );
+            },
           ),
         ],
       ),
