@@ -85,10 +85,22 @@ class HeroSection extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     ),
                     onPressed: () {
-                      context.read<AuthCubit>().login();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            '¡Abriremos las inscripciones muy pronto!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          behavior: SnackBarBehavior.floating,
+                          width: isMobile ? null : 400,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
                     },
                     child: const Text(
-                      'Me interesa',
+                      'Próximamente',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
