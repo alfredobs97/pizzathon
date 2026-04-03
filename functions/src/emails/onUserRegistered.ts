@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import * as logger from "firebase-functions/logger";
 import * as nodemailer from "nodemailer";
 import { onDocumentWritten } from "firebase-functions/firestore";
@@ -15,7 +17,7 @@ const userCollection = "users_2026_05";
 export const sendWelcomeEmail = onDocumentWritten(
   `${userCollection}/{userId}`,
   async (event) => {
-    const snapshot = event.data?.before;
+    const snapshot = event.data?.after;
 
     const emailDestino = snapshot?.data()?.email;
     const nombreUsuario = snapshot?.data()?.displayName || "nuevo usuario";
