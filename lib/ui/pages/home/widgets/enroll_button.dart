@@ -31,7 +31,10 @@ class EnrollButton extends StatelessWidget {
             elevation: 0,
           ),
           child: switch (state) {
-            EnrollmentLoading() => const CircularProgressIndicator(),
+            EnrollmentLoading() => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary),
+            ),
             _ => Text(switch ((isEnrolled, isActive)) {
               (true, _) => 'Inscrito',
               (false, true) => 'Inscribirme',
