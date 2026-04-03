@@ -1,6 +1,6 @@
-import * as functions from "firebase-functions/v1";
 import * as logger from "firebase-functions/logger";
 import * as nodemailer from "nodemailer";
+import { onDocumentWritten } from "firebase-functions/firestore";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -10,13 +10,18 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendWelcomeEmail = functions.auth.user().onCreate(
-  async (user: functions.auth.UserRecord) => {
-    const emailDestino = user.email;
-    const nombreUsuario = user.displayName || "nuevo usuario";
+const userCollection = "users_2026_05";
+
+export const sendWelcomeEmail = onDocumentWritten(
+  `${userCollection}/{userId}`,
+  async (event) => {
+    const snapshot = event.data?.before;
+
+    const emailDestino = snapshot?.data()?.email;
+    const nombreUsuario = snapshot?.data()?.displayName || "nuevo usuario";
 
     if (!emailDestino) {
-      logger.warn(`UID ${user.uid} sin email. Abortando.`);
+      logger.warn(`UID ${event.params.userId} sin email. Abortando.`);
       return null;
     }
 
