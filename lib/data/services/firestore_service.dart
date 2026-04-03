@@ -33,7 +33,7 @@ class FirestoreService {
   }) async {
     Query query = _db
         .collection(_userCollectionName)
-        .orderBy('score', descending: true)
+        .orderBy('createdAt', descending: true)
         .limit(limit);
 
     if (lastDocument != null) {
