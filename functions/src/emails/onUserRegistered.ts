@@ -30,7 +30,7 @@ export const sendWelcomeEmail = onDocumentWritten(
     const mailOptions = {
       from: `"Equipo Pizzathon" <${process.env.EMAIL_USER}>`,
       to: emailDestino,
-      subject: "Confirmación para tu inscripción a Pizzathon",
+      subject: "Confirmación inscripción Pizzathon",
       text: `Hola ${nombreUsuario},\n\nTu inscripción a Pizzathon ha sido aceptada y a partir de aquí tu email será tu acceso a la competición.\n\n
       ¿Qué te recomendamos hacer hasta que comience el evento el 11 de mayo?\n
       - Sigue las novedades del evento en el Instagram de salva.pizzalover\n
