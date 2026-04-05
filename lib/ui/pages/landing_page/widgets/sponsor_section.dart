@@ -57,7 +57,7 @@ class SponsorSection extends StatelessWidget {
               ),
               onPressed: () => _launchEmail(),
               child: Text(
-                'Me interesa',
+                'Quiero patrocinar',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   height: 24 / 16,
                   letterSpacing: 0.15,
@@ -89,8 +89,10 @@ class SponsorSection extends StatelessWidget {
 
   String? _encodeQueryParameters(Map<String, String> params) {
     return params.entries
-        .map((MapEntry<String, String> e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (MapEntry<String, String> e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
   }
 }
