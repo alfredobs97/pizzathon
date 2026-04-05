@@ -22,6 +22,8 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
   final _enrollmentDelay = Duration(seconds: 2);
 
   Future<void> checkEnrollmentStatus() async {
+    emit(EnrollmentLoading());
+
     try {
       await _remoteConfigService.forceFetch();
     } catch (e) {
