@@ -88,7 +88,7 @@ class HeroSection extends StatelessWidget {
                       context.read<AuthCubit>().login();
                     },
                     child: const Text(
-                      'Me interesa',
+                      'Entrar',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
