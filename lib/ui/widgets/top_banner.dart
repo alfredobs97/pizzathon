@@ -40,7 +40,7 @@ class TopBanner extends StatelessWidget implements PreferredSizeWidget {
                   return IconButton(
                     icon: Icon(
                       Icons.admin_panel_settings,
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () => context.go(AppRouter.adminRoute),
                     tooltip: 'Admin Console',
