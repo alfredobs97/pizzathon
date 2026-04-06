@@ -6,17 +6,20 @@ import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
+import 'package:pizzathon/ui/pages/poc_images/poc_images_page.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
   static const String adminRoute = '/capo';
+  static const String pocImagesRoute = '/poc-imagenes';
 
   final _router = GoRouter(
     initialLocation: landingRoute,
     routes: [
       GoRoute(path: landingRoute, builder: (context, state) => LandingPage()),
       GoRoute(path: participantsRoute, builder: (context, state) => HomePage()),
+      GoRoute(path: pocImagesRoute, builder: (context, state) => const PocImagesPage()),
       GoRoute(
         path: '/__/auth/handler', // Captura la ruta conflictiva
         builder: (context, state) {
@@ -37,7 +40,7 @@ class AppRouter {
       ),
     ],
     redirect: (context, state) {
-      if (state.matchedLocation == adminRoute && !isAdmin(context)) {
+      if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) && !isAdmin(context)) {
         return landingRoute;
       }
 
