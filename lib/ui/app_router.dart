@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
+import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/poc_images/poc_images_page.dart';
@@ -30,13 +31,7 @@ class AppRouter {
       ),
       GoRoute(
         path: adminRoute,
-        builder: (context, state) => Scaffold(
-          body: Center(
-            child: Image.network(
-              'https://www.shutterstock.com/shutterstock/photos/1470841721/display_1500/stock-photo-the-circle-game-meme-fingers-making-the-ok-symbol-meme-internet-popular-prank-game-if-you-look-1470841721.jpg',
-            ),
-          ),
-        ),
+        builder: (context, state) => const AdminPage(),
       ),
     ],
     redirect: (context, state) {
