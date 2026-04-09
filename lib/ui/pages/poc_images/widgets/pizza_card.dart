@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
+import 'package:pizzathon/ui/widgets/full_screen_image.dart';
 
 class PizzaCard extends StatelessWidget {
   final dynamic item;
@@ -32,7 +33,19 @@ class PizzaCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.memory(item.compressed, fit: BoxFit.cover),
+                  // --- CLICK EN LA IMAGEN PARA PANTALLA COMPLETA ---
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => FullScreenImage(
+                          imageBytes: item.compressed,
+                          title: "Vista Previa", // Puedes quitar el title si prefieres que no salga texto
+                        ),
+                      );
+                    },
+                    child: Image.memory(item.compressed, fit: BoxFit.cover),
+                  ),
                   Positioned(
                     top: -4,
                     right: -4,
@@ -53,7 +66,7 @@ class PizzaCard extends StatelessWidget {
                     style: theme.textTheme.labelMedium?.copyWith(color: Colors.grey.shade400),
                   ),
                   Text(
-                    "Ahorro: $compKb KB",
+                    "Post Compresión: $compKb KB",
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,

@@ -13,10 +13,25 @@ class PocImagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocProvider(
       create: (context) => PocImagesCubit(ImageProcessingService()),
       child: Scaffold(
-        appBar: AppBar(title: const Text('POC: Selección Múltiple (Admins)')),
+        appBar: AppBar(
+          backgroundColor: theme.scaffoldBackgroundColor, 
+          elevation: 0, 
+          scrolledUnderElevation: 0, 
+          centerTitle: true,
+          iconTheme: IconThemeData(color: theme.colorScheme.primary), 
+          title: Text(
+            'Galería Pizzathon',
+            style: theme.textTheme.displayMedium?.copyWith(
+              fontSize: 22,
+              color: theme.colorScheme.secondary, 
+            ),
+          ),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Center(
@@ -24,7 +39,7 @@ class PocImagesPage extends StatelessWidget {
               builder: (context, state) {
                 return switch (state) {
                   PocImagesInitial() => const InitialView(),
-                  PocImagesLoading() => const CircularProgressIndicator(),
+                  PocImagesLoading() => const CircularProgressIndicator(color: Color(0xFFE36414)), 
                   PocImagesSuccess() => SuccessGridView(state: state),
                   PocImagesError() => ErrorView(message: state.message),
                 };

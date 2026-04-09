@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
-
-import 'pizza_card.dart';
+import 'pizza_card.dart'; // Asegúrate de que el import coincida con tu nombre de archivo
 import 'add_pizza_card.dart';
 import 'success_pizza_buttons.dart';
 
 class SuccessGridView extends StatelessWidget {
   final PocImagesSuccess state;
-  
   const SuccessGridView({super.key, required this.state});
 
   @override
@@ -23,11 +21,11 @@ class SuccessGridView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        
         Expanded(
           child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            // CAMBIO CLAVE: Usamos MaxCrossAxisExtent para que sea responsive
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 250, // Ninguna carta medirá más de 250px
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 0.75,
