@@ -22,7 +22,7 @@ class AppRouter {
       GoRoute(path: participantsRoute, builder: (context, state) => HomePage()),
       GoRoute(path: pocImagesRoute, builder: (context, state) => const PocImagesPage()),
       GoRoute(
-        path: '/__/auth/handler', // Captura la ruta conflictiva
+        path: '/__/auth/handler', 
         builder: (context, state) {
           // Devuelve una pantalla en blanco o de carga.
           // Firebase cerrará este popup automáticamente en un segundo.
@@ -38,11 +38,9 @@ class AppRouter {
       if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) && !isAdmin(context)) {
         return landingRoute;
       }
-
       if (state.matchedLocation == participantsRoute && !isAuth(context)) {
         return landingRoute;
       }
-
       return null;
     },
   );
