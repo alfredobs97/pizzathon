@@ -1,4 +1,4 @@
-import 'dart:typed_data'; 
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
@@ -29,7 +29,7 @@ class ImageProcessingService {
         imageBytes,
         minHeight: 1440,
         minWidth: 1440,
-        quality: 80, 
+        quality: 70,
         format: CompressFormat.jpeg,
       );
 
