@@ -109,12 +109,12 @@ class Footer extends StatelessWidget {
             spacing: 16,
             children: [
               Link(
-                uri: Uri.parse('https://pizzathon.es/participate.html'),
+                uri: Uri.parse('https://pizzathon.es/normas.html'),
                 target: LinkTarget.blank,
                 builder: (BuildContext context, FollowLink? followLink) {
                   return TextButton(
                     onPressed: followLink,
-                    child: Text('Cómo Participar', style: Theme.of(context).textTheme.bodySmall),
+                    child: Text('Normas', style: Theme.of(context).textTheme.bodySmall),
                   );
                 },
               ),
@@ -124,7 +124,10 @@ class Footer extends StatelessWidget {
                 builder: (BuildContext context, FollowLink? followLink) {
                   return TextButton(
                     onPressed: followLink,
-                    child: Text('Política de Privacidad', style: Theme.of(context).textTheme.bodySmall),
+                    child: Text(
+                      'Política de Privacidad',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   );
                 },
               ),
