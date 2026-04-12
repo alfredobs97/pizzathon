@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pizzathon/domain/models/user_extension.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
+import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
+  static const String adminRoute = '/capo';
 
   final _router = GoRouter(
     initialLocation: landingRoute,
@@ -23,11 +26,17 @@ class AppRouter {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         },
       ),
+      GoRoute(
+        path: adminRoute,
+        builder: (context, state) => const AdminPage(),
+      ),
     ],
     redirect: (context, state) {
-      final authState = context.read<AuthCubit>().state;
+      if (state.matchedLocation == adminRoute && !isAdmin(context)) {
+        return landingRoute;
+      }
 
-      if (state.matchedLocation == participantsRoute && authState is! AuthAuthenticated) {
+      if (state.matchedLocation == participantsRoute && !isAuth(context)) {
         return landingRoute;
       }
 
@@ -36,4 +45,14 @@ class AppRouter {
   );
 
   GoRouter get router => _router;
+
+  static bool isAuth(BuildContext context) {
+    final authState = context.read<AuthCubit>().state;
+    return authState is AuthAuthenticated;
+  }
+
+  static bool isAdmin(BuildContext context) {
+    final authState = context.read<AuthCubit>().state;
+    return authState is AuthAuthenticated && authState.user.isAdmin;
+  }
 }
