@@ -104,15 +104,34 @@ class Footer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Link(
-            uri: Uri.parse('https://pizzathon.es/privacy.html'),
-            target: LinkTarget.blank,
-            builder: (BuildContext context, FollowLink? followLink) {
-              return TextButton(
-                onPressed: followLink,
-                child: Text('Política de Privacidad', style: Theme.of(context).textTheme.bodySmall),
-              );
-            },
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 16,
+            children: [
+              Link(
+                uri: Uri.parse('https://pizzathon.es/normas.html'),
+                target: LinkTarget.blank,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return TextButton(
+                    onPressed: followLink,
+                    child: Text('Normas', style: Theme.of(context).textTheme.bodySmall),
+                  );
+                },
+              ),
+              Link(
+                uri: Uri.parse('https://pizzathon.es/privacy.html'),
+                target: LinkTarget.blank,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return TextButton(
+                    onPressed: followLink,
+                    child: Text(
+                      'Política de Privacidad',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

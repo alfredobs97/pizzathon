@@ -20,6 +20,10 @@
           "destination": "/privacy.html"
         },
         {
+          "source": "/normas",
+          "destination": "/normas.html"
+        },
+        {
           "source": "**",
           "destination": "/index.html"
         }
