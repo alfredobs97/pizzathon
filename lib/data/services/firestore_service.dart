@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pizzathon/domain/models/user_extension.dart';
 import '../../domain/models/user_model.dart';
 
 class FirestoreService {
@@ -13,7 +14,7 @@ class FirestoreService {
 
     if (!doc.exists) {
       await userRef.set({
-        'displayName': user.displayName,
+        'displayName': user.nameToSave,
         'email': user.email,
         'photoUrl': user.photoURL,
         'score': 0,
