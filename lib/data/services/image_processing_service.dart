@@ -23,13 +23,13 @@ class ImageProcessingService {
     }
   }
 
-  Future<Uint8List?> compressImage(Uint8List imageBytes) async {
+  Future<Uint8List?> compressImage(Uint8List imageBytes, {required int quality}) async {
     try {
       final Uint8List result = await FlutterImageCompress.compressWithList(
         imageBytes,
         minHeight: 1440,
         minWidth: 1440,
-        quality: 70,
+        quality: quality,
         format: CompressFormat.jpeg,
       );
 

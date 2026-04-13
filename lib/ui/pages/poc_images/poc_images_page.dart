@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 
@@ -16,7 +17,10 @@ class PocImagesPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) => PocImagesCubit(ImageProcessingService()),
+      create: (context) => PocImagesCubit(
+        ImageProcessingService(),
+        RemoteConfigService(),
+      ),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: theme.scaffoldBackgroundColor, 

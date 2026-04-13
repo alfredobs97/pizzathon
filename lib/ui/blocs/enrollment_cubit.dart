@@ -70,6 +70,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
     emit(EnrollmentLoading());
     try {
       await Future.wait([
+        
         _firestoreService.saveUser(user),
         _localStorageService.saveEnrollment(user.uid),
         Future.delayed(_enrollmentDelay),
