@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pizzathon/domain/models/user_extension.dart';
 import '../../domain/models/user_model.dart';
 
 class FirestoreService {
@@ -7,16 +8,13 @@ class FirestoreService {
 
   static const String _userCollectionName = 'users_2026_05';
 
-  Future<void> saveUser(User user, {String? customName}) async {
+  Future<void> saveUser(User user) async {
     final userRef = _db.collection(_userCollectionName).doc(user.uid);
     final doc = await userRef.get();
 
     if (!doc.exists) {
-      final nameToSave = (customName != null && customName.isNotEmpty) 
-          ? customName 
-          : user.displayName;
       await userRef.set({
-        'displayName': nameToSave,
+        'displayName': user.nameToSave,
         'email': user.email,
         'photoUrl': user.photoURL,
         'score': 0,
