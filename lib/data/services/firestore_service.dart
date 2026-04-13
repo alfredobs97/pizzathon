@@ -7,13 +7,16 @@ class FirestoreService {
 
   static const String _userCollectionName = 'users_2026_05';
 
-  Future<void> saveUser(User user) async {
+  Future<void> saveUser(User user, {String? customName}) async {
     final userRef = _db.collection(_userCollectionName).doc(user.uid);
     final doc = await userRef.get();
 
     if (!doc.exists) {
+      final nameToSave = (customName != null && customName.isNotEmpty) 
+          ? customName 
+          : user.displayName;
       await userRef.set({
-        'displayName': user.displayName,
+        'displayName': nameToSave,
         'email': user.email,
         'photoUrl': user.photoURL,
         'score': 0,

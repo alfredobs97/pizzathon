@@ -69,23 +69,19 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
 
     emit(EnrollmentLoading());
     try {
-      var userToSave = user;
-
       final email = user.email;
       final currentName = user.displayName;
 
+      String finalNameToSave = currentName ?? "";
+
       if (currentName == null || currentName.trim().isEmpty || currentName == email) {
-        
         if (email != null && email.contains('@')) {
-          final cleanName = email.split('@').first;
-          await user.updateDisplayName(cleanName); 
-          await user.reload();
-          userToSave = _authService.currentUser ?? user;
+          finalNameToSave = email.split('@').first;
         }
       }
       await Future.wait([
-        _firestoreService.saveUser(userToSave),
-        _localStorageService.saveEnrollment(userToSave.uid),
+        _firestoreService.saveUser(user, customName: finalNameToSave ),
+        _localStorageService.saveEnrollment(user.uid),
         Future.delayed(_enrollmentDelay),
       ]);
 
