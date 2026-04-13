@@ -48,7 +48,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       for (var originalBytes in newOriginals) {
         final compressedBytes = await _imageProcessingService.compressImage(
           originalBytes,
-          quality: settings.quality,
+          settings: settings,
         );
 
         if (compressedBytes != null) {
