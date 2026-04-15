@@ -1,7 +1,19 @@
 {
   "projects": {
-    "default": "pizzathon-app-88888"
+    "default": "pizzathon-app-88888",
+      "dev": "pizzathon-app-dev"
   },
-  "targets": {},
+  "targets": {
+    "pizzathon-app-dev": {
+      "hosting": {
+        "preview-site": [
+          "preview-dev-piz"
+        ],
+        "dev": [
+          "pizzathon-app-dev"
+        ]
+      }
+    }
+  },
   "etags": {}
 }

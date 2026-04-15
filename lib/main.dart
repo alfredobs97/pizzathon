@@ -1,14 +1,47 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:pizzathon/ui/pages/pizza_validation_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/local_storage_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/ui/app_router.dart';
+
 import 'firebase_options.dart';
+import 'data/services/auth_service.dart';
+import 'ui/blocs/auth_cubit.dart';
+import 'ui/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(const MainApp());
+  if (!kIsWeb) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  }
+
+  runApp(
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(create: (context) => AuthService()),
+        RepositoryProvider(create: (context) => FirestoreService()),
+        RepositoryProvider(create: (context) => LocalStorageService()),
+        RepositoryProvider(create: (context) => RemoteConfigService()..init()),
+      ],
+      child: BlocProvider(
+        create: (context) => AuthCubit(context.read<AuthService>())..checkAuth(),
+        child: const MainApp(),
+      ),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -16,11 +49,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Pizzathon Validation POC',
+    return MaterialApp.router(
+      title: 'Pizzathon',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.deepPurple, useMaterial3: true),
-      home: const PizzaValidationPage(),
+      theme: AppTheme.theme,
+      routerConfig: AppRouter().router,
     );
   }
 }

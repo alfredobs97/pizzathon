@@ -1,0 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class UserModel {
+  final String uid;
+  final String displayName;
+  final String email;
+  final String photoUrl;
+  final int score;
+  final DateTime createdAt;
+
+  UserModel({
+    required this.uid,
+    required this.displayName,
+    required this.email,
+    required this.photoUrl,
+    required this.score,
+    required this.createdAt,
+  });
+
+  factory UserModel.fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+
+    return UserModel(
+      uid: doc.id,
+      displayName: data?['displayName'] as String? ?? '',
+      email: data?['email'] as String? ?? '',
+      photoUrl: data?['photoUrl'] as String? ?? '',
+      score: data?['score'] as int? ?? 0,
+      createdAt: (data?['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    );
+  }
+}
