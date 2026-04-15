@@ -22,7 +22,7 @@ class AddPizzaCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_a_photo, size: 40, color: theme.colorScheme.secondary),
+            Icon(Icons.local_pizza, size: 40, color: theme.colorScheme.secondary),
             const SizedBox(height: 8),
             Text(
               "Añadir",

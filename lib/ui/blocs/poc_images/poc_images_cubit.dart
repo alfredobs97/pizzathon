@@ -8,8 +8,8 @@ import 'poc_images_state.dart';
 class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageProcessingService _imageProcessingService;
   final RemoteConfigService _remoteConfigService;
-
-  //static const int limitePizzas = 5;
+  
+  static const int limitePizzas = 4;
 
   PocImagesCubit(this._imageProcessingService, this._remoteConfigService)
     : super(PocImagesInitial());
@@ -27,16 +27,21 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       final newOriginals = await _imageProcessingService.pickMultipleImages();
 
       if (newOriginals.isEmpty) {
-        if (currentList.isNotEmpty) {
-          emit(PocImagesSuccess(processedImages: currentList));
-        } else {
-          emit(PocImagesInitial());
-        }
+        _restorePreviousState(currentList);
+        return;
+      }
+
+      // VALIDACIÓN 1: El máximo permitido
+      final int totalImages = currentList.length + newOriginals.length;
+      
+      if (totalImages > limitePizzas) {
+        emit(PocImagesError("Solo puedes subir un máximo de $limitePizzas imágenes. Tienes ${currentList.length} y has intentado añadir ${newOriginals.length}."));
+        // Restauramos el estado para no perder las fotos que ya se estaban mostrando en el Success
+        _restorePreviousState(currentList);
         return;
       }
 
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
-
       final settings = CompressionSettings(quality: fetchedQuality);
 
       List<({Uint8List original, Uint8List compressed})> finalList = List.of(currentList);
@@ -79,5 +84,23 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         emit(PocImagesSuccess(processedImages: updatedList));
       }
     }
+  }
+
+  // Helper para restaurar el estado y no perder las fotos previas tras un error/cancelación
+  void _restorePreviousState(List<({Uint8List original, Uint8List compressed})> currentList) {
+    if (currentList.isNotEmpty) {
+      emit(PocImagesSuccess(processedImages: currentList));
+    } else {
+      emit(PocImagesInitial());
+    }
+  }
+
+  // VALIDACIÓN 2: El mínimo (exactamente 4). 
+  // Usa esto en tu UI para habilitar/deshabilitar el botón de "Validar Imágenes" o "Siguiente Paso"
+  bool get hasExactlyFourImages {
+    if (state is PocImagesSuccess) {
+      return (state as PocImagesSuccess).processedImages.length == limitePizzas;
+    }
+    return false;
   }
 }

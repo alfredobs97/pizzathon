@@ -14,18 +14,34 @@ class SuccessPizzaButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int limite = PocImagesCubit.limitePizzas;
+    final bool canAddMore = imageCount < limite;
+    final bool canSubmit = imageCount == limite;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         children: [
           Expanded(
             child: OutlinedButton.icon(
-              onPressed: () =>
-                  context.read<PocImagesCubit>().pickAndCompressImages(),
-              icon: const Icon(Icons.add_photo_alternate, size: 18),
-              label: const FittedBox(
+              onPressed: canAddMore
+                  ? () => context.read<PocImagesCubit>().pickAndCompressImages()
+                  : null,
+              icon: Icon(
+                canAddMore ? Icons.add_circle_outline : Icons.check_circle_outline, 
+                size: 18,
+                color: canAddMore ? theme.colorScheme.primary : Colors.grey.shade600, // Aquí
+              ), 
+              label: FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text("Más pizzas"),
+                child: Text(
+                  canAddMore 
+                      ? "$imageCount/$limite Añadir pizzas" 
+                      : "$imageCount/$limite Límite alcanzado",
+                  style: TextStyle(
+                    color: canAddMore ? theme.colorScheme.primary : Colors.grey.shade600, 
+                  ),
+                ),
               ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -33,7 +49,10 @@ class SuccessPizzaButtons extends StatelessWidget {
                   horizontal: 8,
                 ),
                 foregroundColor: theme.colorScheme.primary,
-                side: BorderSide(color: theme.colorScheme.primary, width: 2),
+                side: BorderSide(
+                  color: canAddMore ? theme.colorScheme.primary : Colors.grey.shade400, 
+                  width: 2
+                ),
                 textStyle: theme.textTheme.bodyLarge,
               ),
             ),
@@ -42,7 +61,9 @@ class SuccessPizzaButtons extends StatelessWidget {
 
           Expanded(
             child: FilledButton.icon(
-              onPressed: () => _mostrarDialogoConfirmacion(context),
+              onPressed: canSubmit 
+                  ? () => _mostrarDialogoConfirmacion(context) 
+                  : null,
               icon: const Icon(Icons.cloud_upload, size: 18),
               label: const FittedBox(
                 fit: BoxFit.scaleDown,

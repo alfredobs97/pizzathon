@@ -8,7 +8,7 @@ class ImageProcessingService {
 
   Future<List<Uint8List>> pickMultipleImages() async {
     try {
-      final List<XFile> images = await _picker.pickMultiImage();
+      final List<XFile> images = await _picker.pickMultiImage(limit: 4);
 
       if (images.isNotEmpty) {
         List<Uint8List> bytesList = [];
