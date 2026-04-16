@@ -10,6 +10,8 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
   Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleAuthProvider provider = GoogleAuthProvider();
