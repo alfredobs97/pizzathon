@@ -7,6 +7,7 @@ class UserModel {
   final String photoUrl;
   final int score;
   final DateTime createdAt;
+  final bool isBanned;
 
   UserModel({
     required this.uid,
@@ -15,6 +16,7 @@ class UserModel {
     required this.photoUrl,
     required this.score,
     required this.createdAt,
+    this.isBanned = false,
   });
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
@@ -27,6 +29,7 @@ class UserModel {
       photoUrl: data?['photoUrl'] as String? ?? '',
       score: data?['score'] as int? ?? 0,
       createdAt: (data?['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isBanned: data?['banned'] as bool? ?? false,
     );
   }
 }
