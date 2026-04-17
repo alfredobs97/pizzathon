@@ -44,7 +44,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.fvm
+# FVM Version Cache
+.fvm/
 
 # Secrets
 secrets.json
