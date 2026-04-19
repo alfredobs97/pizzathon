@@ -8,23 +8,19 @@ class AppTheme {
       scaffoldBackgroundColor: const Color(0xFFF8EEE3),
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
-
         primary: Color(0xFFE36414),
         onPrimary: Color(0xFFFFFFFF),
         primaryContainer: Color(0xFFE36414),
         onPrimaryContainer: Color(0xFFF8EEE3),
-
         secondary: Color(0xFF540B0E),
         onSecondary: Color(0xFFF8EEE3),
         secondaryContainer: Color(0xFF540B0E),
         onSecondaryContainer: Color(0xFFF1DAC1),
-
         error: Colors.redAccent,
         onError: Colors.white,
         surface: Color(0xFF1E1E1E),
         onSurface: Colors.white,
       ),
-
       textTheme: TextTheme(
         displayLarge: GoogleFonts.archivoBlack(fontSize: 24, fontWeight: FontWeight.w900),
         displayMedium: GoogleFonts.archivoBlack(fontSize: 20, fontWeight: FontWeight.w900),
@@ -39,30 +35,6 @@ class AppTheme {
         backgroundColor: const Color(0xFFF8EEE3),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: NoTransitionsBuilder(),
-          TargetPlatform.iOS: NoTransitionsBuilder(),
-          TargetPlatform.macOS: NoTransitionsBuilder(),
-          TargetPlatform.windows: NoTransitionsBuilder(),
-          TargetPlatform.linux: NoTransitionsBuilder(),
-        },
-      ),
     );
-  }
-}
-
-class NoTransitionsBuilder extends PageTransitionsBuilder {
-  const NoTransitionsBuilder();
-
-  @override
-  Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return child;
   }
 }

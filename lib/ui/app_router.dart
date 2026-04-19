@@ -26,11 +26,26 @@ class AppRouter {
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
-          GoRoute(path: landingRoute, builder: (context, state) => const LandingPage()),
-          GoRoute(path: participantsRoute, builder: (context, state) => const HomePage()),
-          GoRoute(path: pocImagesRoute, builder: (context, state) => const PocImagesPage()),
-          GoRoute(path: profileRoute, builder: (context, state) => const ProfilePage()),
-          GoRoute(path: adminRoute, builder: (context, state) => const AdminPage()),
+          GoRoute(
+            path: landingRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const LandingPage()),
+          ),
+          GoRoute(
+            path: participantsRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const HomePage()),
+          ),
+          GoRoute(
+            path: pocImagesRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const PocImagesPage()),
+          ),
+          GoRoute(
+            path: profileRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const ProfilePage()),
+          ),
+          GoRoute(
+            path: adminRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const AdminPage()),
+          ),
         ],
       ),
       GoRoute(
@@ -56,6 +71,16 @@ class AppRouter {
   );
 
   GoRouter get router => _router;
+
+  static CustomTransitionPage _fadeTransition(GoRouterState state, Widget child) {
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  }
 
   static bool isAuth(BuildContext context) {
     final authState = context.read<AuthCubit>().state;
