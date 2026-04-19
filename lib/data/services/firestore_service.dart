@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
 import '../../domain/models/user_model.dart';
+import '../../domain/models/pizza_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   static const String _userCollectionName = 'users_2026_05';
+  static const String _pizzaCollectionName = 'pizzas_2026_05';
 
   Future<void> saveUser(User user) async {
     final userRef = _db.collection(_userCollectionName).doc(user.uid);
@@ -28,10 +30,8 @@ class FirestoreService {
     return doc.exists;
   }
 
-  Future<({List<UserModel> users, DocumentSnapshot? lastDocument})> getUsersPaginated({
-    DocumentSnapshot? lastDocument,
-    int limit = 10,
-  }) async {
+  Future<({List<UserModel> users, DocumentSnapshot? lastDocument})>
+  getUsersPaginated({DocumentSnapshot? lastDocument, int limit = 10}) async {
     Query query = _db
         .collection(_userCollectionName)
         .orderBy('createdAt', descending: true)
@@ -43,8 +43,41 @@ class FirestoreService {
 
     final snapshot = await query.get();
 
-    final users = snapshot.docs.map((doc) => UserModel.fromDocument(doc)).toList();
+    final users = snapshot.docs
+        .map((doc) => UserModel.fromDocument(doc))
+        .toList();
 
-    return (users: users, lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null);
+    return (
+      users: users,
+      lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null,
+    );
+  }
+
+  Future<({List<PizzaModel> pizzas, DocumentSnapshot? lastDocument})>
+  getPizzasFromUserPaginated({
+    required String uid,
+    DocumentSnapshot? lastDocument,
+    int limit = 5,
+  }) async {
+    Query query = _db
+        .collection(_pizzaCollectionName)
+        .where('userId', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    final snapshot = await query.get();
+
+    final pizzas = snapshot.docs
+        .map((doc) => PizzaModel.fromDocument(doc))
+        .toList();
+
+    return (
+      pizzas: pizzas,
+      lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null,
+    );
   }
 }
