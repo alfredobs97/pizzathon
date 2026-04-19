@@ -162,13 +162,6 @@ class ProfilePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 40),
-                      TextButton.icon(
-                        onPressed: () => context.read<AuthCubit>().logout(),
-                        icon: const Icon(Icons.logout),
-                        label: const Text('Cerrar Sesión'),
-                        style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                      ),
                     ],
                   ),
                 );
