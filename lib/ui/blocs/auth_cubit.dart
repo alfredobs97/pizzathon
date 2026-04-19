@@ -15,10 +15,14 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> login() async {
+    print("[AuthCubit] A. Emitiendo AuthLoading");
     emit(AuthLoading());
     try {
+      print("[AuthCubit] B. Llamando a authService.signInWithGoogle()");
       await _authService.signInWithGoogle();
-    } catch (e) {
+      print("[AuthCubit] C. authService finalizó exitosamente");
+    } catch (e, stackTrace) {
+      print("[AuthCubit] X. Error en login(): $e\n$stackTrace");
       emit(AuthError(e.toString()));
     }
   }
