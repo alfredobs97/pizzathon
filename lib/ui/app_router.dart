@@ -11,6 +11,7 @@ import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/poc_images/poc_images_page.dart';
 import 'package:pizzathon/ui/pages/profile_page.dart';
+import 'package:pizzathon/ui/widgets/app_shell.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
@@ -22,16 +23,21 @@ class AppRouter {
   final _router = GoRouter(
     initialLocation: landingRoute,
     routes: [
-      GoRoute(path: landingRoute, builder: (context, state) => const LandingPage()),
-      GoRoute(path: participantsRoute, builder: (context, state) => const HomePage()),
-      GoRoute(path: pocImagesRoute, builder: (context, state) => const PocImagesPage()),
-      GoRoute(path: profileRoute, builder: (context, state) => const ProfilePage()),
+      ShellRoute(
+        builder: (context, state, child) => AppShell(child: child),
+        routes: [
+          GoRoute(path: landingRoute, builder: (context, state) => const LandingPage()),
+          GoRoute(path: participantsRoute, builder: (context, state) => const HomePage()),
+          GoRoute(path: pocImagesRoute, builder: (context, state) => const PocImagesPage()),
+          GoRoute(path: profileRoute, builder: (context, state) => const ProfilePage()),
+          GoRoute(path: adminRoute, builder: (context, state) => const AdminPage()),
+        ],
+      ),
       GoRoute(
         path: '/__/auth/handler',
         builder: (context, state) =>
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
-      GoRoute(path: adminRoute, builder: (context, state) => const AdminPage()),
     ],
     redirect: (context, state) {
       if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) &&
