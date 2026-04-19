@@ -9,6 +9,7 @@ import 'package:pizzathon/ui/blocs/enrollment_state.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
+import 'package:pizzathon/ui/pages/not_found_page.dart';
 import 'package:pizzathon/ui/pages/poc_images/poc_images_page.dart';
 import 'package:pizzathon/ui/pages/profile_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
@@ -22,6 +23,7 @@ class AppRouter {
 
   final _router = GoRouter(
     initialLocation: landingRoute,
+    errorBuilder: (context, state) => const NotFoundPage(),
     routes: [
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
