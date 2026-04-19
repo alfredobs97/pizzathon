@@ -42,7 +42,6 @@ class AppDrawer extends StatelessWidget {
                         icon: Icons.login,
                         text: 'Entrar',
                         onTap: () {
-                          Navigator.pop(context);
                           context.read<AuthCubit>().login();
                         },
                       ),
@@ -91,8 +90,8 @@ class AppDrawer extends StatelessWidget {
                     icon: Icons.logout,
                     text: 'Cerrar Sesión',
                     onTap: () {
-                      Navigator.pop(context);
                       context.read<AuthCubit>().logout();
+                      context.go(AppRouter.landingRoute);
                     },
                   ),
                 ),
