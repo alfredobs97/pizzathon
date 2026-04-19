@@ -147,11 +147,6 @@ class AppDrawer extends StatelessWidget {
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Competición Pizzeros Caseros',
-              style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
-            ),
           ],
         ],
       ),
