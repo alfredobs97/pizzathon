@@ -34,132 +34,141 @@ class ProfilePage extends StatelessWidget {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      // Sponsor Banner
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: _SponsorBanner(),
-                      ),
-
-                      // Profile Card
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Center(
-                          child: Container(
-                            constraints: const BoxConstraints(maxWidth: 500),
-                            padding: const EdgeInsets.all(32),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              borderRadius: BorderRadius.circular(24),
+                      Container(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20.0),
+                              child: _SponsorBanner(),
                             ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Center(
+                                child: Container(
+                                  constraints: const BoxConstraints(maxWidth: 330),
+                                  padding: const EdgeInsets.all(32),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            '#7',
-                                            style: GoogleFonts.climateCrisis(
-                                              fontSize: 40,
-                                              wordSpacing: 1,
-                                              fontWeight: FontWeight.w400,
-                                              color: Theme.of(context).colorScheme.primary,
-                                              height: 1.0,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            '24 Puntos',
-                                            style: Theme.of(context).textTheme.displayLarge
-                                                ?.copyWith(
-                                                  color: Theme.of(context).colorScheme.secondary,
-                                                  fontWeight: FontWeight.w400,
-                                                  letterSpacing: 0.15,
-                                                  height: 30 / 24,
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '#7',
+                                                  style: GoogleFonts.climateCrisis(
+                                                    fontSize: 40,
+                                                    wordSpacing: 1,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    height: 1.0,
+                                                  ),
                                                 ),
-                                          ),
-                                          Text(
-                                            '5 Pizzas',
-                                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                              color: Theme.of(context).colorScheme.secondary,
-                                              fontWeight: FontWeight.w400,
+                                                const SizedBox(height: 16),
+                                                Text(
+                                                  '24 Puntos',
+                                                  style: Theme.of(context).textTheme.displayLarge
+                                                      ?.copyWith(
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.secondary,
+                                                        fontWeight: FontWeight.w400,
+                                                        letterSpacing: 0.15,
+                                                        height: 30 / 24,
+                                                      ),
+                                                ),
+                                                Text(
+                                                  '5 Pizzas',
+                                                  style: Theme.of(context).textTheme.titleLarge
+                                                      ?.copyWith(
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.secondary,
+                                                        fontWeight: FontWeight.w400,
+                                                      ),
+                                                ),
+                                              ],
                                             ),
+                                          ),
+
+                                          // Avatar
+                                          CircleAvatar(
+                                            radius: 55,
+                                            backgroundColor: Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimaryContainer,
+                                            backgroundImage: user.photoURL != null
+                                                ? CachedNetworkImageProvider(user.photoURL!)
+                                                : null,
+                                            child: user.photoURL == null
+                                                ? const Icon(Icons.person, size: 55)
+                                                : null,
                                           ),
                                         ],
                                       ),
-                                    ),
-
-                                    // Avatar
-                                    CircleAvatar(
-                                      radius: 60,
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimaryContainer,
-                                      backgroundImage: user.photoURL != null
-                                          ? CachedNetworkImageProvider(user.photoURL!)
-                                          : null,
-                                      child: user.photoURL == null
-                                          ? const Icon(Icons.person, size: 60)
-                                          : null,
-                                    ),
-                                  ],
+                                      const SizedBox(height: 24),
+                                      // User Name
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          user.displayName?.toUpperCase() ?? '',
+                                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                            color: Theme.of(context).colorScheme.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 24),
-                                // User Name
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    user.displayName?.toUpperCase() ?? '',
-                                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                      color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 500),
+                                child: SizedBox(
+                                  width: 320,
+                                  height: 56,
+                                  child: ElevatedButton(
+                                    onPressed: () => _showNewPizzaModal(context),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Nueva Pizza',
+                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 500),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 64,
-                            child: ElevatedButton(
-                              onPressed: () => _showNewPizzaModal(context),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: Text(
-                                'Nueva Pizza',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 40),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 40),
-
                       TextButton.icon(
                         onPressed: () => context.read<AuthCubit>().logout(),
                         icon: const Icon(Icons.logout),
                         label: const Text('Cerrar Sesión'),
                         style: TextButton.styleFrom(foregroundColor: Colors.grey),
                       ),
-                      const SizedBox(height: 40),
                     ],
                   ),
                 );
