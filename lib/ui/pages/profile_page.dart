@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
@@ -18,9 +20,10 @@ class ProfilePage extends StatelessWidget {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: Column(
           children: [
-            const TopBanner(),
+            const CountdownTopBanner(),
             Expanded(
               child: BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
@@ -29,82 +32,138 @@ class ProfilePage extends StatelessWidget {
                   }
 
                   final user = state.user;
-                  final nameParts = (user.displayName ?? "Usuario Anónimo").split(" ");
-                  final firstName = nameParts.isNotEmpty ? nameParts.first : "";
-                  final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
 
                   return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                      child: Center(
-                        child: Container(
-                          constraints: const BoxConstraints(maxWidth: 500),
-                          padding: const EdgeInsets.all(32),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withAlpha(20),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
+                    child: Column(
+                      children: [
+                        // Sponsor Banner
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: _SponsorBanner(),
+                        ),
+
+                        // Profile Card
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Center(
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 500),
+                              padding: const EdgeInsets.all(32),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                borderRadius: BorderRadius.circular(24),
                               ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'MI PERFIL',
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              const SizedBox(height: 32),
-                              CircleAvatar(
-                                radius: 60,
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withAlpha(30),
-                                backgroundImage: user.photoURL != null
-                                    ? NetworkImage(user.photoURL!)
-                                    : null,
-                                child: user.photoURL == null
-                                    ? Icon(
-                                        Icons.person,
-                                        size: 60,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '#7',
+                                              style: GoogleFonts.climateCrisis(
+                                                fontSize: 40,
+                                                wordSpacing: 1,
+                                                fontWeight: FontWeight.w400,
+                                                color: Theme.of(context).colorScheme.primary,
+                                                height: 1.0,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              '24 Puntos',
+                                              style: Theme.of(context).textTheme.displayLarge
+                                                  ?.copyWith(
+                                                    color: Theme.of(context).colorScheme.secondary,
+                                                    fontWeight: FontWeight.w400,
+                                                    letterSpacing: 0.15,
+                                                    height: 30 / 24,
+                                                  ),
+                                            ),
+                                            Text(
+                                              '5 Pizzas',
+                                              style: Theme.of(context).textTheme.titleLarge
+                                                  ?.copyWith(
+                                                    color: Theme.of(context).colorScheme.secondary,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      // Avatar
+                                      CircleAvatar(
+                                        radius: 60,
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimaryContainer,
+                                        backgroundImage: user.photoURL != null
+                                            ? CachedNetworkImageProvider(user.photoURL!)
+                                            : null,
+                                        child: user.photoURL == null
+                                            ? const Icon(Icons.person, size: 60)
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 24),
+                                  // User Name
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      user.displayName?.toUpperCase() ?? '',
+                                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                         color: Theme.of(context).colorScheme.primary,
-                                      )
-                                    : null,
-                              ),
-                              const SizedBox(height: 24),
-                              _ProfileField(label: 'NOMBRE', value: firstName),
-                              const SizedBox(height: 16),
-                              _ProfileField(label: 'APELLIDOS', value: lastName),
-                              const SizedBox(height: 16),
-                              _ProfileField(label: 'EMAIL', value: user.email ?? '-'),
-                              const SizedBox(height: 40),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  onPressed: () => context.read<AuthCubit>().logout(),
-                                  icon: const Icon(Icons.logout),
-                                  label: const Text('CERRAR SESIÓN'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
-                                    textStyle: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 500),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 64,
+                              child: ElevatedButton(
+                                onPressed: () => _showNewPizzaModal(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Nueva Pizza',
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 40),
+
+                        TextButton.icon(
+                          onPressed: () => context.read<AuthCubit>().logout(),
+                          icon: const Icon(Icons.logout),
+                          label: const Text('Cerrar Sesión'),
+                          style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   );
                 },
@@ -115,39 +174,69 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
+
+  void _showNewPizzaModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('NUEVA PIZZA', style: GoogleFonts.archivoBlack(fontSize: 24)),
+              const SizedBox(height: 24),
+              const Text('Aquí irá el formulario para subir una nueva pizza.'),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('CERRAR'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-class _ProfileField extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _ProfileField({required this.label, required this.value});
+class _SponsorBanner extends StatelessWidget {
+  const _SponsorBanner();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // URL to be provided by user. Using a placeholder for now.
+    const sponsorImageUrl =
+        'https://i.ibb.co/3ykCWhmJ/alfa-forni-logo.png'; // Placeholder or actual URL if known
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.secondary.withAlpha(150),
+        Container(
+          width: 80,
+          height: 40,
+          decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+          child: CachedNetworkImage(
+            imageUrl: sponsorImageUrl,
+            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => const Icon(Icons.business),
+            fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: 4),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.white.withAlpha(50),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Theme.of(context).colorScheme.secondary.withAlpha(30)),
-          ),
-          child: Text(
-            value,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
+        const SizedBox(width: 12),
+        Text(
+          'Pone la llama a Pizzathon',
+          style: GoogleFonts.archivo(
+            fontSize: 16,
+            color: const Color(0xFF4A1C17),
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
