@@ -45,3 +45,22 @@ Contains everything related to user visualization and interactions in Flutter.
 
 ## 3. Code Style and Formatting
 - **Line Length limit:** The absolute maximum line length allowed in Dart code and configurations is **100 characters** per line. (This is strictly enforced in `.vscode/settings.json` via `"dart.lineLength": 100`). When coding for this project, your lines must not exceed this limit.
+
+---
+
+## 4. Backend & Data Optimization
+Pizzathon uses **Firebase** (specifically **Firestore**) as its primary backend. It is critical to optimize every interaction with the database to ensure performance and cost efficiency.
+
+### Optimization Rules
+1. **Query Efficiency (Reads):**
+   - Always implement **pagination** or infinite scroll in data lists to avoid unnecessary massive downloads.
+   - Apply filters and sorting on the server (Firestore queries) whenever possible, instead of processing large volumes of data on the client.
+   - Use `snapshots` (streams) only when strictly necessary for real-time updates; otherwise, prefer one-time requests (`get()`).
+
+2. **Write Efficiency (Writes):**
+   - Avoid redundant or cyclic writes.
+   - Ensure that data creation or update operations are as atomic as possible.
+
+3. **Data Architecture:**
+   - When proposing new features involving persistence, first consider how data will be structured to minimize the number of reads needed on the main screens.
+
