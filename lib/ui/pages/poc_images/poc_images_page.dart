@@ -19,7 +19,7 @@ class PocImagesPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => PocImagesCubit(
         ImageProcessingService(), 
-        RemoteConfigService(),
+        context.read<RemoteConfigService>(),
         ImageMetadataService(), 
         PizzaValidationService(),
       ),

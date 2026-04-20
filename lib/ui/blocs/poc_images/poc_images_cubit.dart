@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:typed_data';
 
@@ -53,16 +54,17 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         ));
         return;
       }
-
+      
       final originalBytes = metadata.bytes!; 
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
-
+      debugPrint("valor ANTES de la compresion: ${settings.quality}");
       final compressedBytes = await _imageProcessingService.compressImage(
         originalBytes,
         settings: settings,
       );
 
+      debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
       if (compressedBytes != null) {
         emit(state.copyWith(
           isLoading: false,
