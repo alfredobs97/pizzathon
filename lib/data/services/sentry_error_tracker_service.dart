@@ -56,9 +56,7 @@ class SentryErrorTrackerService implements ErrorTrackerService {
           scope.level = SentryLevel.fatal;
         }
         if (trackedError.extra != null) {
-          trackedError.extra!.forEach((key, value) {
-            scope.setExtra(key, value);
-          });
+          scope.setContexts('extra_metadata', trackedError.extra!);
         }
       },
     );
