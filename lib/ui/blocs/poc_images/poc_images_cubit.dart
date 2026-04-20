@@ -3,16 +3,22 @@ import 'dart:typed_data';
 import '../../../data/services/image_processing_service.dart';
 import '../../../data/services/remote_config_service.dart';
 import '../../../domain/models/compression_settings.dart';
+import 'package:pizzathon/domain/entities/tracked_error.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageProcessingService _imageProcessingService;
   final RemoteConfigService _remoteConfigService;
+  final ErrorTrackerService? _errorTrackerService;
 
   //static const int limitePizzas = 5;
 
-  PocImagesCubit(this._imageProcessingService, this._remoteConfigService)
-    : super(PocImagesInitial());
+  PocImagesCubit(
+    this._imageProcessingService,
+    this._remoteConfigService, [
+    this._errorTrackerService,
+  ]) : super(PocImagesInitial());
 
   Future<void> pickAndCompressImages() async {
     try {
@@ -61,7 +67,14 @@ class PocImagesCubit extends Cubit<PocImagesState> {
           emit(PocImagesError("No se pudo comprimir ninguna imagen."));
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      _errorTrackerService?.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {'component': 'PocImagesCubit', 'action': 'pickAndCompressImages'},
+        ),
+      );
       emit(PocImagesError("Ups! Error: ${e.toString()}"));
     }
   }
