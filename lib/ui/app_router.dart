@@ -9,6 +9,7 @@ import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
 import 'package:pizzathon/ui/pages/poc_images/poc_images_page.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
@@ -19,6 +20,7 @@ class AppRouter {
   final _router = GoRouter(
     initialLocation: landingRoute,
     errorBuilder: (context, state) => const NotFoundPage(),
+    observers: [SentryNavigatorObserver()],
     routes: [
       GoRoute(path: landingRoute, builder: (context, state) => LandingPage()),
       GoRoute(path: participantsRoute, builder: (context, state) => HomePage()),
