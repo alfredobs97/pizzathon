@@ -1,28 +1,60 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:typed_data';
+
+// Ajusta los imports según tu estructura de carpetas
 import '../../../data/services/image_processing_service.dart';
 import '../../../data/services/remote_config_service.dart';
+import '../../../data/services/image_metadata_service.dart';
+import '../../../data/services/pizza_validation_service.dart'; 
 import '../../../domain/models/compression_settings.dart';
+import '../../../domain/entities/validation_result.dart'; // Añadimos este import
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageProcessingService _imageProcessingService;
   final RemoteConfigService _remoteConfigService;
+  final ImageMetadataService _metadataService;
+  final PizzaValidationService _validationService;
 
-  PocImagesCubit(this._imageProcessingService, this._remoteConfigService)
-      : super(PocImagesState());
+  PocImagesCubit(
+    this._imageProcessingService,
+    this._remoteConfigService,
+    this._metadataService,
+    this._validationService,
+  ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
-      final newOriginals = await _imageProcessingService.pickMultipleImages();
 
-      if (newOriginals.isEmpty) {
+      final file = await _imageProcessingService.pickSingleImage();
+
+      if (file == null) {
         emit(state.copyWith(isLoading: false));
         return;
       }
 
-      final originalBytes = newOriginals.first;
+      final metadata = await _metadataService.extractMetadata(file);
+
+      final validationResult = await _validationService.validate(metadata);
+
+      if (validationResult is! ValidationSuccess) {
+        String errorMsg = "Error al validar la imagen.";
+        
+        if (validationResult is ValidationRejected) {
+          errorMsg = validationResult.reason;
+        } else if (validationResult is ValidationDisqualified) {
+          errorMsg = validationResult.reason;
+        }
+
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: errorMsg,
+        ));
+        return;
+      }
+
+      final originalBytes = metadata.bytes!; 
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
 
@@ -45,7 +77,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: "Ups! Error: ${e.toString()}",
+        errorMessage: "Ups! Error inesperado: ${e.toString()}",
       ));
     }
   }

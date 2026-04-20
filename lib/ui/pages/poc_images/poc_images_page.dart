@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
-import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
+import 'package:pizzathon/data/services/image_metadata_service.dart';
+import 'package:pizzathon/data/services/pizza_validation_service.dart';
 
+import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 import 'widgets/initial_view.dart';
 
@@ -15,7 +17,12 @@ class PocImagesPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) => PocImagesCubit(ImageProcessingService(), RemoteConfigService()),
+      create: (context) => PocImagesCubit(
+        ImageProcessingService(), 
+        RemoteConfigService(),
+        ImageMetadataService(), 
+        PizzaValidationService(),
+      ),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: theme.scaffoldBackgroundColor,

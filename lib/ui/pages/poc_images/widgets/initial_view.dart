@@ -38,15 +38,12 @@ class InitialView extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18), 
           ),
           onPressed: () {
-            // 1. Reseteamos el estado por si había algo a medias
             context.read<PocImagesCubit>().resetWizard();
             
-            // 2. Abrimos el modal
             showDialog(
               context: context,
-              barrierDismissible: false, // Evita que se cierre tocando fuera
+              barrierDismissible: false, 
               builder: (_) => BlocProvider.value(
-                // Pasamos la instancia del cubit existente al diálogo
                 value: context.read<PocImagesCubit>(), 
                 child: const PizzaWizardModal(),
               ),

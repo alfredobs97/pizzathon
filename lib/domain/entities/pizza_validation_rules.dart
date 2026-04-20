@@ -138,3 +138,31 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
     return const ValidationSuccess();
   }
 }
+
+
+class ContestDateRangeRule extends PizzaValidationRule {
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const ContestDateRangeRule({required this.startDate, required this.endDate});
+
+  @override
+  String get name => 'Fechas del concurso';
+
+  @override
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
+    if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
+      return const ValidationRejected('No se pudo determinar la fecha exacta de creación de la imagen.');
+    }
+    
+    final creationDate = metadata.creationDate!;
+    
+    if (creationDate.isBefore(startDate) || creationDate.isAfter(endDate)) {
+      return ValidationRejected(
+        'La foto se tomó fuera de las fechas del concurso (del ${startDate.day}/${startDate.month} al ${endDate.day}/${endDate.month}).',
+      );
+    }
+    
+    return const ValidationSuccess();
+  }
+}

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo }
-
+ 
 extension PizzaPhotoStepExtension on PizzaPhotoStep {
   String get title {
     switch (this) {

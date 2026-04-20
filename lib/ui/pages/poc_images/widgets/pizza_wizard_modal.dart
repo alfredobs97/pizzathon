@@ -74,14 +74,17 @@ class PizzaWizardModal extends StatelessWidget {
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: theme.colorScheme.secondary,
-                            fontSize:
-                                18, 
+                            fontSize: 18,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(
+                          Icons.close,
+                          color: theme.colorScheme.secondary,
+                          size: 28, 
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
@@ -167,7 +170,6 @@ class PizzaWizardModal extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // --- FOOTER ---
                 if (hasImage && !isLoading)
                   Padding(
                     padding: const EdgeInsets.only(
