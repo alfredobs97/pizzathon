@@ -6,6 +6,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/data/services/sentry_bloc_observer.dart';
 import 'package:pizzathon/data/services/sentry_error_tracker_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
@@ -22,6 +23,8 @@ void main() async {
 
   final errorTracker = SentryErrorTrackerService();
   await errorTracker.init();
+
+  Bloc.observer = SentryBlocObserver();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
