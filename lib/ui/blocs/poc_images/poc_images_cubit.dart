@@ -9,75 +9,70 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageProcessingService _imageProcessingService;
   final RemoteConfigService _remoteConfigService;
 
-  //static const int limitePizzas = 5;
-
   PocImagesCubit(this._imageProcessingService, this._remoteConfigService)
-    : super(PocImagesInitial());
+      : super(PocImagesState());
 
-  Future<void> pickAndCompressImages() async {
+  Future<void> pickSingleImage() async {
     try {
-      final currentState = state;
-      List<({Uint8List original, Uint8List compressed})> currentList = [];
-
-      if (currentState is PocImagesSuccess) {
-        currentList = List.of(currentState.processedImages);
-      }
-
-      emit(PocImagesLoading());
+      emit(state.copyWith(isLoading: true, errorMessage: null));
       final newOriginals = await _imageProcessingService.pickMultipleImages();
 
       if (newOriginals.isEmpty) {
-        if (currentList.isNotEmpty) {
-          emit(PocImagesSuccess(processedImages: currentList));
-        } else {
-          emit(PocImagesInitial());
-        }
+        emit(state.copyWith(isLoading: false));
         return;
       }
 
+      final originalBytes = newOriginals.first;
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
-
       final settings = CompressionSettings(quality: fetchedQuality);
 
-      List<({Uint8List original, Uint8List compressed})> finalList = List.of(currentList);
+      final compressedBytes = await _imageProcessingService.compressImage(
+        originalBytes,
+        settings: settings,
+      );
 
-      for (var originalBytes in newOriginals) {
-        final compressedBytes = await _imageProcessingService.compressImage(
-          originalBytes,
-          settings: settings,
-        );
-
-        if (compressedBytes != null) {
-          finalList.add((original: originalBytes, compressed: compressedBytes));
-        }
-      }
-
-      if (finalList.isNotEmpty) {
-        emit(PocImagesSuccess(processedImages: finalList));
+      if (compressedBytes != null) {
+        emit(state.copyWith(
+          isLoading: false,
+          pendingImage: compressedBytes,
+        ));
       } else {
-        if (currentList.isNotEmpty) {
-          emit(PocImagesSuccess(processedImages: currentList));
-        } else {
-          emit(PocImagesError("No se pudo comprimir ninguna imagen."));
-        }
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: "No se pudo comprimir la imagen.",
+        ));
       }
     } catch (e) {
-      emit(PocImagesError("Ups! Error: ${e.toString()}"));
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: "Ups! Error: ${e.toString()}",
+      ));
     }
   }
 
-  void removeImage(int index) {
-    if (state is PocImagesSuccess) {
-      final currentState = state as PocImagesSuccess;
-      final updatedList = List.of(currentState.processedImages);
+  void confirmImage() {
+    if (state.pendingImage == null) return;
 
-      updatedList.removeAt(index);
+    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(state.confirmedImages);
+    updatedConfirmed[state.currentStep] = state.pendingImage!;
 
-      if (updatedList.isEmpty) {
-        emit(PocImagesInitial());
-      } else {
-        emit(PocImagesSuccess(processedImages: updatedList));
-      }
+    if (state.currentStep == PizzaPhotoStep.abajo) {
+      emit(state.copyWith(
+        confirmedImages: updatedConfirmed,
+        isFinished: true,
+        clearPendingImage: true,
+      ));
+    } else {
+      final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
+      emit(state.copyWith(
+        currentStep: nextStep,
+        confirmedImages: updatedConfirmed,
+        clearPendingImage: true,
+      ));
     }
+  }
+  
+  void resetWizard() {
+    emit(PocImagesState());
   }
 }
