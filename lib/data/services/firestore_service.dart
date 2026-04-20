@@ -4,7 +4,10 @@ import 'package:pizzathon/domain/models/user_extension.dart';
 import '../../domain/models/user_model.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
+
+  FirestoreService({FirebaseFirestore? firestore})
+      : _db = firestore ?? FirebaseFirestore.instance;
 
   static const String _userCollectionName = 'users_2026_05';
 
@@ -26,6 +29,12 @@ class FirestoreService {
   Future<bool> isUserEnrolled(String uid) async {
     final doc = await _db.collection(_userCollectionName).doc(uid).get();
     return doc.exists;
+  }
+
+  Future<void> banUser(String uid) async {
+    await _db.collection(_userCollectionName).doc(uid).update({
+      'banned': true,
+    });
   }
 
   Future<({List<UserModel> users, DocumentSnapshot? lastDocument})> getUsersPaginated({
