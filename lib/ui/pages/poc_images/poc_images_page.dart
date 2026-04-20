@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 
@@ -20,19 +21,20 @@ class PocImagesPage extends StatelessWidget {
       create: (context) => PocImagesCubit(
         ImageProcessingService(),
         RemoteConfigService(),
+        context.read<ErrorTrackerService>(),
       ),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: theme.scaffoldBackgroundColor, 
-          elevation: 0, 
-          scrolledUnderElevation: 0, 
+          backgroundColor: theme.scaffoldBackgroundColor,
+          elevation: 0,
+          scrolledUnderElevation: 0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: theme.colorScheme.primary), 
+          iconTheme: IconThemeData(color: theme.colorScheme.primary),
           title: Text(
             'Galería Pizzathon',
             style: theme.textTheme.displayMedium?.copyWith(
               fontSize: 22,
-              color: theme.colorScheme.secondary, 
+              color: theme.colorScheme.secondary,
             ),
           ),
         ),
@@ -43,7 +45,7 @@ class PocImagesPage extends StatelessWidget {
               builder: (context, state) {
                 return switch (state) {
                   PocImagesInitial() => const InitialView(),
-                  PocImagesLoading() => const CircularProgressIndicator(color: Color(0xFFE36414)), 
+                  PocImagesLoading() => const CircularProgressIndicator(color: Color(0xFFE36414)),
                   PocImagesSuccess() => SuccessGridView(state: state),
                   PocImagesError() => ErrorView(message: state.message),
                 };

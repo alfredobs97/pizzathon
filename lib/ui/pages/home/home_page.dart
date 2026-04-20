@@ -9,6 +9,7 @@ import '../../../data/services/auth_service.dart';
 import '../../../data/services/firestore_service.dart';
 import '../../blocs/enrollment_cubit.dart';
 import '../../blocs/user_list/users_list_cubit.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'widgets/user_list_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -19,7 +20,9 @@ class HomePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => UsersListCubit(context.read<FirestoreService>())..loadInitialUsers(),
+          create: (context) =>
+              UsersListCubit(context.read<FirestoreService>(), context.read<ErrorTrackerService>())
+                ..loadInitialUsers(),
         ),
         BlocProvider(
           create: (context) => EnrollmentCubit(
@@ -27,6 +30,7 @@ class HomePage extends StatelessWidget {
             context.read<AuthService>(),
             context.read<LocalStorageService>(),
             context.read<RemoteConfigService>(),
+            context.read<ErrorTrackerService>(),
           )..checkEnrollmentStatus(),
         ),
       ],

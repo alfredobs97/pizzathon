@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pizzathon/domain/entities/pizza_image_metadata.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import '../blocs/pizza_validation_cubit.dart';
 import '../blocs/pizza_validation_state.dart';
 
@@ -13,7 +14,8 @@ class PizzaValidationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PizzaValidationCubit(),
+      create: (context) =>
+          PizzaValidationCubit(errorTrackerService: context.read<ErrorTrackerService>()),
       child: const PizzaValidationView(),
     );
   }
