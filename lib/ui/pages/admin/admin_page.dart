@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/ui/widgets/app_shell.dart';
 import '../../../../data/services/firestore_service.dart';
 import '../../blocs/user_list/users_list_cubit.dart';
 import 'widgets/users_tab_view.dart';
@@ -26,6 +27,9 @@ class AdminPage extends StatelessWidget {
               style: theme.textTheme.displayMedium?.copyWith(color: colorScheme.onSurface),
             ),
             iconTheme: IconThemeData(color: colorScheme.onSurface),
+            actions: [
+              IconButton(icon: const Icon(Icons.menu), onPressed: () => AppShell.openDrawer()),
+            ],
             bottom: TabBar(
               indicatorColor: colorScheme.primary,
               indicatorWeight: 4,
