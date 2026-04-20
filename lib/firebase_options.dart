@@ -37,6 +37,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '727941411451',
     projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
     storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+    authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN'),
   );
 
   static const FirebaseOptions android = FirebaseOptions(
