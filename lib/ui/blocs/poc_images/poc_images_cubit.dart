@@ -66,7 +66,8 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       if (compressedBytes != null) {
         emit(state.copyWith(
           isLoading: false,
-          pendingImage: compressedBytes,
+          pendingImage: await file.readAsBytes(),
+
         ));
       } else {
         emit(state.copyWith(
