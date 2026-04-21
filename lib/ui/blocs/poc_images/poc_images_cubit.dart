@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:typed_data';
 
-// Ajusta los imports según tu estructura de carpetas
 import '../../../data/services/image_processing_service.dart';
 import '../../../data/services/remote_config_service.dart';
 import '../../../data/services/image_metadata_service.dart';
 import '../../../data/services/pizza_validation_service.dart'; 
 import '../../../domain/models/compression_settings.dart';
-import '../../../domain/entities/validation_result.dart'; // Añadimos este import
+import '../../../domain/entities/validation_result.dart'; 
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
@@ -59,17 +58,18 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
       debugPrint("valor ANTES de la compresion: ${settings.quality}");
+      
       final compressedBytes = await _imageProcessingService.compressImage(
         originalBytes,
         settings: settings,
       );
 
       debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
+      
       if (compressedBytes != null) {
         emit(state.copyWith(
           isLoading: false,
           pendingImage: await file.readAsBytes(),
-
         ));
       } else {
         emit(state.copyWith(
@@ -107,6 +107,39 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     }
   }
   
+  
+  void savePizzaDetails(String title, String description) {
+    emit(state.copyWith(title: title, description: description));
+  }
+
+  Future<void> submitPizza() async {
+    if (state.isSubmitting) return;
+
+    if (state.confirmedImages.length < 4) {
+      emit(state.copyWith(errorMessage: "Faltan fotos por confirmar."));
+      return;
+    }
+    if (state.title == null || state.description == null) {
+      emit(state.copyWith(errorMessage: "Falta el título o la descripción."));
+      return;
+    }
+
+    try {
+      emit(state.copyWith(isSubmitting: true, errorMessage: null));
+      await Future.delayed(const Duration(seconds: 2));
+
+      emit(state.copyWith(
+        isSubmitting: false,
+      ));
+
+    } catch (e) {
+      emit(state.copyWith(
+        isSubmitting: false,
+        errorMessage: "Error al enviar la participación al servidor.",
+      ));
+    }
+  }
+
   void resetWizard() {
     emit(PocImagesState());
   }

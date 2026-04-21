@@ -33,6 +33,11 @@ class PocImagesState {
   final bool isLoading;
   final String? errorMessage;
   final bool isFinished; 
+  
+  // --- NUEVOS CAMPOS PARA EL FORMULARIO ---
+  final String? title;
+  final String? description;
+  final bool isSubmitting;
 
   PocImagesState({
     this.currentStep = PizzaPhotoStep.bocaHorno,
@@ -41,6 +46,9 @@ class PocImagesState {
     this.isLoading = false,
     this.errorMessage,
     this.isFinished = false,
+    this.title,
+    this.description,
+    this.isSubmitting = false,
   });
 
   PocImagesState copyWith({
@@ -50,6 +58,9 @@ class PocImagesState {
     bool? isLoading,
     String? errorMessage,
     bool? isFinished,
+    String? title,
+    String? description,
+    bool? isSubmitting,
     bool clearPendingImage = false,
   }) {
     return PocImagesState(
@@ -57,8 +68,12 @@ class PocImagesState {
       pendingImage: clearPendingImage ? null : (pendingImage ?? this.pendingImage),
       confirmedImages: confirmedImages ?? this.confirmedImages,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage, // Si es null, limpia el error
+      // Si errorMessage es null, limpia el error de estados anteriores
+      errorMessage: errorMessage, 
       isFinished: isFinished ?? this.isFinished,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
     );
   }
 }
