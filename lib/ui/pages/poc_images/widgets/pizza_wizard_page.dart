@@ -33,18 +33,13 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
     final theme = Theme.of(context);
 
     return BlocConsumer<PocImagesCubit, PocImagesState>(
-      listenWhen: (previous, current) => 
+      listenWhen: (previous, current) =>
           previous.currentStep != current.currentStep ||
           previous.isFinished != current.isFinished ||
           previous.errorMessage != current.errorMessage,
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: theme.colorScheme.error,
-            ),
-          );
+          _showErrorDialog(context, state.errorMessage!, theme);
         }
 
         if (state.isFinished) {
@@ -53,6 +48,8 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
             SnackBar(
               content: const Text('¡Participación enviada con éxito!'),
               backgroundColor: theme.colorScheme.primary,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
           );
         } else {
@@ -67,21 +64,17 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
         }
       },
       builder: (context, state) {
-        final stepNumber = state.currentStep.index + 1;
         final totalSteps = PizzaPhotoStep.values.length;
-        
+
         return Scaffold(
           appBar: AppBar(
             backgroundColor: theme.scaffoldBackgroundColor,
             elevation: 0,
-            iconTheme: IconThemeData(color: theme.colorScheme.primary),
-            title: Text(
-              'Paso $stepNumber de $totalSteps',
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.secondary,
-                fontWeight: FontWeight.bold,
-              ),
+            leading: IconButton(
+              icon: Icon(Icons.close, color: theme.colorScheme.secondary, size: 28),
+              onPressed: () => _showExitConfirmationDialog(context, theme),
             ),
+            title: _buildStepper(state, theme),
             centerTitle: true,
           ),
           body: PageView.builder(
@@ -98,6 +91,55 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildStepper(PocImagesState state, ThemeData theme) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(PizzaPhotoStep.values.length, (index) {
+        final step = PizzaPhotoStep.values[index];
+        final isCompleted = index < state.currentStep.index;
+        final isActive = index == state.currentStep.index;
+
+        IconData iconData;
+        switch (step) {
+          case PizzaPhotoStep.bocaHorno:
+            iconData = Icons.local_fire_department_rounded;
+            break;
+          case PizzaPhotoStep.vistaArriba:
+            iconData = Icons.camera_alt_rounded;
+            break;
+          case PizzaPhotoStep.corte:
+            iconData = Icons.local_pizza_rounded;
+            break;
+          case PizzaPhotoStep.abajo:
+            iconData = Icons.flip_camera_android_rounded;
+            break;
+          case PizzaPhotoStep.detalles:
+            iconData = Icons.edit_note_rounded;
+            break;
+        }
+
+        final color = isActive || isCompleted
+            ? theme.colorScheme.primary
+            : theme.colorScheme.secondary.withAlpha(80);
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: isActive ? theme.colorScheme.primary.withAlpha(30) : Colors.transparent,
+            shape: BoxShape.circle,
+            border: isActive ? Border.all(color: theme.colorScheme.primary, width: 2) : null,
+          ),
+          child: Icon(
+            iconData,
+            color: color,
+            size: isActive ? 22 : 18,
+          ),
+        );
+      }),
     );
   }
 
@@ -250,6 +292,94 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
               cubit.savePizzaDetails(title, description);
               cubit.submitPizza();
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showExitConfirmationDialog(BuildContext context, ThemeData theme) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          "¿Salir del asistente?",
+          style: theme.textTheme.displayMedium?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontSize: 22,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          "Si sales ahora, perderás el progreso actual de tu pizza. ¿Estás seguro?",
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.secondary.withAlpha(180),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              "Cancelar",
+              style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.bold),
+            ),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(); // Cierra el diálogo
+              Navigator.of(context).pop(); // Vuelve a InitialView
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+            ),
+            child: const Text("Salir"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String errorMessage, ThemeData theme) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Column(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: theme.colorScheme.error, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              "¡Ups, hay un problema!",
+              style: theme.textTheme.displayMedium?.copyWith(
+                color: theme.colorScheme.secondary,
+                fontSize: 22,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: Text(
+          errorMessage,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.secondary,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Center(
+            child: FilledButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              ),
+              child: const Text("Entendido"),
+            ),
           ),
         ],
       ),

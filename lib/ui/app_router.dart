@@ -56,7 +56,7 @@ class AppRouter {
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
     ],
-    redirect: (context, state) {
+    /* redirect: (context, state) {
       if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) &&
           !isAdmin(context)) {
         return landingRoute;
@@ -69,7 +69,7 @@ class AppRouter {
         return landingRoute;
       }
       return null;
-    },
+    }, */
   );
 
   GoRouter get router => _router;
