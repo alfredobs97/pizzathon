@@ -1,9 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 import 'pizza_details_form.dart';
+import 'pizza_photo_step_view.dart';
+import 'pizza_stepper_widget.dart';
+import 'pizza_wizard_dialogs.dart';
 
 class PizzaWizardPage extends StatefulWidget {
   const PizzaWizardPage({super.key});
@@ -39,7 +42,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
           previous.errorMessage != current.errorMessage,
       listener: (context, state) {
         if (state.errorMessage != null) {
-          _showErrorDialog(context, state.errorMessage!, theme);
+          showErrorDialog(context, state.errorMessage!, theme);
         }
 
         if (state.isFinished) {
@@ -71,10 +74,15 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
             backgroundColor: theme.scaffoldBackgroundColor,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.close, color: theme.colorScheme.secondary, size: 28),
-              onPressed: () => _showExitConfirmationDialog(context, theme),
+              icon: Icon(Icons.close, color: theme.colorScheme.secondary, size: 30),
+              onPressed: () => showExitConfirmationDialog(context, theme),
             ),
-            title: _buildStepper(state, theme),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Center(child: _buildStepper(context, state, theme)),
+              ),
+            ],
             centerTitle: true,
           ),
           body: PageView.builder(
@@ -86,7 +94,11 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
               if (step == PizzaPhotoStep.detalles) {
                 return _buildDetailsStep(context, state, theme);
               }
-              return _buildPhotoStep(context, step, state, theme);
+              return PizzaPhotoStepView(
+                step: step,
+                state: state,
+                theme: theme,
+              );
             },
           ),
         );
@@ -94,182 +106,40 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
     );
   }
 
-  Widget _buildStepper(PocImagesState state, ThemeData theme) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(PizzaPhotoStep.values.length, (index) {
-        final step = PizzaPhotoStep.values[index];
-        final isCompleted = index < state.currentStep.index;
-        final isActive = index == state.currentStep.index;
+  Widget _buildStepper(BuildContext context, PocImagesState state, ThemeData theme) {
+    final confirmedIndices = state.confirmedImages.keys.map((e) => e.index).toSet();
 
-        IconData iconData;
-        switch (step) {
-          case PizzaPhotoStep.bocaHorno:
-            iconData = Icons.local_fire_department_rounded;
-            break;
-          case PizzaPhotoStep.vistaArriba:
-            iconData = Icons.camera_alt_rounded;
-            break;
-          case PizzaPhotoStep.corte:
-            iconData = Icons.local_pizza_rounded;
-            break;
-          case PizzaPhotoStep.abajo:
-            iconData = Icons.flip_camera_android_rounded;
-            break;
-          case PizzaPhotoStep.detalles:
-            iconData = Icons.edit_note_rounded;
-            break;
-        }
-
-        final color = isActive || isCompleted
-            ? theme.colorScheme.primary
-            : theme.colorScheme.secondary.withAlpha(80);
-
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: isActive ? theme.colorScheme.primary.withAlpha(30) : Colors.transparent,
-            shape: BoxShape.circle,
-            border: isActive ? Border.all(color: theme.colorScheme.primary, width: 2) : null,
-          ),
-          child: Icon(
-            iconData,
-            color: color,
-            size: isActive ? 22 : 18,
-          ),
-        );
-      }),
+    return GestureDetector(
+      onTap: () => _throwIngredient(),
+      child: SizedBox(
+        height: 40,
+        width: 40,
+        child: PizzaStepperWidget(
+          currentStep: state.currentStep.index,
+          totalSteps: PizzaPhotoStep.values.length,
+          confirmedSteps: confirmedIndices,
+          activeColor: theme.colorScheme.primary,
+          crustColor: const Color(0xFFE0A96D),
+          inactiveColor: theme.colorScheme.secondary.withAlpha(40),
+        ),
+      ),
     );
   }
 
-  Widget _buildPhotoStep(BuildContext context, PizzaPhotoStep step, PocImagesState state, ThemeData theme) {
-    final isCurrentStep = state.currentStep == step;
-    final confirmedImage = state.confirmedImages[step];
-    final hasConfirmed = confirmedImage != null;
-    final hasPendingForThisStep = isCurrentStep && state.pendingImage != null;
-    final isLoading = isCurrentStep && state.isLoading;
-    final stepDescription = step.title.split(': ').last;
+  void _throwIngredient() {
+    final overlayState = Overlay.of(context);
+    final ingredients = ['🍕', '🍄', '🧅', '🍅', '🧀', '🫒', '🥓', '🍃', '🔥'];
+    final ingredient = ingredients[math.Random().nextInt(ingredients.length)];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Column(
-        children: [
-          Text(
-            stepDescription,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: theme.colorScheme.secondary,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          Expanded(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    if (hasConfirmed)
-                      Image.memory(confirmedImage, fit: BoxFit.cover)
-                    else if (hasPendingForThisStep)
-                      Image.memory(state.pendingImage!, fit: BoxFit.cover)
-                    else
-                      ColorFiltered(
-                        colorFilter: const ColorFilter.mode(
-                          Colors.grey,
-                          BlendMode.saturation,
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: step.exampleImageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: Colors.grey.shade300),
-                          errorWidget: (context, url, error) =>
-                              Container(color: Colors.grey.shade300),
-                        ),
-                      ),
-                      
-                    if (!hasConfirmed && !hasPendingForThisStep)
-                      Container(color: Colors.black.withAlpha(140)),
-                      
-                    if (isLoading)
-                      Container(
-                        color: Colors.black.withAlpha(100),
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-
-                    if (!hasConfirmed && !hasPendingForThisStep && !isLoading)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.camera_alt, color: Colors.white, size: 48),
-                          const SizedBox(height: 16),
-                          OutlinedButton(
-                            onPressed: () => context
-                                .read<PocImagesCubit>()
-                                .pickSingleImage(),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: const BorderSide(
-                                color: Colors.white,
-                                width: 2,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: const Text("Tomar foto o galería"),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          if (isCurrentStep && hasPendingForThisStep && !isLoading)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton.icon(
-                  onPressed: () =>
-                      context.read<PocImagesCubit>().pickSingleImage(),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Cambiar"),
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.secondary,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  ),
-                ),
-                FilledButton.icon(
-                  onPressed: () =>
-                      context.read<PocImagesCubit>().confirmImage(),
-                  icon: const Icon(Icons.check),
-                  label: const Text("Confirmar"),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFE36414),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          else
-            const SizedBox(height: 48),
-        ],
+    late OverlayEntry overlayEntry;
+    overlayEntry = OverlayEntry(
+      builder: (context) => _FlyingIngredient(
+        ingredient: ingredient,
+        onComplete: () => overlayEntry.remove(),
       ),
     );
+
+    overlayState.insert(overlayEntry);
   }
 
   Widget _buildDetailsStep(BuildContext context, PocImagesState state, ThemeData theme) {
@@ -297,92 +167,80 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
       ),
     );
   }
+}
 
-  void _showExitConfirmationDialog(BuildContext context, ThemeData theme) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          "¿Salir del asistente?",
-          style: theme.textTheme.displayMedium?.copyWith(
-            color: theme.colorScheme.secondary,
-            fontSize: 22,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        content: Text(
-          "Si sales ahora, perderás el progreso actual de tu pizza. ¿Estás seguro?",
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.secondary.withAlpha(180),
-          ),
-          textAlign: TextAlign.center,
-        ),
-        actionsAlignment: MainAxisAlignment.spaceEvenly,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              "Cancelar",
-              style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.bold),
-            ),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop(); // Cierra el diálogo
-              Navigator.of(context).pop(); // Vuelve a InitialView
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
-            ),
-            child: const Text("Salir"),
-          ),
-        ],
-      ),
+class _FlyingIngredient extends StatefulWidget {
+  final String ingredient;
+  final VoidCallback onComplete;
+
+  const _FlyingIngredient({required this.ingredient, required this.onComplete});
+
+  @override
+  State<_FlyingIngredient> createState() => _FlyingIngredientState();
+}
+
+class _FlyingIngredientState extends State<_FlyingIngredient>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _xAnimation;
+  late Animation<double> _rotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
     );
+
+    _xAnimation = Tween<double>(begin: -0.2, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
+
+    _rotationAnimation = Tween<double>(begin: 0, end: 6 * math.pi).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    _controller.forward().then((_) => widget.onComplete());
   }
 
-  void _showErrorDialog(BuildContext context, String errorMessage, ThemeData theme) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Column(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: theme.colorScheme.error, size: 48),
-            const SizedBox(height: 16),
-            Text(
-              "¡Ups, hay un problema!",
-              style: theme.textTheme.displayMedium?.copyWith(
-                color: theme.colorScheme.secondary,
-                fontSize: 22,
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final progress = _controller.value;
+        // Parábola para el efecto de lanzamiento: y = 4 * h * x * (1 - x)
+        // h es la altura máxima del arco
+        final arcHeight = size.height * 0.4;
+        final yOffset = progress < 1.0 ? (math.sin(progress * math.pi) * -arcHeight) : 0.0;
+
+        final xPos = size.width * _xAnimation.value;
+        final yPos = (size.height * 0.5) + yOffset;
+
+        return Positioned(
+          left: xPos,
+          top: yPos,
+          child: Transform.rotate(
+            angle: _rotationAnimation.value,
+            child: Material(
+              color: Colors.transparent,
+              child: Text(
+                widget.ingredient,
+                style: const TextStyle(fontSize: 40),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        content: Text(
-          errorMessage,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.secondary,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          Center(
-            child: FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: FilledButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              ),
-              child: const Text("Entendido"),
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
