@@ -93,8 +93,8 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
     if (state.currentStep == PizzaPhotoStep.abajo) {
       emit(state.copyWith(
+        currentStep: PizzaPhotoStep.detalles,
         confirmedImages: updatedConfirmed,
-        isFinished: true,
         clearPendingImage: true,
       ));
     } else {
@@ -130,6 +130,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
       emit(state.copyWith(
         isSubmitting: false,
+        isFinished: true,
       ));
 
     } catch (e) {

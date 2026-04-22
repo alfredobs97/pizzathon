@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
-import 'pizza_wizard_modal.dart'; 
+import 'pizza_wizard_page.dart';
 
 class InitialView extends StatelessWidget {
   const InitialView({super.key});
@@ -12,14 +12,14 @@ class InitialView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
-          Icons.local_pizza_outlined, 
-          size: 80, 
-          color: Theme.of(context).colorScheme.primary.withAlpha(128) 
+          Icons.local_pizza_outlined,
+          size: 80,
+          color: Theme.of(context).colorScheme.primary.withAlpha(128)
         ),
         const SizedBox(height: 24),
         Text(
           "¿Listo para subir tus Pizzas?",
-          textAlign: TextAlign.center, 
+          textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.displayMedium?.copyWith(
             color: Theme.of(context).colorScheme.secondary,
           ),
@@ -27,7 +27,7 @@ class InitialView extends StatelessWidget {
         const SizedBox(height: 32),
         FilledButton.icon(
           style: FilledButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary, 
+            backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
             elevation: 4,
@@ -35,17 +35,17 @@ class InitialView extends StatelessWidget {
           icon: const Icon(Icons.local_pizza, size: 20),
           label: Text(
             "Nueva pizza",
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18), 
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
           onPressed: () {
             context.read<PocImagesCubit>().resetWizard();
-            
-            showDialog(
-              context: context,
-              barrierDismissible: false, 
-              builder: (_) => BlocProvider.value(
-                value: context.read<PocImagesCubit>(), 
-                child: const PizzaWizardModal(),
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                  value: context.read<PocImagesCubit>(),
+                  child: const PizzaWizardPage(),
+                ),
               ),
             );
           },

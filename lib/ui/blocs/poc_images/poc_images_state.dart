@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo }
+enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo, detalles }
  
 extension PizzaPhotoStepExtension on PizzaPhotoStep {
   String get title {
@@ -9,6 +9,7 @@ extension PizzaPhotoStepExtension on PizzaPhotoStep {
       case PizzaPhotoStep.vistaArriba: return 'Foto 2: Desde arriba';
       case PizzaPhotoStep.corte: return 'Foto 3: De corte';
       case PizzaPhotoStep.abajo: return 'Foto 4: De abajo';
+      case PizzaPhotoStep.detalles: return 'Paso 5: Detalles';
     }
   }
 
@@ -22,6 +23,8 @@ extension PizzaPhotoStepExtension on PizzaPhotoStep {
         return 'URL_FOTO_3';
       case PizzaPhotoStep.abajo: 
         return 'URL_FOTO_4';
+      case PizzaPhotoStep.detalles:
+        return ''; // No example image for details step
     }
   }
 }

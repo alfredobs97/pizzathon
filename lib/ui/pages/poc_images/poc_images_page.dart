@@ -6,10 +6,8 @@ import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/data/services/pizza_validation_service.dart';
 
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
-import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart'; // Importante importar el estado
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 import 'widgets/initial_view.dart';
-import 'widgets/pizza_details_form.dart'; // Asumo que guardaste el formulario aquí
 
 class PocImagesPage extends StatelessWidget {
   const PocImagesPage({super.key});
@@ -43,29 +41,10 @@ class PocImagesPage extends StatelessWidget {
             IconButton(icon: const Icon(Icons.menu), onPressed: () => AppShell.openDrawer()),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
           child: Center(
-            // Envolvemos el hijo con BlocBuilder para reaccionar al estado
-            child: BlocBuilder<PocImagesCubit, PocImagesState>(
-              builder: (context, state) {
-                // Si ya completó las 4 fotos y cerró el modal, mostramos el formulario
-                if (state.isFinished) {
-                  return SingleChildScrollView(
-                    child: PizzaDetailsForm(
-                      onSubmit: (title, description) {
-                        final cubit = context.read<PocImagesCubit>();
-                        cubit.savePizzaDetails(title, description);
-                        cubit.submitPizza();
-                      },
-                    ),
-                  );
-                }
-                
-                // Si está empezando o a medias, mostramos la vista inicial normal
-                return const InitialView();
-              },
-            ),
+            child: InitialView(),
           ),
         ),
       ),
