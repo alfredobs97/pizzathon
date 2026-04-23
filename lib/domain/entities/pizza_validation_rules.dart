@@ -63,7 +63,9 @@ class MaxAgeRule extends PizzaValidationRule {
   @override
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
-      return ValidationRejected('No se pudo determinar la fecha de creación de la imagen.');
+      return ValidationRejected(
+        'No se pudo determinar la fecha de creación de la imagen.',
+      );
     }
     final age = DateTime.now().difference(metadata.creationDate!);
     if (age > maxAge) {
@@ -84,7 +86,8 @@ class RequireCameraMetadataRule extends PizzaValidationRule {
 
   @override
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
-    if (metadata is! DetailedImageMetadata || (metadata.make == null && metadata.model == null)) {
+    if (metadata is! DetailedImageMetadata ||
+        (metadata.make == null && metadata.model == null)) {
       return ValidationRejected(
         'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil.',
       );
@@ -139,7 +142,6 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
   }
 }
 
-
 class ContestDateRangeRule extends PizzaValidationRule {
   final DateTime startDate;
   final DateTime endDate;
@@ -152,17 +154,19 @@ class ContestDateRangeRule extends PizzaValidationRule {
   @override
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
-      return const ValidationRejected('No se pudo determinar la fecha exacta de creación de la imagen.');
+      return const ValidationRejected(
+        'No se pudo determinar la fecha exacta de creación de la imagen.',
+      );
     }
-    
+
     final creationDate = metadata.creationDate!;
-    
+
     if (creationDate.isBefore(startDate) || creationDate.isAfter(endDate)) {
       return ValidationRejected(
         'La foto se tomó fuera de las fechas del concurso (del ${startDate.day}/${startDate.month} al ${endDate.day}/${endDate.month}).',
       );
     }
-    
+
     return const ValidationSuccess();
   }
 }

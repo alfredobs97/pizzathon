@@ -23,10 +23,7 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
 
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
-      widget.onSubmit(
-        _titleController.text, 
-        _descriptionController.text
-      );
+      widget.onSubmit(_titleController.text, _descriptionController.text);
     }
   }
 
@@ -47,21 +44,28 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _titleController,
-            style: TextStyle(color: theme.colorScheme.secondary), 
+            style: TextStyle(color: theme.colorScheme.secondary),
             decoration: InputDecoration(
               labelText: 'Título de la pizza',
-              labelStyle: TextStyle(color: theme.colorScheme.secondary.withOpacity(0.8)),
+              labelStyle: TextStyle(
+                color: theme.colorScheme.secondary.withOpacity(0.8),
+              ),
               hintText: 'Ej: La Diabólica de Caputo',
-              hintStyle: TextStyle(color: theme.colorScheme.secondary.withOpacity(0.6)),
+              hintStyle: TextStyle(
+                color: theme.colorScheme.secondary.withOpacity(0.6),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+                borderSide: BorderSide(
+                  color: theme.colorScheme.primary,
+                  width: 2,
+                ),
               ),
             ),
             validator: (value) {
@@ -82,15 +86,23 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             style: TextStyle(color: theme.colorScheme.secondary),
             decoration: InputDecoration(
               labelText: 'Proceso y detalles',
-              labelStyle: TextStyle(color: theme.colorScheme.secondary.withOpacity(0.8)),
-              hintText: 'Describe cómo hiciste la masa, qué ingredientes usaste y cuánto tiempo estuvo en el horno...',
-              hintStyle: TextStyle(color: theme.colorScheme.secondary.withOpacity(0.6)),
+              labelStyle: TextStyle(
+                color: theme.colorScheme.secondary.withOpacity(0.8),
+              ),
+              hintText:
+                  'Describe cómo hiciste la masa, qué ingredientes usaste y cuánto tiempo estuvo en el horno...',
+              hintStyle: TextStyle(
+                color: theme.colorScheme.secondary.withOpacity(0.6),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+                borderSide: BorderSide(
+                  color: theme.colorScheme.primary,
+                  width: 2,
+                ),
               ),
               alignLabelWithHint: true,
             ),
@@ -124,4 +136,3 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     );
   }
 }
- 

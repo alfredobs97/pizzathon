@@ -74,17 +74,23 @@ class _UsersTabViewState extends State<UsersTabView> {
 
                 final user = users[index];
                 final theme = Theme.of(context);
-                
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6.0),
                   child: ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     tileColor: theme.colorScheme.onSecondaryContainer,
                     leading: CircleAvatar(
                       radius: 20,
                       backgroundColor: Colors.white,
-                      backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
-                      child: user.photoUrl.isEmpty ? const Icon(Icons.person, color: Color(0xFF7B4E22)) : null,
+                      backgroundImage: user.photoUrl.isNotEmpty
+                          ? NetworkImage(user.photoUrl)
+                          : null,
+                      child: user.photoUrl.isEmpty
+                          ? const Icon(Icons.person, color: Color(0xFF7B4E22))
+                          : null,
                     ),
                     title: Text(
                       user.displayName,
@@ -96,15 +102,24 @@ class _UsersTabViewState extends State<UsersTabView> {
                     subtitle: Text(
                       user.email,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.secondary.withValues(alpha: 0.7),
+                        color: theme.colorScheme.secondary.withValues(
+                          alpha: 0.7,
+                        ),
                       ),
                     ),
                     trailing: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.3)),
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.3,
+                          ),
+                        ),
                       ),
                       child: Text(
                         '${user.score} pts',

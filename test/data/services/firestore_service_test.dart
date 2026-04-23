@@ -16,7 +16,7 @@ void main() {
   group('FirestoreService.banUser', () {
     test('should set banned field to true for the specified user', () async {
       const uid = 'user123';
-      
+
       // Create a user first
       await fakeFirestore.collection(userCollectionName).doc(uid).set({
         'displayName': 'Test User',
@@ -29,13 +29,16 @@ void main() {
       await firestoreService.banUser(uid);
 
       // Verify
-      final doc = await fakeFirestore.collection(userCollectionName).doc(uid).get();
+      final doc = await fakeFirestore
+          .collection(userCollectionName)
+          .doc(uid)
+          .get();
       expect(doc.data()?['banned'], true);
     });
 
     test('should update existing banned field from false to true', () async {
       const uid = 'user456';
-      
+
       // Create a user with banned: false
       await fakeFirestore.collection(userCollectionName).doc(uid).set({
         'displayName': 'Test User 2',
@@ -46,7 +49,10 @@ void main() {
       await firestoreService.banUser(uid);
 
       // Verify
-      final doc = await fakeFirestore.collection(userCollectionName).doc(uid).get();
+      final doc = await fakeFirestore
+          .collection(userCollectionName)
+          .doc(uid)
+          .get();
       expect(doc.data()?['banned'], true);
     });
   });

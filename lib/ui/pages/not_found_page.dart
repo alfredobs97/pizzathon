@@ -30,7 +30,11 @@ class NotFoundPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.local_pizza, size: 100, color: theme.colorScheme.secondary),
+              Icon(
+                Icons.local_pizza,
+                size: 100,
+                color: theme.colorScheme.secondary,
+              ),
               const SizedBox(height: 24),
               Text(
                 '404',
@@ -42,7 +46,9 @@ class NotFoundPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 '¡Ups! Ruta no encontrada',
-                style: theme.textTheme.titleLarge?.copyWith(color: theme.colorScheme.primary),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -61,8 +67,13 @@ class NotFoundPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: theme.colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
               ),
             ],

@@ -13,7 +13,8 @@ class EnrollButton extends StatelessWidget {
     return BlocBuilder<EnrollmentCubit, EnrollmentState>(
       builder: (context, state) {
         final isEnrolled = state is EnrollmentStatusChecked && state.isEnrolled;
-        final isActive = state is EnrollmentStatusChecked && state.isEnrollmentActive;
+        final isActive =
+            state is EnrollmentStatusChecked && state.isEnrollmentActive;
 
         return ElevatedButton(
           onPressed: switch ((isEnrolled, isActive)) {
@@ -27,13 +28,17 @@ class EnrollButton extends StatelessWidget {
                 : Theme.of(context).colorScheme.secondary,
             disabledBackgroundColor: Theme.of(context).colorScheme.primary,
             minimumSize: const Size(180, 56),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
             elevation: 0,
           ),
           child: switch (state) {
             EnrollmentLoading() => Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary),
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
             _ => Text(switch ((isEnrolled, isActive)) {
               (true, _) => 'Inscrito',

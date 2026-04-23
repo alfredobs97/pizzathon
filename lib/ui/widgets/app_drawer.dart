@@ -23,7 +23,8 @@ class AppDrawer extends StatelessWidget {
           final isAuthenticated = state is AuthAuthenticated;
           final enrollmentState = context.watch<EnrollmentCubit>().state;
           final isEnrolled =
-              enrollmentState is EnrollmentStatusChecked && enrollmentState.isEnrolled;
+              enrollmentState is EnrollmentStatusChecked &&
+              enrollmentState.isEnrolled;
           final isAdmin = isAuthenticated && state.user.isAdmin;
 
           return Column(
@@ -132,7 +133,10 @@ class AppDrawer extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               state.user.displayName ?? 'Usuario',
-              style: theme.textTheme.displayMedium?.copyWith(color: Colors.white, fontSize: 18),
+              style: theme.textTheme.displayMedium?.copyWith(
+                color: Colors.white,
+                fontSize: 18,
+              ),
             ),
             Text(
               state.user.email ?? '',
@@ -159,7 +163,11 @@ class _DrawerItem extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  const _DrawerItem({required this.icon, required this.text, required this.onTap});
+  const _DrawerItem({
+    required this.icon,
+    required this.text,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +195,11 @@ class _HighlightedDrawerItem extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  const _HighlightedDrawerItem({required this.icon, required this.text, required this.onTap});
+  const _HighlightedDrawerItem({
+    required this.icon,
+    required this.text,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

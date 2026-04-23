@@ -14,7 +14,11 @@ class UsersListLoaded extends UsersListState {
   final DocumentSnapshot? lastDocument;
   final bool hasReachedMax;
 
-  const UsersListLoaded({required this.users, this.lastDocument, required this.hasReachedMax});
+  const UsersListLoaded({
+    required this.users,
+    this.lastDocument,
+    required this.hasReachedMax,
+  });
 
   @override
   bool operator ==(Object other) {

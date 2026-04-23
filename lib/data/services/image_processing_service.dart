@@ -10,11 +10,14 @@ class ImageProcessingService {
     try {
       return await _picker.pickImage(source: ImageSource.gallery);
     } catch (e) {
-      return null; 
+      return null;
     }
   }
 
-  Future<Uint8List?> compressImage(Uint8List imageBytes, {required CompressionSettings settings}) async {
+  Future<Uint8List?> compressImage(
+    Uint8List imageBytes, {
+    required CompressionSettings settings,
+  }) async {
     try {
       return await FlutterImageCompress.compressWithList(
         imageBytes,

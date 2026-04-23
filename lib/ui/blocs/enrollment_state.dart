@@ -12,7 +12,10 @@ class EnrollmentInitial extends EnrollmentState {}
 class EnrollmentStatusChecked extends EnrollmentState {
   final bool isEnrolled;
   final bool isEnrollmentActive;
-  const EnrollmentStatusChecked({required this.isEnrolled, required this.isEnrollmentActive});
+  const EnrollmentStatusChecked({
+    required this.isEnrolled,
+    required this.isEnrollmentActive,
+  });
 
   @override
   List<Object?> get props => [isEnrolled, isEnrollmentActive];

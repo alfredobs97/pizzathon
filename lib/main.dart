@@ -39,7 +39,9 @@ void main() async {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => AuthCubit(context.read<AuthService>())),
+          BlocProvider(
+            create: (context) => AuthCubit(context.read<AuthService>()),
+          ),
           BlocProvider(
             create: (context) => EnrollmentCubit(
               context.read<FirestoreService>(),

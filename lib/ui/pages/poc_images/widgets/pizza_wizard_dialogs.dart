@@ -27,7 +27,10 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
           onPressed: () => Navigator.of(dialogContext).pop(),
           child: Text(
             "Cancelar",
-            style: TextStyle(color: theme.colorScheme.secondary, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: theme.colorScheme.secondary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         FilledButton(
@@ -45,7 +48,11 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
   );
 }
 
-void showErrorDialog(BuildContext context, String errorMessage, ThemeData theme) {
+void showErrorDialog(
+  BuildContext context,
+  String errorMessage,
+  ThemeData theme,
+) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -53,7 +60,11 @@ void showErrorDialog(BuildContext context, String errorMessage, ThemeData theme)
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Column(
         children: [
-          Icon(Icons.warning_amber_rounded, color: theme.colorScheme.error, size: 48),
+          Icon(
+            Icons.warning_amber_rounded,
+            color: theme.colorScheme.error,
+            size: 48,
+          ),
           const SizedBox(height: 16),
           Text(
             "¡Ups, hay un problema!",

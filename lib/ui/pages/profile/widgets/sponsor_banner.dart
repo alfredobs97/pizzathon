@@ -20,7 +20,8 @@ class SponsorBanner extends StatelessWidget {
           decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
           child: CachedNetworkImage(
             imageUrl: sponsorImageUrl,
-            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => const Icon(Icons.business),
             fit: BoxFit.contain,
           ),

@@ -43,19 +43,21 @@ class ProfileHeader extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           '24 Puntos', // Placeholder points
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 0.15,
-                            height: 30 / 24,
-                          ),
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 0.15,
+                                height: 30 / 24,
+                              ),
                         ),
                         Text(
                           '5 Pizzas', // Placeholder pizzas
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.w400,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.w400,
+                              ),
                         ),
                       ],
                     ),
@@ -64,7 +66,9 @@ class ProfileHeader extends StatelessWidget {
                   // Avatar
                   CircleAvatar(
                     radius: 55,
-                    backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onPrimaryContainer,
                     backgroundImage: user.photoURL != null
                         ? CachedNetworkImageProvider(user.photoURL!)
                         : null,

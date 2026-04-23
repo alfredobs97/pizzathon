@@ -1,48 +1,66 @@
 import 'dart:typed_data';
 
-enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo, detalles }
- 
+enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo }
+
+enum WizardStep { fotos, formulario, confirmacion }
+
 extension PizzaPhotoStepExtension on PizzaPhotoStep {
   String get title {
     switch (this) {
-      case PizzaPhotoStep.bocaHorno: return 'Foto 1: A boca de horno';
-      case PizzaPhotoStep.vistaArriba: return 'Foto 2: Desde arriba';
-      case PizzaPhotoStep.corte: return 'Foto 3: De corte';
-      case PizzaPhotoStep.abajo: return 'Foto 4: De abajo';
-      case PizzaPhotoStep.detalles: return 'Paso 5: Detalles';
+      case PizzaPhotoStep.bocaHorno:
+        return 'Pizza a boca de horno';
+      case PizzaPhotoStep.vistaArriba:
+        return 'Pizza desde arriba';
+      case PizzaPhotoStep.corte:
+        return 'Pizza corte porcion';
+      case PizzaPhotoStep.abajo:
+        return 'Pizza cocción debajo';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case PizzaPhotoStep.bocaHorno:
+        return 'Debe verse la pizza recien hecha sobre la pala en la entrada del horno';
+      case PizzaPhotoStep.vistaArriba:
+        return 'Debe verse la pizza completa en todo su diámetro desde arriba';
+      case PizzaPhotoStep.corte:
+        return 'Debe verse el corte lateral de una porción independientemente del estilo de pizza';
+      case PizzaPhotoStep.abajo:
+        return 'Debe verse al menos parcialmente la cocción de la masa debajo';
     }
   }
 
   String get exampleImageUrl {
     switch (this) {
-      case PizzaPhotoStep.bocaHorno: 
+      case PizzaPhotoStep.bocaHorno:
         return 'https://i.ibb.co/n2sYtLD/b8eab707322743000dc0cbeb211a500a33fc43af.jpg';
-      case PizzaPhotoStep.vistaArriba: 
-        return 'URL_FOTO_2';
-      case PizzaPhotoStep.corte: 
-        return 'URL_FOTO_3';
-      case PizzaPhotoStep.abajo: 
-        return 'URL_FOTO_4';
-      case PizzaPhotoStep.detalles:
-        return ''; // No example image for details step
+      case PizzaPhotoStep.vistaArriba:
+        return 'https://i.ibb.co/CKs7jkvD/569589abb736fba9fcf5d2f014c13243a7854c8d.jpg';
+      case PizzaPhotoStep.corte:
+        return 'https://i.ibb.co/4RbS9mVH/733255011dc93e0156a96a05823a61893d1bac11.jpg';
+      case PizzaPhotoStep.abajo:
+        return 'https://i.ibb.co/nMNCmZwc/6cacf9ccfc8592c764c292ff1893325a3d2a4b93.jpg';
     }
   }
 }
 
 class PocImagesState {
+  final WizardStep mainStep;
   final PizzaPhotoStep currentStep;
-  final Uint8List? pendingImage; 
-  final Map<PizzaPhotoStep, Uint8List> confirmedImages; 
+  final Uint8List? pendingImage;
+  final Map<PizzaPhotoStep, Uint8List> confirmedImages;
   final bool isLoading;
   final String? errorMessage;
-  final bool isFinished; 
-  
+  final bool isFinished;
+
   // --- NUEVOS CAMPOS PARA EL FORMULARIO ---
   final String? title;
   final String? description;
   final bool isSubmitting;
 
   PocImagesState({
+    this.mainStep = WizardStep.fotos,
     this.currentStep = PizzaPhotoStep.bocaHorno,
     this.pendingImage,
     this.confirmedImages = const {},
@@ -55,6 +73,7 @@ class PocImagesState {
   });
 
   PocImagesState copyWith({
+    WizardStep? mainStep,
     PizzaPhotoStep? currentStep,
     Uint8List? pendingImage,
     Map<PizzaPhotoStep, Uint8List>? confirmedImages,
@@ -67,12 +86,14 @@ class PocImagesState {
     bool clearPendingImage = false,
   }) {
     return PocImagesState(
+      mainStep: mainStep ?? this.mainStep,
       currentStep: currentStep ?? this.currentStep,
-      pendingImage: clearPendingImage ? null : (pendingImage ?? this.pendingImage),
+      pendingImage: clearPendingImage
+          ? null
+          : (pendingImage ?? this.pendingImage),
       confirmedImages: confirmedImages ?? this.confirmedImages,
       isLoading: isLoading ?? this.isLoading,
-      // Si errorMessage es null, limpia el error de estados anteriores
-      errorMessage: errorMessage, 
+      errorMessage: errorMessage,
       isFinished: isFinished ?? this.isFinished,
       title: title ?? this.title,
       description: description ?? this.description,

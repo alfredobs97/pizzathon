@@ -32,23 +32,26 @@ void main() {
       expect(user.isBanned, true);
     });
 
-    test('should default isBanned to false when not present in the document', () {
-      final now = Timestamp.now();
-      when(() => mockSnapshot.id).thenReturn('user123');
-      when(() => mockSnapshot.data()).thenReturn({
-        'displayName': 'John Doe',
-        'email': 'john@example.com',
-        'photoUrl': 'https://example.com/photo.jpg',
-        'score': 100,
-        'createdAt': now,
-        // 'banned' field is missing
-      });
+    test(
+      'should default isBanned to false when not present in the document',
+      () {
+        final now = Timestamp.now();
+        when(() => mockSnapshot.id).thenReturn('user123');
+        when(() => mockSnapshot.data()).thenReturn({
+          'displayName': 'John Doe',
+          'email': 'john@example.com',
+          'photoUrl': 'https://example.com/photo.jpg',
+          'score': 100,
+          'createdAt': now,
+          // 'banned' field is missing
+        });
 
-      final user = UserModel.fromDocument(mockSnapshot);
+        final user = UserModel.fromDocument(mockSnapshot);
 
-      expect(user.uid, 'user123');
-      expect(user.isBanned, false);
-    });
+        expect(user.uid, 'user123');
+        expect(user.isBanned, false);
+      },
+    );
 
     test('should handle null banned field by defaulting to false', () {
       final now = Timestamp.now();

@@ -22,7 +22,9 @@ class Footer extends StatelessWidget {
       height: isMobile ? 210 : 180,
       width: double.infinity,
       color: Theme.of(context).colorScheme.secondary,
-      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (162 / 1440)),
+      constraints: BoxConstraints(
+        minHeight: isMobile ? 0 : screenWidth * (162 / 1440),
+      ),
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 20, left: 20, right: 20),
       child: Column(
@@ -44,7 +46,10 @@ class Footer extends StatelessWidget {
             child: GestureDetector(
               onTap: _launchInstagram,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12),
@@ -59,7 +64,9 @@ class Footer extends StatelessWidget {
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: CachedNetworkImageProvider('https://i.ibb.co/qL3Zhr1c/salva.png'),
+                          image: CachedNetworkImageProvider(
+                            'https://i.ibb.co/qL3Zhr1c/salva.png',
+                          ),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -84,7 +91,10 @@ class Footer extends StatelessWidget {
                     ),
                     const SizedBox(width: 24),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
@@ -114,7 +124,10 @@ class Footer extends StatelessWidget {
                 builder: (BuildContext context, FollowLink? followLink) {
                   return TextButton(
                     onPressed: followLink,
-                    child: Text('Normas', style: Theme.of(context).textTheme.bodySmall),
+                    child: Text(
+                      'Normas',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   );
                 },
               ),

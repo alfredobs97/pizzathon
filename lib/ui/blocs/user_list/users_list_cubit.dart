@@ -11,7 +11,9 @@ class UsersListCubit extends Cubit<UsersListState> {
   Future<void> loadInitialUsers() async {
     emit(UsersListLoading());
     try {
-      final result = await _firestoreService.getUsersPaginated(limit: _maxItemPerPage);
+      final result = await _firestoreService.getUsersPaginated(
+        limit: _maxItemPerPage,
+      );
 
       emit(
         UsersListLoaded(

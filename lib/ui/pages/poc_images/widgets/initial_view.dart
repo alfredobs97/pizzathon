@@ -14,7 +14,7 @@ class InitialView extends StatelessWidget {
         Icon(
           Icons.local_pizza_outlined,
           size: 80,
-          color: Theme.of(context).colorScheme.primary.withAlpha(128)
+          color: Theme.of(context).colorScheme.primary.withAlpha(128),
         ),
         const SizedBox(height: 24),
         Text(
@@ -35,7 +35,9 @@ class InitialView extends StatelessWidget {
           icon: const Icon(Icons.local_pizza, size: 20),
           label: Text(
             "Nueva pizza",
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
           onPressed: () {
             context.read<PocImagesCubit>().resetWizard();

@@ -18,9 +18,9 @@ class PocImagesPage extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => PocImagesCubit(
-        ImageProcessingService(), 
+        ImageProcessingService(),
         context.read<RemoteConfigService>(),
-        ImageMetadataService(), 
+        ImageMetadataService(),
         PizzaValidationService(),
       ),
       child: Scaffold(
@@ -38,14 +38,15 @@ class PocImagesPage extends StatelessWidget {
             ),
           ),
           actions: [
-            IconButton(icon: const Icon(Icons.menu), onPressed: () => AppShell.openDrawer()),
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => AppShell.openDrawer(),
+            ),
           ],
         ),
         body: const Padding(
           padding: EdgeInsets.all(16.0),
-          child: Center(
-            child: InitialView(),
-          ),
+          child: Center(child: InitialView()),
         ),
       ),
     );

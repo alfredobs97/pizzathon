@@ -30,23 +30,28 @@ class AppRouter {
         routes: [
           GoRoute(
             path: landingRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const LandingPage()),
+            pageBuilder: (context, state) =>
+                _fadeTransition(state, const LandingPage()),
           ),
           GoRoute(
             path: participantsRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const HomePage()),
+            pageBuilder: (context, state) =>
+                _fadeTransition(state, const HomePage()),
           ),
           GoRoute(
             path: pocImagesRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const PocImagesPage()),
+            pageBuilder: (context, state) =>
+                _fadeTransition(state, const PocImagesPage()),
           ),
           GoRoute(
             path: profileRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const ProfilePage()),
+            pageBuilder: (context, state) =>
+                _fadeTransition(state, const ProfilePage()),
           ),
           GoRoute(
             path: adminRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const AdminPage()),
+            pageBuilder: (context, state) =>
+                _fadeTransition(state, const AdminPage()),
           ),
         ],
       ),
@@ -56,7 +61,7 @@ class AppRouter {
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
     ],
-    /* redirect: (context, state) {
+    redirect: (context, state) {
       if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) &&
           !isAdmin(context)) {
         return landingRoute;
@@ -69,12 +74,15 @@ class AppRouter {
         return landingRoute;
       }
       return null;
-    }, */
+    },
   );
 
   GoRouter get router => _router;
 
-  static CustomTransitionPage _fadeTransition(GoRouterState state, Widget child) {
+  static CustomTransitionPage _fadeTransition(
+    GoRouterState state,
+    Widget child,
+  ) {
     return CustomTransitionPage(
       key: state.pageKey,
       child: child,
@@ -91,7 +99,8 @@ class AppRouter {
 
   static bool isEnrolled(BuildContext context) {
     final enrollmentState = context.read<EnrollmentCubit>().state;
-    return enrollmentState is EnrollmentStatusChecked && enrollmentState.isEnrolled;
+    return enrollmentState is EnrollmentStatusChecked &&
+        enrollmentState.isEnrolled;
   }
 
   static bool isAdmin(BuildContext context) {

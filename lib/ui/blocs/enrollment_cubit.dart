@@ -56,26 +56,43 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
     final isActive = _remoteConfigService.isEnrollmentOpen;
 
     if (user == null) {
-      emit(EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: false));
+      emit(
+        EnrollmentStatusChecked(
+          isEnrollmentActive: isActive,
+          isEnrolled: false,
+        ),
+      );
       return;
     }
 
     try {
-      final isEnrolledInCache = await _localStorageService.isUserEnrolled(user.uid);
+      final isEnrolledInCache = await _localStorageService.isUserEnrolled(
+        user.uid,
+      );
 
       if (isEnrolledInCache) {
-        emit(EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: true));
+        emit(
+          EnrollmentStatusChecked(
+            isEnrollmentActive: isActive,
+            isEnrolled: true,
+          ),
+        );
         return;
       }
 
-      final isEnrolledInFirestore = await _firestoreService.isUserEnrolled(user.uid);
+      final isEnrolledInFirestore = await _firestoreService.isUserEnrolled(
+        user.uid,
+      );
 
       if (isEnrolledInFirestore) {
         await _localStorageService.saveEnrollment(user.uid);
       }
 
       emit(
-        EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: isEnrolledInFirestore),
+        EnrollmentStatusChecked(
+          isEnrollmentActive: isActive,
+          isEnrolled: isEnrolledInFirestore,
+        ),
       );
     } catch (e) {
       emit(EnrollmentError(e.toString()));

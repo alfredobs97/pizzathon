@@ -13,7 +13,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UsersListCubit(context.read<FirestoreService>())..loadInitialUsers(),
+      create: (context) =>
+          UsersListCubit(context.read<FirestoreService>())..loadInitialUsers(),
       child: Scaffold(
         body: Column(
           children: [
