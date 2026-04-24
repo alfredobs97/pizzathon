@@ -88,10 +88,10 @@ void showErrorDialog(
           child: FilledButton(
             onPressed: () => Navigator.of(context).pop(),
             style: FilledButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              backgroundColor: theme.colorScheme.secondary,
+              padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 12),
             ),
-            child: const Text("Entendido"),
+            child: const Text("Ok"),
           ),
         ),
       ],

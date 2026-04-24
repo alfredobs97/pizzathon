@@ -116,12 +116,55 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     }
   }
 
-  void savePizzaDetails(String title, String description) {
+  void nextPhotoStep() {
+    if (state.currentStep == PizzaPhotoStep.abajo) {
+      emit(
+        state.copyWith(
+          mainStep: WizardStep.formulario,
+          clearPendingImage: true,
+        ),
+      );
+    } else {
+      final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
+      emit(
+        state.copyWith(
+          currentStep: nextStep,
+          clearPendingImage: true,
+        ),
+      );
+    }
+  }
+
+  void savePizzaDetails({
+    required String pizzaStyle,
+    required String flours,
+    required String preferment,
+    required String prefermentPercentage,
+    required String hydration,
+    required String doughBallWeight,
+    required String oven,
+    required String cookingTemperature,
+  }) {
     emit(
       state.copyWith(
-        title: title,
-        description: description,
+        pizzaStyle: pizzaStyle,
+        flours: flours,
+        preferment: preferment,
+        prefermentPercentage: prefermentPercentage,
+        hydration: hydration,
+        doughBallWeight: doughBallWeight,
+        oven: oven,
+        cookingTemperature: cookingTemperature,
         mainStep: WizardStep.confirmacion,
+      ),
+    );
+  }
+
+  void redoChanges() {
+    emit(
+      state.copyWith(
+        mainStep: WizardStep.fotos,
+        currentStep: PizzaPhotoStep.bocaHorno,
       ),
     );
   }
@@ -141,8 +184,8 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       emit(state.copyWith(errorMessage: "Faltan fotos por confirmar."));
       return;
     }
-    if (state.title == null || state.description == null) {
-      emit(state.copyWith(errorMessage: "Falta el título o la descripción."));
+    if (state.pizzaStyle == null || state.flours == null) {
+      emit(state.copyWith(errorMessage: "Faltan detalles de la pizza."));
       return;
     }
 

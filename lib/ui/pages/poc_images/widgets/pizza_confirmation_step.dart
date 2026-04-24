@@ -5,16 +5,12 @@ import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 
 class PizzaConfirmationStep extends StatelessWidget {
   final PocImagesState state;
-  final ThemeData theme;
 
-  const PizzaConfirmationStep({
-    super.key,
-    required this.state,
-    required this.theme,
-  });
+  const PizzaConfirmationStep({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -84,7 +80,7 @@ class PizzaConfirmationStep extends StatelessWidget {
 
           Card(
             elevation: 0,
-            color: theme.colorScheme.secondary.withAlpha(10),
+            color: theme.colorScheme.secondary.withValues(alpha: 0.05),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -93,33 +89,48 @@ class PizzaConfirmationStep extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Nombre de la Pizza",
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  _buildSummaryItem(theme, "Estilo", state.pizzaStyle),
+                  _buildSummaryItem(theme, "Harinas", state.flours),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSummaryItem(
+                          theme,
+                          "Prefermento",
+                          "${state.preferment} (${state.prefermentPercentage}%)",
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildSummaryItem(
+                          theme,
+                          "Hidratación",
+                          "${state.hydration}%",
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    state.title ?? "-",
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSummaryItem(
+                          theme,
+                          "Peso bola",
+                          "${state.doughBallWeight}gr",
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildSummaryItem(
+                          theme,
+                          "Horno",
+                          state.oven,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Descripción",
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    state.description ?? "-",
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.secondary,
-                    ),
+                  _buildSummaryItem(
+                    theme,
+                    "Temperatura cocción",
+                    "${state.cookingTemperature}Cº",
                   ),
                 ],
               ),
@@ -137,31 +148,60 @@ class PizzaConfirmationStep extends StatelessWidget {
                   onPressed: () => context.read<PocImagesCubit>().submitPizza(),
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFFE36414),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 48,
-                    ),
+                    minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: const Text(
-                    "ENVIAR PARTICIPACIÓN",
+                    "Enviar al Comandante",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
                 const SizedBox(height: 12),
-                TextButton.icon(
-                  onPressed: () =>
-                      context.read<PocImagesCubit>().goBackMainStep(),
-                  icon: const Icon(Icons.edit),
-                  label: const Text("Editar detalles"),
-                  style: TextButton.styleFrom(
+                OutlinedButton.icon(
+                  onPressed: () => context.read<PocImagesCubit>().redoChanges(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Rehacer cambios"),
+                  style: OutlinedButton.styleFrom(
                     foregroundColor: theme.colorScheme.secondary,
+                    minimumSize: const Size(double.infinity, 56),
+                    side: BorderSide(
+                      color: theme.colorScheme.secondary.withValues(alpha: 0.3),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ],
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryItem(ThemeData theme, String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            value ?? "-",
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.secondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

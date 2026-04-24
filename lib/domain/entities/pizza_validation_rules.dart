@@ -26,7 +26,7 @@ class RequireExifDataRule extends PizzaValidationRule {
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (!metadata.hasExif) {
       return ValidationRejected(
-        'La imagen no contiene metadata EXIF. Es posible que sea un screenshot o una imagen descargada.',
+        'La imagen no es una foto tomada con tu telefono\n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();
@@ -44,7 +44,7 @@ class DisallowScreenshotsRule extends PizzaValidationRule {
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is DetailedImageMetadata && metadata.isLikelyScreenshot) {
       return const ValidationRejected(
-        'La imagen parece ser una captura de pantalla según el software de creación.',
+        'La imagen escogida podria ser una captura de pantalla, no es una foto \n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();
@@ -64,13 +64,13 @@ class MaxAgeRule extends PizzaValidationRule {
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
       return ValidationRejected(
-        'No se pudo determinar la fecha de creación de la imagen.',
+        'La imagen tiene un origen desconocido\n INCUMPLE LAS NORMAS',
       );
     }
     final age = DateTime.now().difference(metadata.creationDate!);
     if (age > maxAge) {
       return ValidationRejected(
-        'La foto es demasiado antigua. Debe haber sido tomada en los últimos ${maxAge.inDays} días.',
+        'La foto escogida es antigua\n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();
@@ -89,7 +89,7 @@ class RequireCameraMetadataRule extends PizzaValidationRule {
     if (metadata is! DetailedImageMetadata ||
         (metadata.make == null && metadata.model == null)) {
       return ValidationRejected(
-        'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil.',
+        'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil\n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();

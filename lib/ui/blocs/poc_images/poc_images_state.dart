@@ -55,8 +55,14 @@ class PocImagesState {
   final bool isFinished;
 
   // --- NUEVOS CAMPOS PARA EL FORMULARIO ---
-  final String? title;
-  final String? description;
+  final String? pizzaStyle;
+  final String? flours;
+  final String? preferment;
+  final String? prefermentPercentage;
+  final String? hydration;
+  final String? doughBallWeight;
+  final String? oven;
+  final String? cookingTemperature;
   final bool isSubmitting;
 
   PocImagesState({
@@ -67,8 +73,14 @@ class PocImagesState {
     this.isLoading = false,
     this.errorMessage,
     this.isFinished = false,
-    this.title,
-    this.description,
+    this.pizzaStyle,
+    this.flours,
+    this.preferment,
+    this.prefermentPercentage,
+    this.hydration,
+    this.doughBallWeight,
+    this.oven,
+    this.cookingTemperature,
     this.isSubmitting = false,
   });
 
@@ -80,23 +92,33 @@ class PocImagesState {
     bool? isLoading,
     String? errorMessage,
     bool? isFinished,
-    String? title,
-    String? description,
+    String? pizzaStyle,
+    String? flours,
+    String? preferment,
+    String? prefermentPercentage,
+    String? hydration,
+    String? doughBallWeight,
+    String? oven,
+    String? cookingTemperature,
     bool? isSubmitting,
     bool clearPendingImage = false,
   }) {
     return PocImagesState(
       mainStep: mainStep ?? this.mainStep,
       currentStep: currentStep ?? this.currentStep,
-      pendingImage: clearPendingImage
-          ? null
-          : (pendingImage ?? this.pendingImage),
+      pendingImage: clearPendingImage ? null : (pendingImage ?? this.pendingImage),
       confirmedImages: confirmedImages ?? this.confirmedImages,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
       isFinished: isFinished ?? this.isFinished,
-      title: title ?? this.title,
-      description: description ?? this.description,
+      pizzaStyle: pizzaStyle ?? this.pizzaStyle,
+      flours: flours ?? this.flours,
+      preferment: preferment ?? this.preferment,
+      prefermentPercentage: prefermentPercentage ?? this.prefermentPercentage,
+      hydration: hydration ?? this.hydration,
+      doughBallWeight: doughBallWeight ?? this.doughBallWeight,
+      oven: oven ?? this.oven,
+      cookingTemperature: cookingTemperature ?? this.cookingTemperature,
       isSubmitting: isSubmitting ?? this.isSubmitting,
     );
   }

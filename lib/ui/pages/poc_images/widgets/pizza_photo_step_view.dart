@@ -65,10 +65,10 @@ class PizzaPhotoStepView extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        if (hasConfirmed)
-                          Image.memory(confirmedImage, fit: BoxFit.cover)
-                        else if (hasPendingForThisStep)
+                        if (hasPendingForThisStep)
                           Image.memory(state.pendingImage!, fit: BoxFit.cover)
+                        else if (hasConfirmed)
+                          Image.memory(confirmedImage, fit: BoxFit.cover)
                         else
                           ColorFiltered(
                             colorFilter: const ColorFilter.mode(
@@ -85,15 +85,21 @@ class PizzaPhotoStepView extends StatelessWidget {
                             ),
                           ),
                         if (!hasConfirmed && !hasPendingForThisStep)
-                          Container(color: Colors.black.withValues(alpha: 0.55)),
+                          Container(
+                            color: Colors.black.withValues(alpha: 0.55),
+                          ),
                         if (isLoading)
                           Container(
                             color: Colors.black.withValues(alpha: 0.4),
                             child: const Center(
-                              child: CircularProgressIndicator(color: Colors.white),
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        if (!hasConfirmed && !hasPendingForThisStep && !isLoading)
+                        if (!hasConfirmed &&
+                            !hasPendingForThisStep &&
+                            !isLoading)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -104,8 +110,9 @@ class PizzaPhotoStepView extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               OutlinedButton(
-                                onPressed: () =>
-                                    context.read<PocImagesCubit>().pickSingleImage(),
+                                onPressed: () => context
+                                    .read<PocImagesCubit>()
+                                    .pickSingleImage(),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   side: const BorderSide(
@@ -142,7 +149,9 @@ class PizzaPhotoStepView extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 24),
-          if (isCurrentStep && hasPendingForThisStep && !isLoading)
+          if (isCurrentStep &&
+              (hasPendingForThisStep || hasConfirmed) &&
+              !isLoading)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -160,10 +169,19 @@ class PizzaPhotoStepView extends StatelessWidget {
                   ),
                 ),
                 FilledButton.icon(
-                  onPressed: () =>
-                      context.read<PocImagesCubit>().confirmImage(),
-                  icon: const Icon(Icons.check),
-                  label: const Text("Confirmar"),
+                  onPressed: () {
+                    if (hasPendingForThisStep) {
+                      context.read<PocImagesCubit>().confirmImage();
+                    } else {
+                      context.read<PocImagesCubit>().nextPhotoStep();
+                    }
+                  },
+                  icon: Icon(
+                    hasPendingForThisStep ? Icons.check : Icons.arrow_forward,
+                  ),
+                  label: Text(
+                    hasPendingForThisStep ? "Confirmar" : "Siguiente",
+                  ),
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFFE36414),
                     padding: const EdgeInsets.symmetric(

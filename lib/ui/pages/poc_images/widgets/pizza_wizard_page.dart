@@ -89,14 +89,11 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               // PASO 1: FOTOS
-              PizzaPhotoStepView(
-                step: state.currentStep,
-                state: state,
-              ),
+              PizzaPhotoStepView(step: state.currentStep, state: state),
               // PASO 2: FORMULARIO
               _buildDetailsStep(context, state, theme),
               // PASO 3: CONFIRMACIÓN
-              PizzaConfirmationStep(state: state, theme: theme),
+              PizzaConfirmationStep(state: state),
             ],
           ),
         );
@@ -123,8 +120,8 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
             color: isCompleted
                 ? theme.colorScheme.primary
                 : isCurrent
-                    ? theme.colorScheme.primary.withValues(alpha: 0.15)
-                    : theme.colorScheme.secondary.withValues(alpha: 0.08),
+                ? theme.colorScheme.primary.withValues(alpha: 0.15)
+                : theme.colorScheme.secondary.withValues(alpha: 0.08),
             shape: BoxShape.circle,
             border: Border.all(
               color: isCurrent ? theme.colorScheme.primary : Colors.transparent,
@@ -138,8 +135,8 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
                 color: isCompleted
                     ? theme.colorScheme.onPrimary
                     : isCurrent
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.secondary.withValues(alpha: 0.5),
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.secondary.withValues(alpha: 0.5),
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -159,21 +156,35 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
-          Text(
-            "Detalles de la Pizza",
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: theme.colorScheme.secondary,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
           PizzaDetailsForm(
-            onSubmit: (title, description) {
+            initialPizzaStyle: state.pizzaStyle,
+            initialFlours: state.flours,
+            initialPreferment: state.preferment,
+            initialPrefermentPercentage: state.prefermentPercentage,
+            initialHydration: state.hydration,
+            initialDoughBallWeight: state.doughBallWeight,
+            initialOven: state.oven,
+            initialCookingTemperature: state.cookingTemperature,
+            onSubmit: ({
+              required String pizzaStyle,
+              required String flours,
+              required String preferment,
+              required String prefermentPercentage,
+              required String hydration,
+              required String doughBallWeight,
+              required String oven,
+              required String cookingTemperature,
+            }) {
               context.read<PocImagesCubit>().savePizzaDetails(
-                title,
-                description,
-              );
+                    pizzaStyle: pizzaStyle,
+                    flours: flours,
+                    preferment: preferment,
+                    prefermentPercentage: prefermentPercentage,
+                    hydration: hydration,
+                    doughBallWeight: doughBallWeight,
+                    oven: oven,
+                    cookingTemperature: cookingTemperature,
+                  );
             },
           ),
           const SizedBox(height: 16),
