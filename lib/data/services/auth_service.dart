@@ -10,18 +10,25 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
   Future<UserCredential?> signInWithGoogle() async {
+    print("[AuthService] 1. Iniciando signInWithGoogle()");
     try {
       final GoogleAuthProvider provider = GoogleAuthProvider();
+      print("[AuthService] 2. GoogleAuthProvider instanciado");
 
       provider.setCustomParameters({
         'hl': 'es', 
       });
+      print("[AuthService] 3. Ejecutando signInWithPopup...");
 
-      return await _auth.signInWithPopup(provider);
+      final result = await _auth.signInWithPopup(provider);
       
+      print("[AuthService] 4. signInWithPopup completado exitosamente. UID: ${result.user?.uid}");
+      return result;
     } catch (e, stackTrace) {
-      log("Error en Google Sign-In (Web)", error: e, stackTrace: stackTrace, name: 'AuthService');
+      print("[AuthService] X. FALLO en signInWithPopup: $e\n$stackTrace");
       return null; 
     }
   }
@@ -30,7 +37,7 @@ class AuthService {
     try {
       await _auth.signOut();
     } catch (e, stackTrace) {
-      log("Error al cerrar sesión", error: e, stackTrace: stackTrace, name: 'AuthService');
+      print("[AuthService] Error al cerrar sesión: $e\n$stackTrace");
     }
   }
 }

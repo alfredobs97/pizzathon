@@ -6,6 +6,7 @@ import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 
+import 'package:pizzathon/ui/widgets/app_shell.dart';
 import 'widgets/initial_view.dart';
 import 'widgets/success_grid_view.dart';
 import 'widgets/error_view.dart';
@@ -37,6 +38,9 @@ class PocImagesPage extends StatelessWidget {
               color: theme.colorScheme.secondary,
             ),
           ),
+          actions: [
+            IconButton(icon: const Icon(Icons.menu), onPressed: () => AppShell.openDrawer()),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

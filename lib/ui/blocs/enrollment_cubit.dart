@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
@@ -14,6 +16,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
   final LocalStorageService _localStorageService;
   final RemoteConfigService _remoteConfigService;
   final ErrorTrackerService _errorTrackerService;
+  StreamSubscription<User?>? _authSubscription;
 
   EnrollmentCubit(
     this._firestoreService,
@@ -21,7 +24,26 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
     this._localStorageService,
     this._remoteConfigService,
     this._errorTrackerService,
-  ) : super(EnrollmentInitial());
+  ) : super(EnrollmentInitial()) {
+    _authSubscription = _authService.authStateChanges.listen((user) {
+      if (user != null) {
+        checkEnrollmentStatus();
+      } else {
+        emit(
+          EnrollmentStatusChecked(
+            isEnrolled: false,
+            isEnrollmentActive: _remoteConfigService.isEnrollmentOpen,
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
+  }
 
   final _enrollmentDelay = Duration(seconds: 2);
 

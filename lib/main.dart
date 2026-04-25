@@ -14,6 +14,7 @@ import 'package:pizzathon/ui/app_router.dart';
 
 import 'firebase_options.dart';
 import 'data/services/auth_service.dart';
+import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'ui/blocs/auth_cubit.dart';
 import 'ui/theme/theme.dart';
 
@@ -50,10 +51,23 @@ void main() async {
         RepositoryProvider(create: (context) => RemoteConfigService()..init()),
         RepositoryProvider<ErrorTrackerService>(create: (context) => errorTracker),
       ],
-      child: BlocProvider(
-        create: (context) =>
-            AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>())
-              ..checkAuth(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>())
+                  ..checkAuth(),
+          ),
+          BlocProvider(
+            create: (context) => EnrollmentCubit(
+              context.read<FirestoreService>(),
+              context.read<AuthService>(),
+              context.read<LocalStorageService>(),
+              context.read<RemoteConfigService>(),
+              context.read<ErrorTrackerService>(),
+            ),
+          ),
+        ],
         child: const MainApp(),
       ),
     ),
