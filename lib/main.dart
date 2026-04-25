@@ -55,8 +55,7 @@ void main() async {
         providers: [
           BlocProvider(
             create: (context) =>
-                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>())
-                  ..checkAuth(),
+                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>()),
           ),
           BlocProvider(
             create: (context) => EnrollmentCubit(
