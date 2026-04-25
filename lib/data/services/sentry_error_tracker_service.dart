@@ -31,7 +31,10 @@ class SentryErrorTrackerService implements ErrorTrackerService {
       // Quota and privacy optimization settings
       options.tracesSampleRate = 0.01; // Performance monitoring sampled at 1%
       options.debug = kDebugMode;
-      options.environment = kReleaseMode ? 'production' : 'development';
+      options.environment = const String.fromEnvironment(
+        'ENVIRONMENT',
+        defaultValue: kReleaseMode ? 'production' : 'development',
+      );
 
       // Automatic PII blocking from Sentry
       options.sendDefaultPii = false;
