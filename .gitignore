@@ -54,3 +54,5 @@ secrets-dev.json
 # Tooling
 .firebase/
 devtools_options.yaml
+
+sentry.properties

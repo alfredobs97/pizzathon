@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/domain/entities/tracked_error.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import '../../data/services/auth_service.dart';
 import '../../data/services/firestore_service.dart';
 import 'enrollment_state.dart';
@@ -13,6 +15,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
   final AuthService _authService;
   final LocalStorageService _localStorageService;
   final RemoteConfigService _remoteConfigService;
+  final ErrorTrackerService _errorTrackerService;
   StreamSubscription<User?>? _authSubscription;
 
   EnrollmentCubit(
@@ -20,6 +23,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
     this._authService,
     this._localStorageService,
     this._remoteConfigService,
+    this._errorTrackerService,
   ) : super(EnrollmentInitial()) {
     _authSubscription = _authService.authStateChanges.listen((user) {
       if (user != null) {
@@ -48,8 +52,15 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
 
     try {
       await _remoteConfigService.forceFetch();
-    } catch (e) {
-      debugPrint('Error al obtener el estado del remote config: $e');
+    } catch (e, stackTrace) {
+      _errorTrackerService.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {'component': 'EnrollmentCubit', 'action': 'forceFetchRemoteConfig'},
+        ),
+      );
+      debugPrint('Error fetching remote config status: $e');
     }
 
     final user = _authService.currentUser;
@@ -77,7 +88,14 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
       emit(
         EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: isEnrolledInFirestore),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      _errorTrackerService.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {'component': 'EnrollmentCubit', 'action': 'checkEnrollmentStatus'},
+        ),
+      );
       emit(EnrollmentError(e.toString()));
     }
   }
@@ -103,7 +121,14 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
           isEnrolled: true,
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      _errorTrackerService.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {'component': 'EnrollmentCubit', 'action': 'enroll'},
+        ),
+      );
       emit(EnrollmentError(e.toString()));
     }
   }
