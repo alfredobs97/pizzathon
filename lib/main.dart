@@ -1,3 +1,4 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,12 @@ void main() async {
   Bloc.observer = SentryBlocObserver();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  if (kIsWeb) {
+    await FirebaseAppCheck.instance.activate(
+      providerWeb: ReCaptchaV3Provider(const String.fromEnvironment('RECAPTCHA_SITE_KEY')),
+    );
+  }
 
   // Global error capture
   FlutterError.onError = (details) {
