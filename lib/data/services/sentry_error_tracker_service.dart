@@ -19,6 +19,11 @@ class SentryErrorTrackerService implements ErrorTrackerService {
   Future<void> init() async {
     if (_isInitialized) return;
 
+    if (kDebugMode) {
+      debugPrint('Sentry is disabled in debug mode.');
+      return;
+    }
+
     const dsn = String.fromEnvironment('SENTRY_DSN');
 
     if (dsn.isEmpty) {
