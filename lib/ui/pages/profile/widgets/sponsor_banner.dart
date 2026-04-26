@@ -7,23 +7,16 @@ class SponsorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // URL to be provided by user. Using a placeholder for now.
-    const sponsorImageUrl =
-        'https://i.ibb.co/3ykCWhmJ/alfa-forni-logo.png'; // Placeholder or actual URL if known
+    const sponsorImageUrl = 'https://i.ibb.co/6RfjhFx9/alfa-forni-logo-negro-1.png';
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: 80,
-          height: 40,
-          decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
-          child: CachedNetworkImage(
-            imageUrl: sponsorImageUrl,
-            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => const Icon(Icons.business),
-            fit: BoxFit.contain,
-          ),
+        CachedNetworkImage(
+          imageUrl: sponsorImageUrl,
+          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => const Icon(Icons.business),
+          height: 80,
         ),
         const SizedBox(width: 12),
         Text(
