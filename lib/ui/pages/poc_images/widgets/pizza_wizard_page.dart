@@ -89,11 +89,11 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               // PASO 1: FOTOS
-              PizzaPhotoStepView(step: state.currentStep, state: state),
+              const PizzaPhotoStepView(),
               // PASO 2: FORMULARIO
               _buildDetailsStep(context, state, theme),
               // PASO 3: CONFIRMACIÓN
-              PizzaConfirmationStep(state: state),
+              const PizzaConfirmationStep(),
             ],
           ),
         );
@@ -152,42 +152,12 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
     PocImagesState state,
     ThemeData theme,
   ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(24.0),
       child: Column(
         children: [
-          PizzaDetailsForm(
-            initialPizzaStyle: state.pizzaStyle,
-            initialFlours: state.flours,
-            initialPreferment: state.preferment,
-            initialPrefermentPercentage: state.prefermentPercentage,
-            initialHydration: state.hydration,
-            initialDoughBallWeight: state.doughBallWeight,
-            initialOven: state.oven,
-            initialCookingTemperature: state.cookingTemperature,
-            onSubmit: ({
-              required String pizzaStyle,
-              required String flours,
-              required String preferment,
-              required String prefermentPercentage,
-              required String hydration,
-              required String doughBallWeight,
-              required String oven,
-              required String cookingTemperature,
-            }) {
-              context.read<PocImagesCubit>().savePizzaDetails(
-                    pizzaStyle: pizzaStyle,
-                    flours: flours,
-                    preferment: preferment,
-                    prefermentPercentage: prefermentPercentage,
-                    hydration: hydration,
-                    doughBallWeight: doughBallWeight,
-                    oven: oven,
-                    cookingTemperature: cookingTemperature,
-                  );
-            },
-          ),
-          const SizedBox(height: 16),
+          PizzaDetailsForm(),
+          SizedBox(height: 16),
         ],
       ),
     );

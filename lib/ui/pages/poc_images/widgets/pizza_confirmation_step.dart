@@ -4,13 +4,13 @@ import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 
 class PizzaConfirmationStep extends StatelessWidget {
-  final PocImagesState state;
-
-  const PizzaConfirmationStep({super.key, required this.state});
+  const PizzaConfirmationStep({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final state = context.watch<PocImagesCubit>().state;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(

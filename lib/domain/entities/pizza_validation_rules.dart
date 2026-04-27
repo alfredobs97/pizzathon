@@ -51,31 +51,6 @@ class DisallowScreenshotsRule extends PizzaValidationRule {
   }
 }
 
-/// Rejects images older than [maxAge].
-class MaxAgeRule extends PizzaValidationRule {
-  final Duration maxAge;
-
-  const MaxAgeRule({this.maxAge = const Duration(days: 10)});
-
-  @override
-  String get name => 'Antigüedad de la foto';
-
-  @override
-  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
-    if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
-      return ValidationRejected(
-        'La imagen tiene un origen desconocido\n INCUMPLE LAS NORMAS',
-      );
-    }
-    final age = DateTime.now().difference(metadata.creationDate!);
-    if (age > maxAge) {
-      return ValidationRejected(
-        'La foto escogida es antigua\n INCUMPLE LAS NORMAS',
-      );
-    }
-    return const ValidationSuccess();
-  }
-}
 
 /// Requires the image to have a known camera make and model in its EXIF data.
 class RequireCameraMetadataRule extends PizzaValidationRule {

@@ -4,20 +4,11 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
   showDialog(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(
-        "¿Salir del asistente?",
-        style: theme.textTheme.displayMedium?.copyWith(
-          color: theme.colorScheme.secondary,
-          fontSize: 22,
-        ),
-        textAlign: TextAlign.center,
-      ),
+      contentPadding: const EdgeInsets.all(24.0),
       content: Text(
-        "Si sales ahora, perderás el progreso actual de tu pizza. ¿Estás seguro?",
+        "Si cierras se borrará toda la información de tu pizza\n ¿Seguro quieres cerrar?",
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.secondary.withAlpha(180),
+          color: theme.colorScheme.secondary,
         ),
         textAlign: TextAlign.center,
       ),
@@ -26,7 +17,7 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(),
           child: Text(
-            "Cancelar",
+            "Volver a pizza",
             style: TextStyle(
               color: theme.colorScheme.secondary,
               fontWeight: FontWeight.bold,
@@ -41,7 +32,7 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
           style: FilledButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
           ),
-          child: const Text("Salir"),
+          child: const Text("Cerrar"),
         ),
       ],
     ),

@@ -1,38 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../blocs/poc_images/poc_images_cubit.dart';
 
 class PizzaDetailsForm extends StatefulWidget {
-  final String? initialPizzaStyle;
-  final String? initialFlours;
-  final String? initialPreferment;
-  final String? initialPrefermentPercentage;
-  final String? initialHydration;
-  final String? initialDoughBallWeight;
-  final String? initialOven;
-  final String? initialCookingTemperature;
-
-  final Function({
-    required String pizzaStyle,
-    required String flours,
-    required String preferment,
-    required String prefermentPercentage,
-    required String hydration,
-    required String doughBallWeight,
-    required String oven,
-    required String cookingTemperature,
-  }) onSubmit;
-
-  const PizzaDetailsForm({
-    super.key,
-    this.initialPizzaStyle,
-    this.initialFlours,
-    this.initialPreferment,
-    this.initialPrefermentPercentage,
-    this.initialHydration,
-    this.initialDoughBallWeight,
-    this.initialOven,
-    this.initialCookingTemperature,
-    required this.onSubmit,
-  });
+  const PizzaDetailsForm({super.key});
 
   @override
   State<PizzaDetailsForm> createState() => _PizzaDetailsFormState();
@@ -64,14 +35,16 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
   @override
   void initState() {
     super.initState();
-    _selectedStyle = widget.initialPizzaStyle;
-    _floursController = TextEditingController(text: widget.initialFlours);
-    _prefermentController = TextEditingController(text: widget.initialPreferment);
-    _prefermentPercentageController = TextEditingController(text: widget.initialPrefermentPercentage);
-    _hydrationController = TextEditingController(text: widget.initialHydration);
-    _doughBallWeightController = TextEditingController(text: widget.initialDoughBallWeight);
-    _ovenController = TextEditingController(text: widget.initialOven);
-    _cookingTemperatureController = TextEditingController(text: widget.initialCookingTemperature);
+    final state = context.read<PocImagesCubit>().state;
+
+    _selectedStyle = state.pizzaStyle;
+    _floursController = TextEditingController(text: state.flours);
+    _prefermentController = TextEditingController(text: state.preferment);
+    _prefermentPercentageController = TextEditingController(text: state.prefermentPercentage);
+    _hydrationController = TextEditingController(text: state.hydration);
+    _doughBallWeightController = TextEditingController(text: state.doughBallWeight);
+    _ovenController = TextEditingController(text: state.oven);
+    _cookingTemperatureController = TextEditingController(text: state.cookingTemperature);
   }
 
   @override
@@ -88,16 +61,16 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
 
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
-      widget.onSubmit(
-        pizzaStyle: _selectedStyle ?? '',
-        flours: _floursController.text,
-        preferment: _prefermentController.text,
-        prefermentPercentage: _prefermentPercentageController.text,
-        hydration: _hydrationController.text,
-        doughBallWeight: _doughBallWeightController.text,
-        oven: _ovenController.text,
-        cookingTemperature: _cookingTemperatureController.text,
-      );
+      context.read<PocImagesCubit>().savePizzaDetails(
+            pizzaStyle: _selectedStyle ?? '',
+            flours: _floursController.text,
+            preferment: _prefermentController.text,
+            prefermentPercentage: _prefermentPercentageController.text,
+            hydration: _hydrationController.text,
+            doughBallWeight: _doughBallWeightController.text,
+            oven: _ovenController.text,
+            cookingTemperature: _cookingTemperatureController.text,
+          );
     }
   }
 

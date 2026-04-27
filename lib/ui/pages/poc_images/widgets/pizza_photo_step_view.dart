@@ -2,21 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
-import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 
 class PizzaPhotoStepView extends StatelessWidget {
-  final PizzaPhotoStep step;
-  final PocImagesState state;
-
-  const PizzaPhotoStepView({
-    super.key,
-    required this.step,
-    required this.state,
-  });
+  const PizzaPhotoStepView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final state = context.watch<PocImagesCubit>().state;
+    final step = state.currentStep;
+
     final isCurrentStep = state.currentStep == step;
     final confirmedImage = state.confirmedImages[step];
     final hasConfirmed = confirmedImage != null;

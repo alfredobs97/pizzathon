@@ -1,10 +1,6 @@
 import 'dart:typed_data';
 
-enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo }
-
-enum WizardStep { fotos, formulario, confirmacion }
-
-extension PizzaPhotoStepExtension on PizzaPhotoStep {
+enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo;
   String get title {
     switch (this) {
       case PizzaPhotoStep.bocaHorno:
@@ -44,6 +40,9 @@ extension PizzaPhotoStepExtension on PizzaPhotoStep {
     }
   }
 }
+
+enum WizardStep { fotos, formulario, confirmacion }
+
 
 class PocImagesState {
   final WizardStep mainStep;
