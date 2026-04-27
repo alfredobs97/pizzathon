@@ -40,17 +40,11 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     _selectedStyle = state.pizzaStyle;
     _floursController = TextEditingController(text: state.flours);
     _prefermentController = TextEditingController(text: state.preferment);
-    _prefermentPercentageController = TextEditingController(
-      text: state.prefermentPercentage,
-    );
+    _prefermentPercentageController = TextEditingController(text: state.prefermentPercentage);
     _hydrationController = TextEditingController(text: state.hydration);
-    _doughBallWeightController = TextEditingController(
-      text: state.doughBallWeight,
-    );
+    _doughBallWeightController = TextEditingController(text: state.doughBallWeight);
     _ovenController = TextEditingController(text: state.oven);
-    _cookingTemperatureController = TextEditingController(
-      text: state.cookingTemperature,
-    );
+    _cookingTemperatureController = TextEditingController(text: state.cookingTemperature);
   }
 
   @override
@@ -108,8 +102,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             value: _selectedStyle,
             items: _pizzaStyles,
             onChanged: (val) => setState(() => _selectedStyle = val),
-            primaryColor: primaryColor,
-            secondaryColor: secondaryColor,
           ),
           const SizedBox(height: 20),
 
@@ -118,8 +110,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             controller: _floursController,
             label: 'Harinas',
             hint: 'Especifica harinas',
-            primaryColor: primaryColor,
-            secondaryColor: secondaryColor,
           ),
           const SizedBox(height: 20),
 
@@ -132,8 +122,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
                   controller: _prefermentController,
                   label: 'Prefermento',
                   hint: 'Selecciona',
-                  primaryColor: primaryColor,
-                  secondaryColor: secondaryColor,
                 ),
               ),
               const SizedBox(width: 12),
@@ -142,8 +130,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
                   controller: _prefermentPercentageController,
                   label: '% Prefermento',
                   hint: '%',
-                  primaryColor: primaryColor,
-                  secondaryColor: secondaryColor,
                 ),
               ),
             ],
@@ -158,8 +144,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
                   controller: _hydrationController,
                   label: 'Hidratación final',
                   hint: '%',
-                  primaryColor: primaryColor,
-                  secondaryColor: secondaryColor,
                 ),
               ),
               const SizedBox(width: 12),
@@ -168,8 +152,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
                   controller: _doughBallWeightController,
                   label: 'Peso de bola',
                   hint: 'gr',
-                  primaryColor: primaryColor,
-                  secondaryColor: secondaryColor,
                 ),
               ),
             ],
@@ -177,13 +159,7 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
           const SizedBox(height: 20),
 
           // Horno
-          _buildTextField(
-            controller: _ovenController,
-            label: 'Horno',
-            hint: 'Especifica horno',
-            primaryColor: primaryColor,
-            secondaryColor: secondaryColor,
-          ),
+          _buildTextField(controller: _ovenController, label: 'Horno', hint: 'Especifica horno'),
           const SizedBox(height: 20),
 
           // Temperatura
@@ -191,8 +167,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             controller: _cookingTemperatureController,
             label: 'Temperaturas de cocción',
             hint: 'En Cº',
-            primaryColor: primaryColor,
-            secondaryColor: secondaryColor,
           ),
           const SizedBox(height: 40),
 
@@ -201,17 +175,11 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             style: FilledButton.styleFrom(
               backgroundColor: primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             ),
             child: const Text(
               'Confirmar',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
         ],
@@ -223,36 +191,33 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     required TextEditingController controller,
     required String label,
     required String hint,
-    required Color primaryColor,
-    required Color secondaryColor,
   }) {
     return TextFormField(
       controller: controller,
-      style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w500),
+      style: Theme.of(
+        context,
+      ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, color: Colors.black),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(
-          color: secondaryColor,
+          color: Theme.of(context).colorScheme.secondary,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintText: hint,
         hintStyle: TextStyle(
-          color: secondaryColor.withValues(alpha: 0.4),
+          color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.4),
           fontWeight: FontWeight.w400,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryColor, width: 2),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryColor, width: 3),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -278,8 +243,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
-    required Color primaryColor,
-    required Color secondaryColor,
   }) {
     return DropdownButtonFormField<String>(
       initialValue: value,
@@ -289,42 +252,38 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
               value: e,
               child: Text(
                 e,
-                style: TextStyle(
-                  color: secondaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, color: Colors.black),
               ),
             ),
           )
           .toList(),
       onChanged: onChanged,
-      icon: Icon(Icons.keyboard_arrow_down, color: primaryColor),
-      dropdownColor: const Color(0xFFF8EEE3),
-      style: TextStyle(color: secondaryColor, fontWeight: FontWeight.w500),
+      icon: Icon(Icons.keyboard_arrow_down, color: Theme.of(context).colorScheme.primary),
+      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+      style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(
-          color: secondaryColor,
+          color: Theme.of(context).colorScheme.secondary,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintText: hint,
         hintStyle: TextStyle(
-          color: secondaryColor.withValues(alpha: 0.4),
+          color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.4),
           fontWeight: FontWeight.w400,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryColor, width: 2),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryColor, width: 3),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
         ),
       ),
       validator: (value) {
