@@ -60,7 +60,7 @@ class ProfilePage extends StatelessWidget {
                                     width: 320,
                                     height: 56,
                                     child: ElevatedButton(
-                                      onPressed: () => context.push(AppRouter.pocImagesRoute),
+                                      onPressed: () => context.push(AppRouter.newPizzaRoute),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(context).colorScheme.primary,
                                         foregroundColor: Theme.of(context).colorScheme.onPrimary,

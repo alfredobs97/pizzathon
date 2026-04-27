@@ -20,7 +20,7 @@ class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
   static const String adminRoute = '/capo';
-  static const String pocImagesRoute = '/poc-imagenes';
+  static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
 
   final _router = GoRouter(
@@ -40,7 +40,7 @@ class AppRouter {
             pageBuilder: (context, state) => _fadeTransition(state, const HomePage()),
           ),
           GoRoute(
-            path: pocImagesRoute,
+            path: newPizzaRoute,
             onExit: (context, state) async {
               final result = await showExitConfirmationDialog(context);
               return result;
