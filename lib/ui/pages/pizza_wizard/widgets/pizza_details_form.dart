@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/poc_images/poc_images_cubit.dart';
 
@@ -13,8 +14,8 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
   final _formKey = GlobalKey<FormState>();
 
   String? _selectedStyle;
+  String? _selectedPreferment;
   late final TextEditingController _floursController;
-  late final TextEditingController _prefermentController;
   late final TextEditingController _prefermentPercentageController;
   late final TextEditingController _hydrationController;
   late final TextEditingController _doughBallWeightController;
@@ -31,6 +32,7 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     'Padellino',
     'Pala romana',
   ];
+  final List<String> _preferments = ['No', 'Poolish', 'Biga', 'Esponja', 'Masa madre'];
 
   @override
   void initState() {
@@ -38,8 +40,8 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     final state = context.read<PocImagesCubit>().state;
 
     _selectedStyle = state.pizzaStyle;
+    _selectedPreferment = (state.preferment?.isEmpty ?? true) ? 'No' : state.preferment;
     _floursController = TextEditingController(text: state.flours);
-    _prefermentController = TextEditingController(text: state.preferment);
     _prefermentPercentageController = TextEditingController(text: state.prefermentPercentage);
     _hydrationController = TextEditingController(text: state.hydration);
     _doughBallWeightController = TextEditingController(text: state.doughBallWeight);
@@ -50,7 +52,6 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
   @override
   void dispose() {
     _floursController.dispose();
-    _prefermentController.dispose();
     _prefermentPercentageController.dispose();
     _hydrationController.dispose();
     _doughBallWeightController.dispose();
@@ -64,8 +65,10 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
       context.read<PocImagesCubit>().savePizzaDetails(
         pizzaStyle: _selectedStyle ?? '',
         flours: _floursController.text,
-        preferment: _prefermentController.text,
-        prefermentPercentage: _prefermentPercentageController.text,
+        preferment: _selectedPreferment ?? 'No',
+        prefermentPercentage: _selectedPreferment == 'No'
+            ? ''
+            : _prefermentPercentageController.text,
         hydration: _hydrationController.text,
         doughBallWeight: _doughBallWeightController.text,
         oven: _ovenController.text,
@@ -118,20 +121,27 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
             children: [
               Expanded(
                 flex: 2,
-                child: _buildTextField(
-                  controller: _prefermentController,
+                child: _buildDropdownField(
                   label: 'Prefermento',
-                  hint: 'Selecciona',
+                  hint: 'Selecciona prefermento',
+                  value: _selectedPreferment,
+                  items: _preferments,
+                  onChanged: (val) => setState(() => _selectedPreferment = val),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildTextField(
-                  controller: _prefermentPercentageController,
-                  label: '% Prefermento',
-                  hint: '%',
+
+              if (_selectedPreferment != 'No' && _selectedPreferment != null) ...[
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildTextField(
+                    controller: _prefermentPercentageController,
+                    label: '% Prefermento',
+                    hint: '%',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
           const SizedBox(height: 20),
@@ -144,6 +154,8 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
                   controller: _hydrationController,
                   label: 'Hidratación final',
                   hint: '%',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
               ),
               const SizedBox(width: 12),
@@ -152,6 +164,8 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
                   controller: _doughBallWeightController,
                   label: 'Peso de bola',
                   hint: 'gr',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
               ),
             ],
@@ -162,11 +176,12 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
           _buildTextField(controller: _ovenController, label: 'Horno', hint: 'Especifica horno'),
           const SizedBox(height: 20),
 
-          // Temperatura
           _buildTextField(
             controller: _cookingTemperatureController,
             label: 'Temperaturas de cocción',
             hint: 'En Cº',
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
           const SizedBox(height: 40),
 
@@ -191,9 +206,13 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     required TextEditingController controller,
     required String label,
     required String hint,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       style: Theme.of(
         context,
       ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400, color: Colors.black),
