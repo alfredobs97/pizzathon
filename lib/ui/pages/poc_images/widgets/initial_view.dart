@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
-import 'pizza_wizard_page.dart';
 
 class InitialView extends StatelessWidget {
   const InitialView({super.key});
@@ -42,13 +43,9 @@ class InitialView extends StatelessWidget {
           onPressed: () {
             context.read<PocImagesCubit>().resetWizard();
 
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => BlocProvider.value(
-                  value: context.read<PocImagesCubit>(),
-                  child: const PizzaWizardPage(),
-                ),
-              ),
+            context.push(
+              '${AppRouter.pocImagesRoute}/wizard',
+              extra: context.read<PocImagesCubit>(),
             );
           },
         ),

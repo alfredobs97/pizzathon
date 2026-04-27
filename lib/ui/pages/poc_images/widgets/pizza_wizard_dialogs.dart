@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
-  showDialog(
+Future<bool> showExitConfirmationDialog(BuildContext context)
+async {
+  final theme = Theme.of(context);
+  final result = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
       contentPadding: const EdgeInsets.all(24.0),
@@ -15,7 +17,7 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
       actionsAlignment: MainAxisAlignment.spaceEvenly,
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(dialogContext).pop(),
+          onPressed: () => Navigator.of(dialogContext).pop(false),
           child: Text(
             "Volver a pizza",
             style: TextStyle(
@@ -25,10 +27,7 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
           ),
         ),
         FilledButton(
-          onPressed: () {
-            Navigator.of(dialogContext).pop();
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(dialogContext).pop(true),
           style: FilledButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
           ),
@@ -37,6 +36,7 @@ void showExitConfirmationDialog(BuildContext context, ThemeData theme) {
       ],
     ),
   );
+  return result ?? false;
 }
 
 void showErrorDialog(

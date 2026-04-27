@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 import 'pizza_confirmation_step.dart';
@@ -45,7 +46,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
         }
 
         if (state.isFinished) {
-          Navigator.of(context).pop();
+          context.pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('¡Participación enviada con éxito!'),
@@ -69,39 +70,32 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
         }
       },
       builder: (context, state) {
-        return PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (didPop) return;
-            showExitConfirmationDialog(context, theme);
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: theme.scaffoldBackgroundColor,
-              elevation: 0,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: theme.colorScheme.secondary,
-                  size: 30,
-                ),
-                onPressed: () => showExitConfirmationDialog(context, theme),
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.close,
+                color: theme.colorScheme.secondary,
+                size: 30,
               ),
-              title: _buildStepper(context, state, theme),
-              centerTitle: true,
+              onPressed: () => context.pop(),
             ),
-            body: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                // PASO 1: FOTOS
-                const PizzaPhotoStepView(),
-                // PASO 2: FORMULARIO
-                _buildDetailsStep(context, state, theme),
-                // PASO 3: CONFIRMACIÓN
-                const PizzaConfirmationStep(),
-              ],
-            ),
+            title: _buildStepper(context, state, theme),
+            centerTitle: true,
+          ),
+          body: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              // PASO 1: FOTOS
+              const PizzaPhotoStepView(),
+              // PASO 2: FORMULARIO
+              _buildDetailsStep(context, state, theme),
+              // PASO 3: CONFIRMACIÓN
+              const PizzaConfirmationStep(),
+            ],
           ),
         );
       },
