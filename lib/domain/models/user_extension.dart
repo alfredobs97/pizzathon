@@ -10,4 +10,12 @@ extension UserExtension on User {
     ];
     return adminEmails.contains(email);
   }
+
+  String get nameToSave {
+    if (displayName == email) {
+      return email?.split('@').firstOrNull ?? "";
+    }
+
+    return displayName ?? "";
+  }
 }

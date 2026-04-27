@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -10,27 +9,18 @@ class AuthService {
 
   User? get currentUser => _auth.currentUser;
 
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
   Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleAuthProvider provider = GoogleAuthProvider();
+    final GoogleAuthProvider provider = GoogleAuthProvider();
 
-      provider.setCustomParameters({
-        'hl': 'es', 
-      });
+    provider.setCustomParameters({'hl': 'es'});
 
-      return await _auth.signInWithPopup(provider);
-      
-    } catch (e, stackTrace) {
-      log("Error en Google Sign-In (Web)", error: e, stackTrace: stackTrace, name: 'AuthService');
-      return null; 
-    }
+    final result = await _auth.signInWithPopup(provider);
+    return result;
   }
 
   Future<void> signOut() async {
-    try {
-      await _auth.signOut();
-    } catch (e, stackTrace) {
-      log("Error al cerrar sesión", error: e, stackTrace: stackTrace, name: 'AuthService');
-    }
+    await _auth.signOut();
   }
 }
