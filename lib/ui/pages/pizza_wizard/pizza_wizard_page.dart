@@ -9,7 +9,6 @@ import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_photo_step_view.dart';
-import 'package:pizzathon/ui/widgets/app_shell.dart';
 import 'widgets/pizza_confirmation_step.dart';
 import 'widgets/pizza_details_form.dart';
 import 'widgets/pizza_wizard_dialogs.dart';
@@ -88,26 +87,24 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
                 elevation: 0,
                 title: _buildStepper(context, state, theme),
                 centerTitle: true,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () => AppShell.openDrawer(),
-                    color: theme.colorScheme.secondary,
-                  ),
-                ],
                 leading: IconButton(
                   icon: Icon(Icons.close, color: theme.colorScheme.secondary),
                   onPressed: () => context.pop(),
                 ),
               ),
-              body: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  const PizzaPhotoStepView(),
-                  _buildDetailsStep(context, state, theme),
-                  const PizzaConfirmationStep(),
-                ],
+              body: Center(
+                child: SizedBox(
+                  width: 480,
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      const PizzaPhotoStepView(),
+                      _buildDetailsStep(context, state, theme),
+                      const PizzaConfirmationStep(),
+                    ],
+                  ),
+                ),
               ),
             );
           },

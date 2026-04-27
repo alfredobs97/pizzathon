@@ -33,9 +33,7 @@ class PizzaPhotoStepView extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             step.title,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: theme.colorScheme.secondary,
-            ),
+            style: theme.textTheme.headlineSmall?.copyWith(color: theme.colorScheme.secondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -66,62 +64,47 @@ class PizzaPhotoStepView extends StatelessWidget {
                           Image.memory(confirmedImage, fit: BoxFit.cover)
                         else
                           ColorFiltered(
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
-                              BlendMode.saturation,
-                            ),
+                            colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.saturation),
                             child: CachedNetworkImage(
                               imageUrl: step.exampleImageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Container(color: Colors.grey.shade300),
+                              placeholder: (context, url) => Container(color: Colors.grey.shade300),
                               errorWidget: (context, url, error) =>
                                   Container(color: Colors.grey.shade300),
                             ),
                           ),
                         if (!hasConfirmed && !hasPendingForThisStep)
-                          Container(
-                            color: Colors.black.withValues(alpha: 0.55),
-                          ),
+                          Container(color: Colors.black.withValues(alpha: 0.55)),
                         if (isLoading)
                           Container(
                             color: Colors.black.withValues(alpha: 0.4),
                             child: const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
+                              child: CircularProgressIndicator(color: Colors.white),
                             ),
                           ),
-                        if (!hasConfirmed &&
-                            !hasPendingForThisStep &&
-                            !isLoading)
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 48,
-                              ),
-                              const SizedBox(height: 16),
-                              OutlinedButton(
-                                onPressed: () => context
-                                    .read<PocImagesCubit>()
-                                    .pickSingleImage(),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  side: const BorderSide(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
+                        if (!hasConfirmed && !hasPendingForThisStep && !isLoading)
+                          Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.camera_alt, color: Colors.white, size: 48),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  height: 56,
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    onPressed: () =>
+                                        context.read<PocImagesCubit>().pickSingleImage(),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      side: const BorderSide(color: Colors.white, width: 2),
+                                    ),
+                                    child: const Text("Escoger foto"),
                                   ),
                                 ),
-                                child: const Text("Escoger foto"),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                       ],
                     ),
@@ -144,44 +127,35 @@ class PizzaPhotoStepView extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 24),
-          if (isCurrentStep &&
-              (hasPendingForThisStep || hasConfirmed) &&
-              !isLoading)
+          if (isCurrentStep && (hasPendingForThisStep || hasConfirmed) && !isLoading)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton.icon(
-                  onPressed: () =>
-                      context.read<PocImagesCubit>().pickSingleImage(),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Cambiar"),
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.secondary,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
+                Expanded(
+                  child: SizedBox(
+                    height: 56,
+                    child: TextButton(
+                      onPressed: () => context.read<PocImagesCubit>().pickSingleImage(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.secondary,
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                      ),
+                      child: const Text("Cambiar"),
                     ),
                   ),
                 ),
-                FilledButton.icon(
-                  onPressed: () {
-                    if (hasPendingForThisStep) {
-                      context.read<PocImagesCubit>().confirmImage();
-                    } else {
-                      context.read<PocImagesCubit>().nextPhotoStep();
-                    }
-                  },
-                  icon: Icon(
-                    hasPendingForThisStep ? Icons.check : Icons.arrow_forward,
-                  ),
-                  label: Text(
-                    hasPendingForThisStep ? "Confirmar" : "Siguiente",
-                  ),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFE36414),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
+                Expanded(
+                  child: SizedBox(
+                    height: 56,
+                    child: FilledButton(
+                      onPressed: () {
+                        if (hasPendingForThisStep) {
+                          context.read<PocImagesCubit>().confirmImage();
+                        } else {
+                          context.read<PocImagesCubit>().nextPhotoStep();
+                        }
+                      },
+                      child: Text(hasPendingForThisStep ? "Confirmar" : "Siguiente"),
                     ),
                   ),
                 ),
