@@ -12,6 +12,7 @@ import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:pizzathon/ui/pages/profile/profile_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 
@@ -25,6 +26,7 @@ class AppRouter {
   final _router = GoRouter(
     initialLocation: landingRoute,
     errorBuilder: (context, state) => const NotFoundPage(),
+    observers: [SentryNavigatorObserver()],
     routes: [
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),

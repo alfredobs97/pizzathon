@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/domain/entities/tracked_error.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'dart:typed_data';
 
 import '../../../data/services/image_processing_service.dart';
@@ -15,12 +17,14 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final RemoteConfigService _remoteConfigService;
   final ImageMetadataService _metadataService;
   final PizzaValidationService _validationService;
+  final ErrorTrackerService _errorTrackerService;
 
   PocImagesCubit(
     this._imageProcessingService,
     this._remoteConfigService,
     this._metadataService,
     this._validationService,
+    this._errorTrackerService,
   ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
@@ -64,26 +68,20 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
 
       if (compressedBytes != null) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            pendingImage: await file.readAsBytes(),
-          ),
-        );
+        emit(state.copyWith(isLoading: false, pendingImage: await file.readAsBytes()));
       } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: "No se pudo comprimir la imagen.",
-          ),
-        );
+        emit(state.copyWith(isLoading: false, errorMessage: "No se pudo comprimir la imagen."));
       }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: "Ups! Error inesperado: ${e.toString()}",
+    } catch (e, stackTrace) {
+      _errorTrackerService.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {'component': 'PocImagesCubit', 'action': 'pickAndCompressImages'},
         ),
+      );
+      emit(
+        state.copyWith(isLoading: false, errorMessage: "Ups! Error inesperado: ${e.toString()}"),
       );
     }
   }
@@ -91,9 +89,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   void confirmImage() {
     if (state.pendingImage == null) return;
 
-    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(
-      state.confirmedImages,
-    );
+    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(state.confirmedImages);
     updatedConfirmed[state.currentStep] = state.pendingImage!;
 
     if (state.currentStep == PizzaPhotoStep.bottom) {
@@ -118,12 +114,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
   void nextPhotoStep() {
     if (state.currentStep == PizzaPhotoStep.bottom) {
-      emit(
-        state.copyWith(
-          mainStep: WizardStep.formulario,
-          clearPendingImage: true,
-        ),
-      );
+      emit(state.copyWith(mainStep: WizardStep.formulario, clearPendingImage: true));
     } else {
       final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
       emit(state.copyWith(currentStep: nextStep, clearPendingImage: true));
@@ -156,12 +147,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   }
 
   void redoChanges() {
-    emit(
-      state.copyWith(
-        mainStep: WizardStep.fotos,
-        currentStep: PizzaPhotoStep.front,
-      ),
-    );
+    emit(state.copyWith(mainStep: WizardStep.fotos, currentStep: PizzaPhotoStep.front));
   }
 
   void goBackMainStep() {

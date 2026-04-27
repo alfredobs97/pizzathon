@@ -1,4 +1,3 @@
-//import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -13,31 +12,15 @@ class AuthService {
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<UserCredential?> signInWithGoogle() async {
-    print("[AuthService] 1. Iniciando signInWithGoogle()");
-    try {
-      final GoogleAuthProvider provider = GoogleAuthProvider();
-      print("[AuthService] 2. GoogleAuthProvider instanciado");
+    final GoogleAuthProvider provider = GoogleAuthProvider();
 
-      provider.setCustomParameters({'hl': 'es'});
-      print("[AuthService] 3. Ejecutando signInWithPopup...");
+    provider.setCustomParameters({'hl': 'es'});
 
-      final result = await _auth.signInWithPopup(provider);
-
-      print(
-        "[AuthService] 4. signInWithPopup completado exitosamente. UID: ${result.user?.uid}",
-      );
-      return result;
-    } catch (e, stackTrace) {
-      print("[AuthService] X. FALLO en signInWithPopup: $e\n$stackTrace");
-      return null;
-    }
+    final result = await _auth.signInWithPopup(provider);
+    return result;
   }
 
   Future<void> signOut() async {
-    try {
-      await _auth.signOut();
-    } catch (e, stackTrace) {
-      print("[AuthService] Error al cerrar sesión: $e\n$stackTrace");
-    }
+    await _auth.signOut();
   }
 }
