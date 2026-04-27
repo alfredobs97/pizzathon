@@ -7,8 +7,9 @@ class MainSponsorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
+    return Container(
+      height: 365,
+      color: Theme.of(context).colorScheme.onSecondaryContainer,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -28,10 +29,53 @@ class MainSponsorSection extends StatelessWidget {
                 onTap: followLink,
                 child: CachedNetworkImage(
                   imageUrl: 'https://i.ibb.co/6RfjhFx9/alfa-forni-logo-negro-1.png',
-                  height: 116,
+                  height: 130,
                 ),
               );
             },
+          ),
+          const SizedBox(height: 30),
+          Text(
+            'Patrocinadores',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontSize: 24,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Link(
+                uri: Uri.parse('https://gimetal.it/'),
+                target: LinkTarget.blank,
+                builder: (context, followLink) {
+                  return InkWell(
+                    hoverColor: Colors.transparent,
+                    onTap: followLink,
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.ibb.co/fVFkzD05/Gi-Metal.png',
+                      height: 65,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 40),
+              Link(
+                uri: Uri.parse('https://biribox.com/'),
+                target: LinkTarget.blank,
+                builder: (context, followLink) {
+                  return InkWell(
+                    hoverColor: Colors.transparent,
+                    onTap: followLink,
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.ibb.co/V0HrVmnJ/biribox-3.png',
+                      height: 65,
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
