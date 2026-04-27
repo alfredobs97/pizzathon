@@ -18,6 +18,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
+      listenWhen: (previous, current) => previous is AuthLoading && current is AuthAuthenticated,
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           context.go(AppRouter.participantsRoute);
