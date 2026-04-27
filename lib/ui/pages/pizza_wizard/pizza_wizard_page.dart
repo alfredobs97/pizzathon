@@ -5,6 +5,7 @@ import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/pizza_validation_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_photo_step_view.dart';
@@ -45,6 +46,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
         context.read<RemoteConfigService>(),
         ImageMetadataService(),
         PizzaValidationService(),
+        context.read<ErrorTrackerService>(),
       ),
       child: Builder(
         builder: (context) => BlocConsumer<PocImagesCubit, PocImagesState>(
