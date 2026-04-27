@@ -10,12 +10,10 @@ import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
-import 'package:pizzathon/ui/pages/poc_images/poc_images_page.dart';
-import 'package:pizzathon/ui/pages/poc_images/widgets/pizza_wizard_dialogs.dart';
-import 'package:pizzathon/ui/pages/poc_images/widgets/pizza_wizard_page.dart';
+import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dart';
+import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:pizzathon/ui/pages/profile/profile_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
-import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
@@ -33,54 +31,27 @@ class AppRouter {
         routes: [
           GoRoute(
             path: landingRoute,
-            pageBuilder: (context, state) =>
-                _fadeTransition(state, const LandingPage()),
+            pageBuilder: (context, state) => _fadeTransition(state, const LandingPage()),
           ),
           GoRoute(
             path: participantsRoute,
-            pageBuilder: (context, state) =>
-                _fadeTransition(state, const HomePage()),
+            pageBuilder: (context, state) => _fadeTransition(state, const HomePage()),
           ),
           GoRoute(
             path: pocImagesRoute,
             onExit: (context, state) async {
               final result = await showExitConfirmationDialog(context);
-              return result ?? false;
+              return result;
             },
-            pageBuilder: (context, state) =>
-                _fadeTransition(state, const PocImagesPage()),
-            routes: [
-              GoRoute(
-                path: 'wizard',
-                pageBuilder: (context, state) {
-                  final cubit = state.extra as PocImagesCubit;
-                  return _fadeTransition(
-                    state,
-                    BlocProvider.value(
-                      value: cubit,
-                      child: const PizzaWizardPage(),
-                    ),
-                  );
-                },
-                onExit: (context, state) async {
-                  final cubit = context.read<PocImagesCubit>();
-                  if (cubit.state.isFinished) return true;
-                  return await showExitConfirmationDialog(
-                    context
-                  );
-                },
-              ),
-            ],
+            pageBuilder: (context, state) => _fadeTransition(state, const PizzaWizardPage()),
           ),
           GoRoute(
             path: profileRoute,
-            pageBuilder: (context, state) =>
-                _fadeTransition(state, const ProfilePage()),
+            pageBuilder: (context, state) => _fadeTransition(state, const ProfilePage()),
           ),
           GoRoute(
             path: adminRoute,
-            pageBuilder: (context, state) =>
-                _fadeTransition(state, const AdminPage()),
+            pageBuilder: (context, state) => _fadeTransition(state, const AdminPage()),
           ),
         ],
       ),
@@ -108,10 +79,7 @@ class AppRouter {
 
   GoRouter get router => _router;
 
-  static CustomTransitionPage _fadeTransition(
-    GoRouterState state,
-    Widget child,
-  ) {
+  static CustomTransitionPage _fadeTransition(GoRouterState state, Widget child) {
     return CustomTransitionPage(
       key: state.pageKey,
       child: child,
@@ -128,8 +96,7 @@ class AppRouter {
 
   static bool isEnrolled(BuildContext context) {
     final enrollmentState = context.read<EnrollmentCubit>().state;
-    return enrollmentState is EnrollmentStatusChecked &&
-        enrollmentState.isEnrolled;
+    return enrollmentState is EnrollmentStatusChecked && enrollmentState.isEnrolled;
   }
 
   static bool isAdmin(BuildContext context) {

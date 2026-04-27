@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
@@ -54,42 +53,26 @@ class ProfilePage extends StatelessWidget {
                               ProfileHeader(user: user),
                               const SizedBox(height: 16),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 500,
-                                  ),
+                                  constraints: const BoxConstraints(maxWidth: 500),
                                   child: SizedBox(
                                     width: 320,
                                     height: 56,
                                     child: ElevatedButton(
-                                      onPressed: () =>
-                                          _showNewPizzaModal(context),
+                                      onPressed: () => context.push(AppRouter.pocImagesRoute),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                        foregroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
+                                        backgroundColor: Theme.of(context).colorScheme.primary,
+                                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            30,
-                                          ),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                       ),
                                       child: Text(
                                         'Nueva Pizza',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.onPrimary,
-                                            ),
+                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -111,40 +94,6 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  void _showNewPizzaModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'NUEVA PIZZA',
-                style: GoogleFonts.archivoBlack(fontSize: 24),
-              ),
-              const SizedBox(height: 24),
-              const Text('Aquí irá el formulario para subir una nueva pizza.'),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('CERRAR'),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
