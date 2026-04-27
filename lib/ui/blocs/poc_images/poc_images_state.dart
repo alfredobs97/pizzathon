@@ -1,6 +1,11 @@
 import 'dart:typed_data';
 
-enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo;
+enum PizzaPhotoStep {
+  bocaHorno,
+  vistaArriba,
+  corte,
+  abajo;
+
   String get title {
     switch (this) {
       case PizzaPhotoStep.bocaHorno:
@@ -42,7 +47,6 @@ enum PizzaPhotoStep { bocaHorno, vistaArriba, corte, abajo;
 }
 
 enum WizardStep { fotos, formulario, confirmacion }
-
 
 class PocImagesState {
   final WizardStep mainStep;
@@ -105,7 +109,9 @@ class PocImagesState {
     return PocImagesState(
       mainStep: mainStep ?? this.mainStep,
       currentStep: currentStep ?? this.currentStep,
-      pendingImage: clearPendingImage ? null : (pendingImage ?? this.pendingImage),
+      pendingImage: clearPendingImage
+          ? null
+          : (pendingImage ?? this.pendingImage),
       confirmedImages: confirmedImages ?? this.confirmedImages,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,

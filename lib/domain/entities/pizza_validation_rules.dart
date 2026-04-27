@@ -51,7 +51,6 @@ class DisallowScreenshotsRule extends PizzaValidationRule {
   }
 }
 
-
 /// Requires the image to have a known camera make and model in its EXIF data.
 class RequireCameraMetadataRule extends PizzaValidationRule {
   const RequireCameraMetadataRule();

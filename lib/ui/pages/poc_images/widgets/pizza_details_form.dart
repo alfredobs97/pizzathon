@@ -40,11 +40,17 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     _selectedStyle = state.pizzaStyle;
     _floursController = TextEditingController(text: state.flours);
     _prefermentController = TextEditingController(text: state.preferment);
-    _prefermentPercentageController = TextEditingController(text: state.prefermentPercentage);
+    _prefermentPercentageController = TextEditingController(
+      text: state.prefermentPercentage,
+    );
     _hydrationController = TextEditingController(text: state.hydration);
-    _doughBallWeightController = TextEditingController(text: state.doughBallWeight);
+    _doughBallWeightController = TextEditingController(
+      text: state.doughBallWeight,
+    );
     _ovenController = TextEditingController(text: state.oven);
-    _cookingTemperatureController = TextEditingController(text: state.cookingTemperature);
+    _cookingTemperatureController = TextEditingController(
+      text: state.cookingTemperature,
+    );
   }
 
   @override
@@ -62,15 +68,15 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
       context.read<PocImagesCubit>().savePizzaDetails(
-            pizzaStyle: _selectedStyle ?? '',
-            flours: _floursController.text,
-            preferment: _prefermentController.text,
-            prefermentPercentage: _prefermentPercentageController.text,
-            hydration: _hydrationController.text,
-            doughBallWeight: _doughBallWeightController.text,
-            oven: _ovenController.text,
-            cookingTemperature: _cookingTemperatureController.text,
-          );
+        pizzaStyle: _selectedStyle ?? '',
+        flours: _floursController.text,
+        preferment: _prefermentController.text,
+        prefermentPercentage: _prefermentPercentageController.text,
+        hydration: _hydrationController.text,
+        doughBallWeight: _doughBallWeightController.text,
+        oven: _ovenController.text,
+        cookingTemperature: _cookingTemperatureController.text,
+      );
     }
   }
 
@@ -236,7 +242,10 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
           color: secondaryColor.withValues(alpha: 0.4),
           fontWeight: FontWeight.w400,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: primaryColor, width: 2),
@@ -275,16 +284,18 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
     return DropdownButtonFormField<String>(
       initialValue: value,
       items: items
-          .map((e) => DropdownMenuItem(
-                value: e,
-                child: Text(
-                  e,
-                  style: TextStyle(
-                    color: secondaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+          .map(
+            (e) => DropdownMenuItem(
+              value: e,
+              child: Text(
+                e,
+                style: TextStyle(
+                  color: secondaryColor,
+                  fontWeight: FontWeight.w500,
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
       icon: Icon(Icons.keyboard_arrow_down, color: primaryColor),
@@ -303,7 +314,10 @@ class _PizzaDetailsFormState extends State<PizzaDetailsForm> {
           color: secondaryColor.withValues(alpha: 0.4),
           fontWeight: FontWeight.w400,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: primaryColor, width: 2),

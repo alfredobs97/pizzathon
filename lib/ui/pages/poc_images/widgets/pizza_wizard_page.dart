@@ -69,32 +69,39 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(
-                Icons.close,
-                color: theme.colorScheme.secondary,
-                size: 30,
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+            showExitConfirmationDialog(context, theme);
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color: theme.colorScheme.secondary,
+                  size: 30,
+                ),
+                onPressed: () => showExitConfirmationDialog(context, theme),
               ),
-              onPressed: () => showExitConfirmationDialog(context, theme),
+              title: _buildStepper(context, state, theme),
+              centerTitle: true,
             ),
-            title: _buildStepper(context, state, theme),
-            centerTitle: true,
-          ),
-          body: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              // PASO 1: FOTOS
-              const PizzaPhotoStepView(),
-              // PASO 2: FORMULARIO
-              _buildDetailsStep(context, state, theme),
-              // PASO 3: CONFIRMACIÓN
-              const PizzaConfirmationStep(),
-            ],
+            body: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                // PASO 1: FOTOS
+                const PizzaPhotoStepView(),
+                // PASO 2: FORMULARIO
+                _buildDetailsStep(context, state, theme),
+                // PASO 3: CONFIRMACIÓN
+                const PizzaConfirmationStep(),
+              ],
+            ),
           ),
         );
       },
@@ -154,12 +161,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
   ) {
     return const SingleChildScrollView(
       padding: EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          PizzaDetailsForm(),
-          SizedBox(height: 16),
-        ],
-      ),
+      child: Column(children: [PizzaDetailsForm(), SizedBox(height: 16)]),
     );
   }
 }

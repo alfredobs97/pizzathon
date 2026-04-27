@@ -126,12 +126,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       );
     } else {
       final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
-      emit(
-        state.copyWith(
-          currentStep: nextStep,
-          clearPendingImage: true,
-        ),
-      );
+      emit(state.copyWith(currentStep: nextStep, clearPendingImage: true));
     }
   }
 
