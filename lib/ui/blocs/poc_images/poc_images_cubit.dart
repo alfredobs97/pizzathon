@@ -68,20 +68,36 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
 
       if (compressedBytes != null) {
-        emit(state.copyWith(isLoading: false, pendingImage: await file.readAsBytes()));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            pendingImage: await file.readAsBytes(),
+          ),
+        );
       } else {
-        emit(state.copyWith(isLoading: false, errorMessage: "No se pudo comprimir la imagen."));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: "No se pudo comprimir la imagen.",
+          ),
+        );
       }
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(
         TrackedError(
           error: e,
           stackTrace: stackTrace,
-          extra: {'component': 'PocImagesCubit', 'action': 'pickAndCompressImages'},
+          extra: {
+            'component': 'PocImagesCubit',
+            'action': 'pickAndCompressImages',
+          },
         ),
       );
       emit(
-        state.copyWith(isLoading: false, errorMessage: "Ups! Error inesperado: ${e.toString()}"),
+        state.copyWith(
+          isLoading: false,
+          errorMessage: "Ups! Error inesperado: ${e.toString()}",
+        ),
       );
     }
   }
@@ -89,7 +105,9 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   void confirmImage() {
     if (state.pendingImage == null) return;
 
-    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(state.confirmedImages);
+    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(
+      state.confirmedImages,
+    );
     updatedConfirmed[state.currentStep] = state.pendingImage!;
 
     if (state.currentStep == PizzaPhotoStep.bottom) {
@@ -114,7 +132,12 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
   void nextPhotoStep() {
     if (state.currentStep == PizzaPhotoStep.bottom) {
-      emit(state.copyWith(mainStep: WizardStep.formulario, clearPendingImage: true));
+      emit(
+        state.copyWith(
+          mainStep: WizardStep.formulario,
+          clearPendingImage: true,
+        ),
+      );
     } else {
       final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
       emit(state.copyWith(currentStep: nextStep, clearPendingImage: true));
@@ -141,20 +164,40 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         doughBallWeight: doughBallWeight,
         oven: oven,
         cookingTemperature: cookingTemperature,
+        mainStep: WizardStep.ingredientes,
+      ),
+    );
+  }
+
+  void saveIngredients({
+    required String baseIngredient,
+    required String otherIngredients,
+  }) {
+    emit(
+      state.copyWith(
+        baseIngredient: baseIngredient,
+        otherIngredients: otherIngredients,
         mainStep: WizardStep.confirmacion,
       ),
     );
   }
 
   void redoChanges() {
-    emit(state.copyWith(mainStep: WizardStep.fotos, currentStep: PizzaPhotoStep.front));
+    emit(
+      state.copyWith(
+        mainStep: WizardStep.fotos,
+        currentStep: PizzaPhotoStep.front,
+      ),
+    );
   }
 
   void goBackMainStep() {
     if (state.mainStep == WizardStep.formulario) {
       emit(state.copyWith(mainStep: WizardStep.fotos));
-    } else if (state.mainStep == WizardStep.confirmacion) {
+    } else if (state.mainStep == WizardStep.ingredientes) {
       emit(state.copyWith(mainStep: WizardStep.formulario));
+    } else if (state.mainStep == WizardStep.confirmacion) {
+      emit(state.copyWith(mainStep: WizardStep.ingredientes));
     }
   }
 
@@ -167,6 +210,12 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     }
     if (state.pizzaStyle == null || state.flours == null) {
       emit(state.copyWith(errorMessage: "Faltan detalles de la pizza."));
+      return;
+    }
+    if (state.baseIngredient == null || state.otherIngredients == null) {
+      emit(
+        state.copyWith(errorMessage: "Faltan los ingredientes de la pizza."),
+      );
       return;
     }
 

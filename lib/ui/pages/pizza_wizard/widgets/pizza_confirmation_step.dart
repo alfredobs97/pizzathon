@@ -132,6 +132,17 @@ class PizzaConfirmationStep extends StatelessWidget {
                           "Temperatura cocción",
                           "${state.cookingTemperature}Cº",
                         ),
+                        const Divider(height: 32),
+                        _buildSummaryItem(
+                          theme,
+                          "Ingrediente base",
+                          state.baseIngredient,
+                        ),
+                        _buildSummaryItem(
+                          theme,
+                          "Resto de ingredientes",
+                          state.otherIngredients,
+                        ),
                       ],
                     ),
                   ),

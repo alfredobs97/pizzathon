@@ -46,7 +46,7 @@ enum PizzaPhotoStep {
   }
 }
 
-enum WizardStep { fotos, formulario, confirmacion }
+enum WizardStep { fotos, formulario, ingredientes, confirmacion }
 
 class PocImagesState {
   final WizardStep mainStep;
@@ -57,7 +57,6 @@ class PocImagesState {
   final String? errorMessage;
   final bool isFinished;
 
-  // --- NUEVOS CAMPOS PARA EL FORMULARIO ---
   final String? pizzaStyle;
   final String? flours;
   final String? preferment;
@@ -66,6 +65,8 @@ class PocImagesState {
   final String? doughBallWeight;
   final String? oven;
   final String? cookingTemperature;
+  final String? baseIngredient;
+  final String? otherIngredients;
   final bool isSubmitting;
 
   PocImagesState({
@@ -84,6 +85,8 @@ class PocImagesState {
     this.doughBallWeight,
     this.oven,
     this.cookingTemperature,
+    this.baseIngredient,
+    this.otherIngredients,
     this.isSubmitting = false,
   });
 
@@ -103,6 +106,8 @@ class PocImagesState {
     String? doughBallWeight,
     String? oven,
     String? cookingTemperature,
+    String? baseIngredient,
+    String? otherIngredients,
     bool? isSubmitting,
     bool clearPendingImage = false,
   }) {
@@ -124,6 +129,8 @@ class PocImagesState {
       doughBallWeight: doughBallWeight ?? this.doughBallWeight,
       oven: oven ?? this.oven,
       cookingTemperature: cookingTemperature ?? this.cookingTemperature,
+      baseIngredient: baseIngredient ?? this.baseIngredient,
+      otherIngredients: otherIngredients ?? this.otherIngredients,
       isSubmitting: isSubmitting ?? this.isSubmitting,
     );
   }

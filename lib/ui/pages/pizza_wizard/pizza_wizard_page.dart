@@ -11,6 +11,7 @@ import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_photo_step_view.dart';
 import 'widgets/pizza_confirmation_step.dart';
 import 'widgets/pizza_details_form.dart';
+import 'widgets/pizza_ingredients_step.dart';
 import 'widgets/pizza_wizard_dialogs.dart';
 
 class PizzaWizardPage extends StatefulWidget {
@@ -65,7 +66,9 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
                   content: const Text('¡Participación enviada con éxito!'),
                   backgroundColor: theme.colorScheme.primary,
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             } else {
@@ -89,7 +92,12 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
                 centerTitle: true,
                 leading: IconButton(
                   icon: Icon(Icons.close, color: theme.colorScheme.secondary),
-                  onPressed: () => context.pop(),
+                  onPressed: () async {
+                    final shouldExit = await showExitConfirmationDialog(context);
+                    if (shouldExit && context.mounted) {
+                      context.pop();
+                    }
+                  },
                 ),
               ),
               body: Center(
@@ -101,6 +109,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
                     children: [
                       const PizzaPhotoStepView(),
                       _buildDetailsStep(context, state, theme),
+                      const PizzaIngredientsStep(),
                       const PizzaConfirmationStep(),
                     ],
                   ),
@@ -113,11 +122,18 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
     );
   }
 
-  Widget _buildStepper(BuildContext context, PocImagesState state, ThemeData theme) {
+  Widget _buildStepper(
+    BuildContext context,
+    PocImagesState state,
+    ThemeData theme,
+  ) {
+    if (state.mainStep == WizardStep.confirmacion) {
+      return const SizedBox.shrink();
+    }
+
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(WizardStep.values.length, (index) {
-        final isCompleted = state.mainStep.index > index;
+      children: List.generate(3, (index) {
         final isCurrent = state.mainStep.index == index;
 
         return Container(
@@ -125,11 +141,9 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: isCompleted
-                ? theme.colorScheme.primary
-                : isCurrent
-                ? theme.colorScheme.primary.withValues(alpha: 0.15)
-                : theme.colorScheme.secondary.withValues(alpha: 0.08),
+            color: isCurrent
+                ? theme.colorScheme.onSecondaryContainer
+                : Colors.transparent,
             shape: BoxShape.circle,
             border: Border.all(
               color: isCurrent ? theme.colorScheme.primary : Colors.transparent,
@@ -140,12 +154,10 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
             child: Text(
               '${index + 1}',
               style: TextStyle(
-                color: isCompleted
-                    ? theme.colorScheme.onPrimary
-                    : isCurrent
+                color: isCurrent
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.secondary.withValues(alpha: 0.5),
-                fontWeight: FontWeight.bold,
+                    : theme.colorScheme.primary.withValues(alpha: 0.5),
+                fontWeight: FontWeight.w900,
                 fontSize: 16,
               ),
             ),
@@ -155,7 +167,11 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
     );
   }
 
-  Widget _buildDetailsStep(BuildContext context, PocImagesState state, ThemeData theme) {
+  Widget _buildDetailsStep(
+    BuildContext context,
+    PocImagesState state,
+    ThemeData theme,
+  ) {
     return const SingleChildScrollView(
       padding: EdgeInsets.all(24.0),
       child: Column(children: [PizzaDetailsForm(), SizedBox(height: 16)]),
