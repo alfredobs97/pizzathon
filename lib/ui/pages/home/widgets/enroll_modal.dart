@@ -16,13 +16,17 @@ class EnrollModal extends StatelessWidget {
         child: BlocConsumer<EnrollmentCubit, EnrollmentState>(
           listener: (context, state) {
             if (state is EnrollmentError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) => AnimatedSwitcher(
             duration: kThemeAnimationDuration,
             child: switch (state) {
-              EnrollmentLoading() => _LoadingView(key: const ValueKey('loading')),
+              EnrollmentLoading() => _LoadingView(
+                key: const ValueKey('loading'),
+              ),
               EnrollmentStatusChecked() when state.isEnrolled => _SuccessView(
                 key: const ValueKey('success'),
               ),
@@ -87,7 +91,9 @@ class _InitialView extends StatelessWidget {
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Theme.of(context).colorScheme.onSecondary,
                   minimumSize: const Size(double.infinity, 64),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                 ),
                 child: Text(
                   'Acepto y me inscribo',
@@ -176,7 +182,9 @@ class _SuccessView extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,
               minimumSize: const Size(double.infinity, 64),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
             ),
             child: Text(
               'OK',

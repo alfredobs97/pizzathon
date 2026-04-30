@@ -70,9 +70,10 @@ class _UserListWidgetState extends State<UserListWidget> {
                     children: [
                       Text(
                         'Los participantes',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                       ),
                     ],
                   ),
@@ -81,24 +82,28 @@ class _UserListWidgetState extends State<UserListWidget> {
 
               // User List
               SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  if (index >= state.users.length) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index >= state.users.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Center(
-                      child: SizedBox(
-                        width: 360,
-                        child: UserListItemWidget(user: state.users[index]),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 360,
+                          child: UserListItemWidget(user: state.users[index]),
+                        ),
                       ),
-                    ),
-                  );
-                }, childCount: state.users.length + (state.hasReachedMax ? 0 : 1)),
+                    );
+                  },
+                  childCount:
+                      state.users.length + (state.hasReachedMax ? 0 : 1),
+                ),
               ),
 
               const SliverToBoxAdapter(child: SizedBox(height: 40)),

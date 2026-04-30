@@ -79,11 +79,6 @@ class AppDrawer extends StatelessWidget {
                         text: 'Admin Console',
                         onTap: () => context.go(AppRouter.adminRoute),
                       ),
-                      _DrawerItem(
-                        icon: Icons.image,
-                        text: 'POC Imágenes',
-                        onTap: () => context.go(AppRouter.pocImagesRoute),
-                      ),
                     ],
                   ],
                 ),

@@ -26,13 +26,15 @@ sealed class PizzaImageMetadata {
         if (assertions == null) continue;
 
         for (final assertion in assertions) {
-          if (assertion is Map<String, dynamic> && assertion['label'] == 'c2pa.actions.v2') {
+          if (assertion is Map<String, dynamic> &&
+              assertion['label'] == 'c2pa.actions.v2') {
             final data = assertion['data'] as Map<String, dynamic>?;
             final actions = data?['actions'] as List<dynamic>?;
             if (actions != null) {
               for (final action in actions) {
                 if (action is Map<String, dynamic>) {
-                  final digitalSourceType = action['digitalSourceType'] as String?;
+                  final digitalSourceType =
+                      action['digitalSourceType'] as String?;
                   // trainedAlgorithmicMedia is the IPTC standard for AI-generated content
                   if (digitalSourceType != null &&
                       digitalSourceType.contains('trainedAlgorithmicMedia')) {

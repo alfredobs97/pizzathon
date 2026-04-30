@@ -26,7 +26,9 @@ class PizzaValidationCubit extends Cubit<PizzaValidationState> {
 
   Future<void> pickAndValidateImage() async {
     try {
-      final XFile? imagePath = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? imagePath = await _picker.pickImage(
+        source: ImageSource.gallery,
+      );
 
       if (imagePath == null) return;
 
@@ -46,7 +48,12 @@ class PizzaValidationCubit extends Cubit<PizzaValidationState> {
 
       switch (validationResult) {
         case ValidationSuccess():
-          emit(state.copyWith(status: PizzaValidationStatus.success, metadata: metadata));
+          emit(
+            state.copyWith(
+              status: PizzaValidationStatus.success,
+              metadata: metadata,
+            ),
+          );
         case ValidationRejected(:final reason):
           emit(
             state.copyWith(

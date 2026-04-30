@@ -12,9 +12,14 @@ class SponsorSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: const Color(0xFFF1DAC1),
-      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (210 / 1440)),
+      constraints: BoxConstraints(
+        minHeight: isMobile ? 0 : screenWidth * (210 / 1440),
+      ),
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: isMobile ? 40 : 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : 20,
+        horizontal: 20,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -52,8 +57,13 @@ class SponsorSection extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
               onPressed: () => _launchEmail(),
               child: Text(

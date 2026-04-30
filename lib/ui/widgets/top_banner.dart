@@ -17,7 +17,9 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
+      constraints: BoxConstraints(
+        minHeight: isMobile ? 0 : screenWidth * (42 / 1440),
+      ),
       color: Theme.of(context).colorScheme.secondary,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Stack(
@@ -27,7 +29,10 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
           /*  Positioned(
             right: 0,
             child: IconButton(
-              icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.onPrimary),
+              icon: Icon(
+                Icons.menu,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               onPressed: () {
                 AppShell.openDrawer();
               },
@@ -51,9 +56,9 @@ class TopBanner extends StatelessWidget implements PreferredSizeWidget {
       child: Text(
         'Buscamos 100 MEJORES talentos en Pizza',
         textAlign: TextAlign.center,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
     );
   }

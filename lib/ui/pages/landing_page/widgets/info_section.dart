@@ -73,7 +73,9 @@ class InfoSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: Theme.of(context).colorScheme.primary,
-      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (326 / 1440)),
+      constraints: BoxConstraints(
+        minHeight: isMobile ? 0 : screenWidth * (326 / 1440),
+      ),
       padding: const EdgeInsets.symmetric(vertical: 35, horizontal: 20),
       child: Center(
         child: isMobile

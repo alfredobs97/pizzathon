@@ -16,7 +16,9 @@ class PizzaCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
+        ],
         image: DecorationImage(
           image: CachedNetworkImageProvider(pizza.imageUrl),
           fit: BoxFit.cover,
@@ -49,7 +51,11 @@ class PizzaCard extends StatelessWidget {
                   height: 1.0,
                   color: Colors.white,
                   shadows: const [
-                    Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2)),
+                    Shadow(
+                      color: Colors.black45,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
                   ],
                 ),
               ),
@@ -62,7 +68,11 @@ class PizzaCard extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   color: Colors.white.withValues(alpha: 0.9),
                   shadows: const [
-                    Shadow(color: Colors.black45, blurRadius: 2, offset: Offset(0, 1)),
+                    Shadow(
+                      color: Colors.black45,
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
                   ],
                 ),
               ),

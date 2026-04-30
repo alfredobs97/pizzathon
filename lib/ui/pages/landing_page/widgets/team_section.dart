@@ -64,7 +64,11 @@ class _ProfileItem extends StatelessWidget {
   final String role;
   final String imageUrl;
 
-  const _ProfileItem({required this.name, required this.role, required this.imageUrl});
+  const _ProfileItem({
+    required this.name,
+    required this.role,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
