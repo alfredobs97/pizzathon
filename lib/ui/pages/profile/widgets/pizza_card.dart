@@ -20,7 +20,7 @@ class PizzaCard extends StatelessWidget {
           BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
         ],
         image: DecorationImage(
-          image: CachedNetworkImageProvider(pizza.imageUrl),
+          image: CachedNetworkImageProvider(pizza.imageUrls.firstOrNull ?? ''),
           fit: BoxFit.cover,
         ),
       ),

@@ -78,7 +78,7 @@ class PizzaConfirmationStep extends StatelessWidget {
                   title: "INGREDIENTES",
                   details: [
                     _buildDetailRow(theme, "BASE", state.baseIngredient),
-                    _buildDetailRow(theme, "RESTO", state.otherIngredients, isLongText: true),
+                    _buildDetailRow(theme, "RESTO", state.otherIngredients),
                   ],
                 ),
                 const SizedBox(height: 40),

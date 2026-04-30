@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/data/services/auth_service.dart';
+import 'package:pizzathon/data/services/pizza_storage_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'dart:typed_data';
@@ -18,6 +20,8 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageMetadataService _metadataService;
   final PizzaValidationService _validationService;
   final ErrorTrackerService _errorTrackerService;
+  final AuthService _authService;
+  final PizzaStorageService _pizzaStorageService;
 
   PocImagesCubit(
     this._imageProcessingService,
@@ -25,6 +29,8 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     this._metadataService,
     this._validationService,
     this._errorTrackerService,
+    this._authService,
+    this._pizzaStorageService,
   ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
@@ -56,6 +62,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       }
 
       final originalBytes = metadata.bytes!;
+      final originalSize = originalBytes.length;
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
       debugPrint("valor ANTES de la compresion: ${settings.quality}");
@@ -68,10 +75,20 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
 
       if (compressedBytes != null) {
+        final compressedSize = compressedBytes.length;
+        
+        final updatedOriginalSizes = Map<PizzaPhotoStep, int>.from(state.originalSizes);
+        final updatedCompressedSizes = Map<PizzaPhotoStep, int>.from(state.compressedSizes);
+        
+        updatedOriginalSizes[state.currentStep] = originalSize;
+        updatedCompressedSizes[state.currentStep] = compressedSize;
+
         emit(
           state.copyWith(
             isLoading: false,
-            pendingImage: await file.readAsBytes(),
+            pendingImage: compressedBytes,
+            originalSizes: updatedOriginalSizes,
+            compressedSizes: updatedCompressedSizes,
           ),
         );
       } else {
@@ -221,10 +238,47 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
     try {
       emit(state.copyWith(isSubmitting: true, errorMessage: null));
-      await Future.delayed(const Duration(seconds: 2));
 
-      emit(state.copyWith(isSubmitting: false, isFinished: true));
-    } catch (e) {
+      final userId = _authService.currentUser?.uid;
+      if (userId == null) {
+        throw Exception("Debes estar identificado para enviar tu pizza.");
+      }
+
+      final pizzaData = {
+        'pizzaStyle': state.pizzaStyle,
+        'flours': state.flours,
+        'preferment': state.preferment,
+        'prefermentPercentage': state.prefermentPercentage,
+        'hydration': state.hydration,
+        'doughBallWeight': state.doughBallWeight,
+        'oven': state.oven,
+        'cookingTemperature': state.cookingTemperature,
+        'baseIngredient': state.baseIngredient,
+        'otherIngredients': state.otherIngredients,
+      };
+
+      final imageUrls = await _pizzaStorageService.uploadPizzaParticipation(
+        userId: userId,
+        images: state.confirmedImages,
+        pizzaData: pizzaData,
+      );
+
+      emit(state.copyWith(
+        isSubmitting: false,
+        isFinished: true,
+        imageUrls: imageUrls,
+      ));
+    } catch (e, stackTrace) {
+      _errorTrackerService.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {
+            'component': 'PocImagesCubit',
+            'action': 'submitPizza',
+          },
+        ),
+      );
       emit(
         state.copyWith(
           isSubmitting: false,

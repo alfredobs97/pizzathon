@@ -53,6 +53,9 @@ class PocImagesState {
   final PizzaPhotoStep currentStep;
   final Uint8List? pendingImage;
   final Map<PizzaPhotoStep, Uint8List> confirmedImages;
+  final Map<PizzaPhotoStep, int> originalSizes;
+  final Map<PizzaPhotoStep, int> compressedSizes;
+  final Map<PizzaPhotoStep, String> imageUrls;
   final bool isLoading;
   final String? errorMessage;
   final bool isFinished;
@@ -74,6 +77,9 @@ class PocImagesState {
     this.currentStep = PizzaPhotoStep.front,
     this.pendingImage,
     this.confirmedImages = const {},
+    this.originalSizes = const {},
+    this.compressedSizes = const {},
+    this.imageUrls = const {},
     this.isLoading = false,
     this.errorMessage,
     this.isFinished = false,
@@ -95,6 +101,9 @@ class PocImagesState {
     PizzaPhotoStep? currentStep,
     Uint8List? pendingImage,
     Map<PizzaPhotoStep, Uint8List>? confirmedImages,
+    Map<PizzaPhotoStep, int>? originalSizes,
+    Map<PizzaPhotoStep, int>? compressedSizes,
+    Map<PizzaPhotoStep, String>? imageUrls,
     bool? isLoading,
     String? errorMessage,
     bool? isFinished,
@@ -114,10 +123,11 @@ class PocImagesState {
     return PocImagesState(
       mainStep: mainStep ?? this.mainStep,
       currentStep: currentStep ?? this.currentStep,
-      pendingImage: clearPendingImage
-          ? null
-          : (pendingImage ?? this.pendingImage),
+      pendingImage: clearPendingImage ? null : (pendingImage ?? this.pendingImage),
       confirmedImages: confirmedImages ?? this.confirmedImages,
+      originalSizes: originalSizes ?? this.originalSizes,
+      compressedSizes: compressedSizes ?? this.compressedSizes,
+      imageUrls: imageUrls ?? this.imageUrls,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
       isFinished: isFinished ?? this.isFinished,

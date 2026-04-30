@@ -6,10 +6,12 @@ import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'package:pizzathon/ui/blocs/enrollment_state.dart';
+import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
+import 'package:pizzathon/ui/pages/pizza_wizard/pizza_success_page.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -22,6 +24,7 @@ class AppRouter {
   static const String adminRoute = '/capo';
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
+  static const String pizzaSuccessRoute = '/pizza-enviada';
 
   final _router = GoRouter(
     initialLocation: landingRoute,
@@ -42,10 +45,17 @@ class AppRouter {
           GoRoute(
             path: newPizzaRoute,
             onExit: (context, state) async {
+              final isFinished = context.read<PocImagesCubit>().state.isFinished;
+              if (isFinished) return true;
+
               final result = await showExitConfirmationDialog(context);
               return result;
             },
             pageBuilder: (context, state) => _fadeTransition(state, const PizzaWizardPage()),
+          ),
+          GoRoute(
+            path: pizzaSuccessRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const PizzaSuccessPage()),
           ),
           GoRoute(
             path: profileRoute,
@@ -64,7 +74,7 @@ class AppRouter {
       ),
     ],
     /* redirect: (context, state) {
-      if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) &&
+      if ((state.matchedLocation == adminRoute || state.matchedLocation == profileRoute) &&
           !isAdmin(context)) {
         return landingRoute;
       }
