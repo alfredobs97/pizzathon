@@ -106,7 +106,7 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 8),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: 16,
+            spacing: 8,
             children: [
               Link(
                 uri: Uri.parse('https://pizzathon.es/normas.html'),
@@ -115,6 +115,16 @@ class Footer extends StatelessWidget {
                   return TextButton(
                     onPressed: followLink,
                     child: Text('Normas', style: Theme.of(context).textTheme.bodySmall),
+                  );
+                },
+              ),
+              Link(
+                uri: Uri.parse('https://pizzathon.es/puntuacion.html'),
+                target: LinkTarget.blank,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return TextButton(
+                    onPressed: followLink,
+                    child: Text('Puntuación', style: Theme.of(context).textTheme.bodySmall),
                   );
                 },
               ),
