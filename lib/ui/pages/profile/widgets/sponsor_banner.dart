@@ -7,9 +7,7 @@ class SponsorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // URL to be provided by user. Using a placeholder for now.
-    const sponsorImageUrl =
-        'https://i.ibb.co/3ykCWhmJ/alfa-forni-logo.png'; // Placeholder or actual URL if known
+    const sponsorImageUrl = 'https://i.ibb.co/6RfjhFx9/alfa-forni-logo-negro-1.png';
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -28,12 +26,10 @@ class SponsorBanner extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Text(
-          'Pone la llama a Pizzathon',
-          style: GoogleFonts.archivo(
-            fontSize: 16,
-            color: const Color(0xFF4A1C17),
-            fontWeight: FontWeight.w500,
-          ),
+          'Patrocinador principal',
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
         ),
       ],
     );

@@ -26,7 +26,7 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
         alignment: Alignment.center,
         children: [
           child,
-          Positioned(
+          /*  Positioned(
             right: 0,
             child: IconButton(
               icon: Icon(
@@ -37,7 +37,7 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
                 AppShell.openDrawer();
               },
             ),
-          ),
+          ), */
         ],
       ),
     );
