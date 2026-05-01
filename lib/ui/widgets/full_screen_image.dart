@@ -5,11 +5,7 @@ class FullScreenImage extends StatelessWidget {
   final Uint8List imageBytes;
   final String? title;
 
-  const FullScreenImage({
-    super.key, 
-    required this.imageBytes, 
-    this.title,
-  });
+  const FullScreenImage({super.key, required this.imageBytes, this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +19,21 @@ class FullScreenImage extends StatelessWidget {
             child: InteractiveViewer(
               minScale: 0.5,
               maxScale: 4.0,
-              child: Image.memory(
-                imageBytes,
-                fit: BoxFit.contain,
-              ),
+              child: Image.memory(imageBytes, fit: BoxFit.contain),
             ),
           ),
-          
+
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.only(top: 40, bottom: 10, left: 10, right: 10),
+              padding: const EdgeInsets.only(
+                top: 40,
+                bottom: 10,
+                left: 10,
+                right: 10,
+              ),
               color: Colors.black45,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,12 +43,18 @@ class FullScreenImage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 16),
                       child: Text(
                         title!,
-                        style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],

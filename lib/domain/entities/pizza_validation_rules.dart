@@ -26,7 +26,7 @@ class RequireExifDataRule extends PizzaValidationRule {
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (!metadata.hasExif) {
       return ValidationRejected(
-        'La imagen no contiene metadata EXIF. Es posible que sea un screenshot o una imagen descargada.',
+        'La imagen no es una foto tomada con tu telefono\n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();
@@ -44,31 +44,7 @@ class DisallowScreenshotsRule extends PizzaValidationRule {
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
     if (metadata is DetailedImageMetadata && metadata.isLikelyScreenshot) {
       return const ValidationRejected(
-        'La imagen parece ser una captura de pantalla según el software de creación.',
-      );
-    }
-    return const ValidationSuccess();
-  }
-}
-
-/// Rejects images older than [maxAge].
-class MaxAgeRule extends PizzaValidationRule {
-  final Duration maxAge;
-
-  const MaxAgeRule({this.maxAge = const Duration(days: 10)});
-
-  @override
-  String get name => 'Antigüedad de la foto';
-
-  @override
-  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
-    if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
-      return ValidationRejected('No se pudo determinar la fecha de creación de la imagen.');
-    }
-    final age = DateTime.now().difference(metadata.creationDate!);
-    if (age > maxAge) {
-      return ValidationRejected(
-        'La foto es demasiado antigua. Debe haber sido tomada en los últimos ${maxAge.inDays} días.',
+        'La imagen escogida podria ser una captura de pantalla, no es una foto \n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();
@@ -84,9 +60,10 @@ class RequireCameraMetadataRule extends PizzaValidationRule {
 
   @override
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
-    if (metadata is! DetailedImageMetadata || (metadata.make == null && metadata.model == null)) {
+    if (metadata is! DetailedImageMetadata ||
+        (metadata.make == null && metadata.model == null)) {
       return ValidationRejected(
-        'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil.',
+        'No se detectó información de cámara. La imagen podría no haber sido tomada con un dispositivo móvil\n INCUMPLE LAS NORMAS',
       );
     }
     return const ValidationSuccess();
@@ -135,6 +112,35 @@ class DisallowC2paAIGeneratedRule extends PizzaValidationRule {
 
     // If it has C2PA but is not AI, maybe we should be unsure?
     // For now, if it's not AI, we allow it to continue to other rules.
+    return const ValidationSuccess();
+  }
+}
+
+class ContestDateRangeRule extends PizzaValidationRule {
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const ContestDateRangeRule({required this.startDate, required this.endDate});
+
+  @override
+  String get name => 'Fechas del concurso';
+
+  @override
+  Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
+    if (metadata is! DetailedImageMetadata || metadata.creationDate == null) {
+      return const ValidationRejected(
+        'No se pudo determinar la fecha exacta de creación de la imagen.',
+      );
+    }
+
+    final creationDate = metadata.creationDate!;
+
+    if (creationDate.isBefore(startDate) || creationDate.isAfter(endDate)) {
+      return ValidationRejected(
+        'La foto se tomó fuera de las fechas del concurso (del ${startDate.day}/${startDate.month} al ${endDate.day}/${endDate.month}).',
+      );
+    }
+
     return const ValidationSuccess();
   }
 }

@@ -1,96 +1,240 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:typed_data';
-import '../../../data/services/image_processing_service.dart';
-import '../../../data/services/remote_config_service.dart';
-import '../../../domain/models/compression_settings.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
+import 'dart:typed_data';
+
+import '../../../data/services/image_processing_service.dart';
+import '../../../data/services/remote_config_service.dart';
+import '../../../data/services/image_metadata_service.dart';
+import '../../../data/services/pizza_validation_service.dart';
+import '../../../domain/models/compression_settings.dart';
+import '../../../domain/entities/validation_result.dart';
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageProcessingService _imageProcessingService;
   final RemoteConfigService _remoteConfigService;
-  final ErrorTrackerService? _errorTrackerService;
-
-  //static const int limitePizzas = 5;
+  final ImageMetadataService _metadataService;
+  final PizzaValidationService _validationService;
+  final ErrorTrackerService _errorTrackerService;
 
   PocImagesCubit(
     this._imageProcessingService,
-    this._remoteConfigService, [
+    this._remoteConfigService,
+    this._metadataService,
+    this._validationService,
     this._errorTrackerService,
-  ]) : super(PocImagesInitial());
+  ) : super(PocImagesState());
 
-  Future<void> pickAndCompressImages() async {
+  Future<void> pickSingleImage() async {
     try {
-      final currentState = state;
-      List<({Uint8List original, Uint8List compressed})> currentList = [];
+      emit(state.copyWith(isLoading: true, errorMessage: null));
 
-      if (currentState is PocImagesSuccess) {
-        currentList = List.of(currentState.processedImages);
-      }
+      final file = await _imageProcessingService.pickSingleImage();
 
-      emit(PocImagesLoading());
-      final newOriginals = await _imageProcessingService.pickMultipleImages();
-
-      if (newOriginals.isEmpty) {
-        if (currentList.isNotEmpty) {
-          emit(PocImagesSuccess(processedImages: currentList));
-        } else {
-          emit(PocImagesInitial());
-        }
+      if (file == null) {
+        emit(state.copyWith(isLoading: false));
         return;
       }
 
-      final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
+      final metadata = await _metadataService.extractMetadata(file);
 
-      final settings = CompressionSettings(quality: fetchedQuality);
+      final validationResult = await _validationService.validate(metadata);
 
-      List<({Uint8List original, Uint8List compressed})> finalList = List.of(currentList);
+      if (validationResult is! ValidationSuccess) {
+        String errorMsg = "Error al validar la imagen.";
 
-      for (var originalBytes in newOriginals) {
-        final compressedBytes = await _imageProcessingService.compressImage(
-          originalBytes,
-          settings: settings,
-        );
-
-        if (compressedBytes != null) {
-          finalList.add((original: originalBytes, compressed: compressedBytes));
+        if (validationResult is ValidationRejected) {
+          errorMsg = validationResult.reason;
+        } else if (validationResult is ValidationDisqualified) {
+          errorMsg = validationResult.reason;
         }
+
+        emit(state.copyWith(isLoading: false, errorMessage: errorMsg));
+        return;
       }
 
-      if (finalList.isNotEmpty) {
-        emit(PocImagesSuccess(processedImages: finalList));
+      final originalBytes = metadata.bytes!;
+      final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
+      final settings = CompressionSettings(quality: fetchedQuality);
+      debugPrint("valor ANTES de la compresion: ${settings.quality}");
+
+      final compressedBytes = await _imageProcessingService.compressImage(
+        originalBytes,
+        settings: settings,
+      );
+
+      debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
+
+      if (compressedBytes != null) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            pendingImage: await file.readAsBytes(),
+          ),
+        );
       } else {
-        if (currentList.isNotEmpty) {
-          emit(PocImagesSuccess(processedImages: currentList));
-        } else {
-          emit(PocImagesError("No se pudo comprimir ninguna imagen."));
-        }
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: "No se pudo comprimir la imagen.",
+          ),
+        );
       }
     } catch (e, stackTrace) {
-      _errorTrackerService?.trackError(
+      _errorTrackerService.trackError(
         TrackedError(
           error: e,
           stackTrace: stackTrace,
-          extra: {'component': 'PocImagesCubit', 'action': 'pickAndCompressImages'},
+          extra: {
+            'component': 'PocImagesCubit',
+            'action': 'pickAndCompressImages',
+          },
         ),
       );
-      emit(PocImagesError("Ups! Error: ${e.toString()}"));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: "Ups! Error inesperado: ${e.toString()}",
+        ),
+      );
     }
   }
 
-  void removeImage(int index) {
-    if (state is PocImagesSuccess) {
-      final currentState = state as PocImagesSuccess;
-      final updatedList = List.of(currentState.processedImages);
+  void confirmImage() {
+    if (state.pendingImage == null) return;
 
-      updatedList.removeAt(index);
+    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(
+      state.confirmedImages,
+    );
+    updatedConfirmed[state.currentStep] = state.pendingImage!;
 
-      if (updatedList.isEmpty) {
-        emit(PocImagesInitial());
-      } else {
-        emit(PocImagesSuccess(processedImages: updatedList));
-      }
+    if (state.currentStep == PizzaPhotoStep.bottom) {
+      emit(
+        state.copyWith(
+          mainStep: WizardStep.formulario,
+          confirmedImages: updatedConfirmed,
+          clearPendingImage: true,
+        ),
+      );
+    } else {
+      final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
+      emit(
+        state.copyWith(
+          currentStep: nextStep,
+          confirmedImages: updatedConfirmed,
+          clearPendingImage: true,
+        ),
+      );
     }
+  }
+
+  void nextPhotoStep() {
+    if (state.currentStep == PizzaPhotoStep.bottom) {
+      emit(
+        state.copyWith(
+          mainStep: WizardStep.formulario,
+          clearPendingImage: true,
+        ),
+      );
+    } else {
+      final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
+      emit(state.copyWith(currentStep: nextStep, clearPendingImage: true));
+    }
+  }
+
+  void savePizzaDetails({
+    required String pizzaStyle,
+    required String flours,
+    required String preferment,
+    required String prefermentPercentage,
+    required String hydration,
+    required String doughBallWeight,
+    required String oven,
+    required String cookingTemperature,
+  }) {
+    emit(
+      state.copyWith(
+        pizzaStyle: pizzaStyle,
+        flours: flours,
+        preferment: preferment,
+        prefermentPercentage: prefermentPercentage,
+        hydration: hydration,
+        doughBallWeight: doughBallWeight,
+        oven: oven,
+        cookingTemperature: cookingTemperature,
+        mainStep: WizardStep.ingredientes,
+      ),
+    );
+  }
+
+  void saveIngredients({
+    required String baseIngredient,
+    required String otherIngredients,
+  }) {
+    emit(
+      state.copyWith(
+        baseIngredient: baseIngredient,
+        otherIngredients: otherIngredients,
+        mainStep: WizardStep.confirmacion,
+      ),
+    );
+  }
+
+  void redoChanges() {
+    emit(
+      state.copyWith(
+        mainStep: WizardStep.fotos,
+        currentStep: PizzaPhotoStep.front,
+      ),
+    );
+  }
+
+  void goBackMainStep() {
+    if (state.mainStep == WizardStep.formulario) {
+      emit(state.copyWith(mainStep: WizardStep.fotos));
+    } else if (state.mainStep == WizardStep.ingredientes) {
+      emit(state.copyWith(mainStep: WizardStep.formulario));
+    } else if (state.mainStep == WizardStep.confirmacion) {
+      emit(state.copyWith(mainStep: WizardStep.ingredientes));
+    }
+  }
+
+  Future<void> submitPizza() async {
+    if (state.isSubmitting) return;
+
+    if (state.confirmedImages.length < 4) {
+      emit(state.copyWith(errorMessage: "Faltan fotos por confirmar."));
+      return;
+    }
+    if (state.pizzaStyle == null || state.flours == null) {
+      emit(state.copyWith(errorMessage: "Faltan detalles de la pizza."));
+      return;
+    }
+    if (state.baseIngredient == null || state.otherIngredients == null) {
+      emit(
+        state.copyWith(errorMessage: "Faltan los ingredientes de la pizza."),
+      );
+      return;
+    }
+
+    try {
+      emit(state.copyWith(isSubmitting: true, errorMessage: null));
+      await Future.delayed(const Duration(seconds: 2));
+
+      emit(state.copyWith(isSubmitting: false, isFinished: true));
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          errorMessage: "Error al enviar la participación al servidor.",
+        ),
+      );
+    }
+  }
+
+  void resetWizard() {
+    emit(PocImagesState());
   }
 }

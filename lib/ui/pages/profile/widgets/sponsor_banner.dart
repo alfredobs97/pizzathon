@@ -12,11 +12,17 @@ class SponsorBanner extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CachedNetworkImage(
-          imageUrl: sponsorImageUrl,
-          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => const Icon(Icons.business),
-          height: 80,
+        Container(
+          width: 80,
+          height: 40,
+          decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+          child: CachedNetworkImage(
+            imageUrl: sponsorImageUrl,
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => const Icon(Icons.business),
+            fit: BoxFit.contain,
+          ),
         ),
         const SizedBox(width: 12),
         Text(

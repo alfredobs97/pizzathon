@@ -4,10 +4,16 @@ import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
 
 @JS('readC2paFromBytes')
-external JSPromise<JSString?> _readC2paFromBytes(JSUint8Array bytes, [JSString? mimeType]);
+external JSPromise<JSString?> _readC2paFromBytes(
+  JSUint8Array bytes, [
+  JSString? mimeType,
+]);
 
 /// Web implementation of C2PA analysis using package:web and dart:js_interop.
-Future<Map<String, dynamic>?> analyzeC2paImpl(Uint8List bytes, [String? mimeType]) async {
+Future<Map<String, dynamic>?> analyzeC2paImpl(
+  Uint8List bytes, [
+  String? mimeType,
+]) async {
   try {
     // 1. Convert Dart Uint8List to JS Uint8Array
     final jsBytes = bytes.toJS;

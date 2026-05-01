@@ -13,7 +13,9 @@ class HeroSection extends StatelessWidget {
     final isMobile = screenWidth < 800;
 
     double calculatedHeight = screenWidth * (522 / 1440);
-    final double heroHeight = isMobile ? 400 : calculatedHeight.clamp(0.0, 522.0);
+    final double heroHeight = isMobile
+        ? 400
+        : calculatedHeight.clamp(0.0, 522.0);
 
     return SizedBox(
       width: double.infinity,
@@ -31,7 +33,9 @@ class HeroSection extends StatelessWidget {
                   Container(color: Theme.of(context).colorScheme.primary),
               errorWidget: (context, url, error) => Container(
                 color: Colors.black26,
-                child: const Center(child: Icon(Icons.error, color: Colors.white, size: 40)),
+                child: const Center(
+                  child: Icon(Icons.error, color: Colors.white, size: 40),
+                ),
               ),
             ),
           ),
@@ -78,18 +82,28 @@ class HeroSection extends StatelessWidget {
                   width: 240,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.8),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
                     onPressed: () {
                       context.read<AuthCubit>().login();
                     },
                     child: const Text(
                       'Entrar',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

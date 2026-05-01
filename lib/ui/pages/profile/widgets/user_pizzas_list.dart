@@ -64,7 +64,10 @@ class _UserPizzasListState extends State<UserPizzasList> {
           builder: (context, state) {
             if (state is UserPizzasLoading) {
               return const Center(
-                child: Padding(padding: EdgeInsets.all(32.0), child: CircularProgressIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: CircularProgressIndicator(),
+                ),
               );
             }
 
@@ -72,7 +75,10 @@ class _UserPizzasListState extends State<UserPizzasList> {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
-                  child: Text('Error: ${state.message}', style: const TextStyle(color: Colors.red)),
+                  child: Text(
+                    'Error: ${state.message}',
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
               );
             }
@@ -92,9 +98,10 @@ class _UserPizzasListState extends State<UserPizzasList> {
                         const SizedBox(height: 16),
                         Text(
                           'No has subido ninguna pizza aún.',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
                         ),
                       ],
                     ),
@@ -107,8 +114,10 @@ class _UserPizzasListState extends State<UserPizzasList> {
                 child: ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.pizzas.length + (state.hasReachedMax ? 0 : 1),
-                  separatorBuilder: (context, index) => const SizedBox(height: 24),
+                  itemCount:
+                      state.pizzas.length + (state.hasReachedMax ? 0 : 1),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 24),
                   itemBuilder: (context, index) {
                     if (index >= state.pizzas.length) {
                       return const Center(
@@ -119,7 +128,10 @@ class _UserPizzasListState extends State<UserPizzasList> {
                       );
                     }
                     final pizza = state.pizzas[index];
-                    return AspectRatio(aspectRatio: 1.0, child: PizzaCard(pizza: pizza));
+                    return AspectRatio(
+                      aspectRatio: 1.0,
+                      child: PizzaCard(pizza: pizza),
+                    );
                   },
                 ),
               );

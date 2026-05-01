@@ -24,6 +24,10 @@
           "destination": "/normas.html"
         },
         {
+          "source": "/puntuacion",
+          "destination": "/puntuacion.html"
+        },
+        {
           "source": "**",
           "destination": "/index.html"
         }
@@ -41,6 +45,14 @@
         {
           "source": "/privacy",
           "destination": "/privacy.html"
+        },
+        {
+          "source": "/normas",
+          "destination": "/normas.html"
+        },
+        {
+          "source": "/puntuacion",
+          "destination": "/puntuacion.html"
         },
         {
           "source": "**",

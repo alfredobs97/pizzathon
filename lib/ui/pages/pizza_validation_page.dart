@@ -60,7 +60,8 @@ class PizzaValidationView extends StatelessWidget {
 
   Widget _buildInitialState(BuildContext context) {
     return ElevatedButton.icon(
-      onPressed: () => context.read<PizzaValidationCubit>().pickAndValidateImage(),
+      onPressed: () =>
+          context.read<PizzaValidationCubit>().pickAndValidateImage(),
       icon: const Icon(Icons.add),
       label: const Text('Añadir pizza'),
       style: ElevatedButton.styleFrom(
@@ -90,7 +91,10 @@ class PizzaValidationView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        const Text('Analizando pizza', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text(
+          'Analizando pizza',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
       ],
     );
   }
@@ -98,7 +102,8 @@ class PizzaValidationView extends StatelessWidget {
   Widget _buildSuccessState(BuildContext context, PizzaValidationState state) {
     final dateFormat = DateFormat("dd MMM yyyy / HH:mm 'h'");
     final metadata = state.metadata;
-    final dateText = metadata is DetailedImageMetadata && metadata.creationDate != null
+    final dateText =
+        metadata is DetailedImageMetadata && metadata.creationDate != null
         ? dateFormat.format(metadata.creationDate!)
         : 'Desconocida';
 
@@ -109,8 +114,18 @@ class PizzaValidationView extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: kIsWeb
-              ? Image.network(state.imageFile!.path, width: 250, height: 250, fit: BoxFit.cover)
-              : Image.file(File(state.imageFile!.path), width: 250, height: 250, fit: BoxFit.cover),
+              ? Image.network(
+                  state.imageFile!.path,
+                  width: 250,
+                  height: 250,
+                  fit: BoxFit.cover,
+                )
+              : Image.file(
+                  File(state.imageFile!.path),
+                  width: 250,
+                  height: 250,
+                  fit: BoxFit.cover,
+                ),
         ),
         const SizedBox(height: 16),
         const Text(
@@ -130,7 +145,9 @@ class PizzaValidationView extends StatelessWidget {
               backgroundColor: const Color(0xFF6C6381),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Aceptar'),
           ),
@@ -149,7 +166,10 @@ class PizzaValidationView extends StatelessWidget {
     );
   }
 
-  Widget _buildDisqualifiedState(BuildContext context, PizzaValidationState state) {
+  Widget _buildDisqualifiedState(
+    BuildContext context,
+    PizzaValidationState state,
+  ) {
     return _buildResultState(
       context,
       state,
@@ -180,7 +200,10 @@ class PizzaValidationView extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(color.withValues(alpha: 0.6), BlendMode.srcOver),
+                  colorFilter: ColorFilter.mode(
+                    color.withValues(alpha: 0.6),
+                    BlendMode.srcOver,
+                  ),
                   child: kIsWeb
                       ? Image.network(
                           state.imageFile!.path,
@@ -198,13 +221,19 @@ class PizzaValidationView extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(icon, color: color, size: 32),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           if (state.status == PizzaValidationStatus.rejected) ...[
             const SizedBox(height: 4),
             Text(
@@ -228,8 +257,13 @@ class PizzaValidationView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6C6381),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 48,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('Aceptar'),
             ),

@@ -14,7 +14,6 @@ class PizzaValidator {
           const [
             DisallowC2paAIGeneratedRule(),
             DisallowAIGeneratedRule(),
-            MaxAgeRule(),
             DisallowScreenshotsRule(),
             RequireCameraMetadataRule(),
             RequireExifDataRule(),

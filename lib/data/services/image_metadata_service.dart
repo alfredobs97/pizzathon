@@ -24,7 +24,10 @@ class ImageMetadataService {
       final make = exifData['Image Make']?.printable;
       final model = exifData['Image Model']?.printable;
 
-      final software = _combineSoftware(exifData['Image Software']?.printable, pngTextData);
+      final software = _combineSoftware(
+        exifData['Image Software']?.printable,
+        pngTextData,
+      );
 
       return DetailedImageMetadata(
         creationDate: creationDate,
@@ -53,7 +56,8 @@ class ImageMetadataService {
     try {
       final chunks = png_extract.extractChunks(fileBytes);
       final textChunks = chunks.where(
-        (c) => c['name'] == 'tEXt' || c['name'] == 'zTXt' || c['name'] == 'iTXt',
+        (c) =>
+            c['name'] == 'tEXt' || c['name'] == 'zTXt' || c['name'] == 'iTXt',
       );
 
       if (textChunks.isEmpty) return null;
@@ -75,7 +79,9 @@ class ImageMetadataService {
     if (dateString == null) return null;
 
     try {
-      final formattedString = dateString.replaceFirst(':', '-').replaceFirst(':', '-');
+      final formattedString = dateString
+          .replaceFirst(':', '-')
+          .replaceFirst(':', '-');
       return DateTime.parse(formattedString);
     } catch (e) {
       debugPrint('Error parsing Date: $e');

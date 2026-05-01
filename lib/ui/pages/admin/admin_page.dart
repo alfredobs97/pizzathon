@@ -14,7 +14,8 @@ class AdminPage extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return BlocProvider(
-      create: (context) => UsersListCubit(context.read<FirestoreService>())..loadInitialUsers(),
+      create: (context) =>
+          UsersListCubit(context.read<FirestoreService>())..loadInitialUsers(),
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -24,17 +25,24 @@ class AdminPage extends StatelessWidget {
             elevation: 0,
             title: Text(
               'Panel de Administración',
-              style: theme.textTheme.displayMedium?.copyWith(color: colorScheme.onSurface),
+              style: theme.textTheme.displayMedium?.copyWith(
+                color: colorScheme.onSurface,
+              ),
             ),
             iconTheme: IconThemeData(color: colorScheme.onSurface),
             actions: [
-              IconButton(icon: const Icon(Icons.menu), onPressed: () => AppShell.openDrawer()),
+              IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => AppShell.openDrawer(),
+              ),
             ],
             bottom: TabBar(
               indicatorColor: colorScheme.primary,
               indicatorWeight: 4,
               labelColor: colorScheme.primary,
-              unselectedLabelColor: colorScheme.onSurface.withValues(alpha: 0.7),
+              unselectedLabelColor: colorScheme.onSurface.withValues(
+                alpha: 0.7,
+              ),
               labelStyle: theme.textTheme.titleMedium,
               tabs: const [
                 Tab(icon: Icon(Icons.people), text: 'Usuarios'),
