@@ -63,9 +63,8 @@ class AppRouter {
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
     ],
-    /* redirect: (context, state) {
-      if ((state.matchedLocation == adminRoute || state.matchedLocation == pocImagesRoute) &&
-          !isAdmin(context)) {
+    redirect: (context, state) {
+      if ((state.matchedLocation == adminRoute) && !isAdmin(context)) {
         return landingRoute;
       }
       if (state.matchedLocation == participantsRoute && !isAuth(context)) {
@@ -75,8 +74,11 @@ class AppRouter {
       if (state.matchedLocation == profileRoute && (!isAuth(context) || !isEnrolled(context))) {
         return landingRoute;
       }
+      if (state.matchedLocation == newPizzaRoute) {
+        return landingRoute;
+      }
       return null;
-    }, */
+    },
   );
 
   GoRouter get router => _router;
