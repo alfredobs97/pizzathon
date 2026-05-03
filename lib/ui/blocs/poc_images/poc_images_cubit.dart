@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/auth_service.dart';
+import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/pizza_storage_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
@@ -22,6 +23,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final ErrorTrackerService _errorTrackerService;
   final AuthService _authService;
   final PizzaStorageService _pizzaStorageService;
+  final FirestoreService _firestoreService;
 
   PocImagesCubit(
     this._imageProcessingService,
@@ -31,6 +33,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     this._errorTrackerService,
     this._authService,
     this._pizzaStorageService,
+    this._firestoreService,
   ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
@@ -257,16 +260,36 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         'otherIngredients': state.otherIngredients,
       };
 
+      // 1. Get pizza count for numbering
+      final count = await _firestoreService.getPizzaCount(userId);
+      final pizzaNumber = count + 1;
+
+      // 2. Upload images to Storage
       final imageUrls = await _pizzaStorageService.uploadPizzaParticipation(
         userId: userId,
         images: state.confirmedImages,
+        pizzaNumber: pizzaNumber,
+      );
+
+      // 3. Save all data to Firestore
+      await _firestoreService.savePizzaParticipation(
+        userId: userId,
+        pizzaNumber: pizzaNumber,
         pizzaData: pizzaData,
+        imageUrls: imageUrls,
       );
 
       emit(state.copyWith(
         isSubmitting: false,
         isFinished: true,
-        imageUrls: imageUrls,
+        imageUrls: Map<PizzaPhotoStep, String>.fromEntries(
+          imageUrls.entries.map(
+            (e) => MapEntry(
+              PizzaPhotoStep.values.firstWhere((step) => step.name == e.key),
+              e.value,
+            ),
+          ),
+        ),
       ));
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(

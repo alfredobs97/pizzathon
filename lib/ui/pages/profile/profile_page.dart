@@ -19,7 +19,7 @@ class ProfilePage extends StatelessWidget {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated) {
-          context.go(AppRouter.landingRoute);
+          //context.go(AppRouter.landingRoute);
         }
       },
       child: Column(

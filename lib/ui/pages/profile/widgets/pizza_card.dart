@@ -83,3 +83,7 @@ class PizzaCard extends StatelessWidget {
     );
   }
 }
+
+extension on Map<String, String> {
+  get firstOrNull => null;
+}

@@ -28,6 +28,30 @@ class FirestoreService {
     }
   }
 
+  Future<int> getPizzaCount(String uid) async {
+    final querySnapshot = await _db
+        .collection(_pizzaCollectionName)
+        .where('userId', isEqualTo: uid)
+        .count()
+        .get();
+    return querySnapshot.count ?? 0;
+  }
+
+  Future<void> savePizzaParticipation({
+    required String userId,
+    required int pizzaNumber,
+    required Map<String, dynamic> pizzaData,
+    required Map<String, String> imageUrls,
+  }) async {
+    await _db.collection(_pizzaCollectionName).add({
+      ...pizzaData,
+      'userId': userId,
+      'pizzaNumber': pizzaNumber,
+      'imageUrls': imageUrls,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   Future<bool> isUserEnrolled(String uid) async {
     final doc = await _db.collection(_userCollectionName).doc(uid).get();
     return doc.exists;

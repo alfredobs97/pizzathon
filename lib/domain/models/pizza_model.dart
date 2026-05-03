@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PizzaModel {
   final String id;
   final String userId;
-  final List<String> imageUrls;
+  final Map<String, String> imageUrls;
   final String? thumbnailUrl;
   final DateTime createdAt;
   
@@ -43,12 +43,18 @@ class PizzaModel {
   factory PizzaModel.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
-    // Handle legacy imageUrl if it exists
-    List<String> urls = [];
-    if (data['imageUrls'] != null) {
-      urls = List<String>.from(data['imageUrls']);
+    // Handle both Map and List for backward compatibility
+    Map<String, String> urls = {};
+    if (data['imageUrls'] is Map) {
+      urls = Map<String, String>.from(data['imageUrls']);
+    } else if (data['imageUrls'] is List) {
+      final list = List<String>.from(data['imageUrls']);
+      // Convert list to map with generic keys if needed
+      for (int i = 0; i < list.length; i++) {
+        urls['photo_$i'] = list[i];
+      }
     } else if (data['imageUrl'] != null) {
-      urls = [data['imageUrl'] as String];
+      urls['photo_0'] = data['imageUrl'] as String;
     }
 
     return PizzaModel(
