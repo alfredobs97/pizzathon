@@ -85,8 +85,11 @@ class AppRouter {
       if (state.matchedLocation == profileRoute && (!isAuth(context) || !isEnrolled(context))) {
         return landingRoute;
       }
+      if (state.matchedLocation == newPizzaRoute) {
+        return landingRoute;
+      }
       return null;
-    }, */
+    },
   );
 
   GoRouter get router => _router;
