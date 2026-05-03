@@ -11,7 +11,6 @@ class PizzaStorageService {
 
   static const String _storageRootPath = 'pizzas_2026_05';
 
-  /// Uploads 4 pizza images in parallel and returns their download URLs.
   Future<Map<String, String>> uploadPizzaParticipation({
     required String userId,
     required Map<PizzaPhotoStep, Uint8List> images,
@@ -19,17 +18,14 @@ class PizzaStorageService {
   }) async {
     final Map<String, String> imageUrls = {};
 
-    // 1. Prepare upload tasks for parallel execution
     final uploadTasks = images.entries.map((entry) async {
       final step = entry.key;
       final bytes = entry.value;
 
-      // Path structure: pizzas_2026_05/userId/pizzaNumber/step.jpg
       final path = '$_storageRootPath/$userId/$pizzaNumber/${step.name}.jpg';
 
       final ref = _storage.ref().child(path);
 
-      // Upload with metadata
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
         customMetadata: {
@@ -44,7 +40,6 @@ class PizzaStorageService {
       return MapEntry(step.name, downloadUrl);
     });
 
-    // 2. Execute all uploads in parallel
     final results = await Future.wait(uploadTasks);
     for (final entry in results) {
       imageUrls[entry.key] = entry.value;
