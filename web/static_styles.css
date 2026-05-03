@@ -146,7 +146,6 @@ h2.secondary {
   font-size: 1.2rem;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
-  text-transform: uppercase;
 }
 
 img {
@@ -181,8 +180,9 @@ img {
   .container {
     padding: 30px 20px;
   }
-  
-  .highlight-text, .dark-highlight {
+
+  .highlight-text,
+  .dark-highlight {
     font-size: 1.8rem;
   }
 }
