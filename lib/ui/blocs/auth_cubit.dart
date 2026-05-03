@@ -21,6 +21,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _authService.signInWithGoogle();
+      emit(AuthAuthenticated(_authService.currentUser!));
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(
         TrackedError(
