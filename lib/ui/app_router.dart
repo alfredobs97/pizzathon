@@ -73,7 +73,7 @@ class AppRouter {
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
     ],
-    /* redirect: (context, state) {
+     redirect: (context, state) {
       if ((state.matchedLocation == adminRoute || state.matchedLocation == profileRoute) &&
           !isAdmin(context)) {
         return landingRoute;
