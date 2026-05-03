@@ -1,7 +1,10 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
+import 'package:pizzathon/domain/models/pizza_photo_step.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
 
 class PizzaConfirmationStep extends StatelessWidget {
   const PizzaConfirmationStep({super.key});
@@ -46,7 +49,7 @@ class PizzaConfirmationStep extends StatelessWidget {
                   theme: theme,
                   title: "MASA Y FORMULACIÓN",
                   details: [
-                    _buildDetailRow(theme, "ESTILO", state.pizzaStyle),
+                    _buildDetailRow(theme, "ESTILO", state.pizzaStyle?.displayName),
                     _buildDetailRow(theme, "HARINAS", state.flours),
                     _buildDetailRow(
                       theme,
@@ -122,7 +125,15 @@ class PizzaConfirmationStep extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 if (image != null)
-                  Image.memory(image, fit: BoxFit.cover)
+                  FutureBuilder<Uint8List>(
+                    future: image.readAsBytes(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Image.memory(snapshot.data!, fit: BoxFit.cover);
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                  )
                 else
                   Container(color: Colors.grey.shade200),
                 Positioned(

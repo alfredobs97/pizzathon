@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pizzathon/data/services/auth_service.dart';
-import 'package:pizzathon/data/services/firestore_service.dart';
-import 'package:pizzathon/data/services/pizza_storage_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pizzathon/domain/entities/validation_result.dart';
+import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
-import 'dart:typed_data';
-
-import '../../../data/services/image_processing_service.dart';
-import '../../../data/services/remote_config_service.dart';
-import '../../../data/services/image_metadata_service.dart';
-import '../../../data/services/pizza_validation_service.dart';
-import '../../../domain/models/compression_settings.dart';
-import '../../../domain/entities/validation_result.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/data/services/image_processing_service.dart';
+import 'package:pizzathon/data/services/auth_service.dart';
+import 'package:pizzathon/data/services/pizza_storage_service.dart';
+import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/pizza_validation_service.dart';
+import 'package:pizzathon/domain/models/compression_settings.dart';
+import 'package:pizzathon/domain/models/pizza_photo_step.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
@@ -68,16 +68,15 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       final originalSize = originalBytes.length;
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
-      debugPrint("valor ANTES de la compresion: ${settings.quality}");
-
-      final compressedBytes = await _imageProcessingService.compressImage(
+      
+      final compressedFile = await _imageProcessingService.compressImage(
+        file,
         originalBytes,
         settings: settings,
       );
 
-      debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
-
-      if (compressedBytes != null) {
+      if (compressedFile != null) {
+        final compressedBytes = await compressedFile.readAsBytes();
         final compressedSize = compressedBytes.length;
         
         final updatedOriginalSizes = Map<PizzaPhotoStep, int>.from(state.originalSizes);
@@ -89,7 +88,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         emit(
           state.copyWith(
             isLoading: false,
-            pendingImage: compressedBytes,
+            pendingImage: compressedFile,
             originalSizes: updatedOriginalSizes,
             compressedSizes: updatedCompressedSizes,
           ),
@@ -125,7 +124,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   void confirmImage() {
     if (state.pendingImage == null) return;
 
-    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(
+    final updatedConfirmed = Map<PizzaPhotoStep, XFile>.from(
       state.confirmedImages,
     );
     updatedConfirmed[state.currentStep] = state.pendingImage!;
@@ -165,14 +164,14 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   }
 
   void savePizzaDetails({
-    required String pizzaStyle,
+    required PizzaStyle pizzaStyle,
     required String flours,
     required String preferment,
-    required String prefermentPercentage,
-    required String hydration,
-    required String doughBallWeight,
+    required int prefermentPercentage,
+    required num hydration,
+    required num doughBallWeight,
     required String oven,
-    required String cookingTemperature,
+    required num cookingTemperature,
   }) {
     emit(
       state.copyWith(
@@ -247,45 +246,50 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         throw Exception("Debes estar identificado para enviar tu pizza.");
       }
 
-      final pizzaData = {
-        'pizzaStyle': state.pizzaStyle,
-        'flours': state.flours,
-        'preferment': state.preferment,
-        'prefermentPercentage': state.prefermentPercentage,
-        'hydration': state.hydration,
-        'doughBallWeight': state.doughBallWeight,
-        'oven': state.oven,
-        'cookingTemperature': state.cookingTemperature,
-        'baseIngredient': state.baseIngredient,
-        'otherIngredients': state.otherIngredients,
-      };
-
       final pizzaId = _firestoreService.generatePizzaId();
 
-      final imageUrls = await _pizzaStorageService.uploadPizzaParticipation(
+      final uploadedImages = await _pizzaStorageService.uploadPizzaParticipation(
         userId: userId,
         images: state.confirmedImages,
         pizzaId: pizzaId,
       );
 
+      final Map<String, String> imageUrlsMap = {};
+      for (final link in uploadedImages) {
+        imageUrlsMap[link.step.name] = link.url;
+      }
+
+      final pizza = PizzaModel(
+        id: pizzaId,
+        userId: userId,
+        imageUrls: imageUrlsMap,
+        createdAt: DateTime.now(),
+        pizzaStyle: state.pizzaStyle,
+        flours: state.flours,
+        preferment: state.preferment,
+        prefermentPercentage: state.prefermentPercentage,
+        hydration: state.hydration,
+        doughBallWeight: state.doughBallWeight,
+        oven: state.oven,
+        cookingTemperature: state.cookingTemperature,
+        baseIngredient: state.baseIngredient,
+        otherIngredients: state.otherIngredients,
+      );
+
       await _firestoreService.savePizzaParticipation(
         userId: userId,
         pizzaId: pizzaId,
-        pizzaData: pizzaData,
-        imageUrls: imageUrls,
+        pizzaData: pizza.toMap(),
+        imageUrls: imageUrlsMap,
       );
 
       emit(state.copyWith(
         isSubmitting: false,
         isFinished: true,
-        imageUrls: Map<PizzaPhotoStep, String>.fromEntries(
-          imageUrls.entries.map(
-            (e) => MapEntry(
-              PizzaPhotoStep.values.firstWhere((step) => step.name == e.key),
-              e.value,
-            ),
-          ),
-        ),
+        imageUrls: imageUrlsMap.map((key, value) => MapEntry(
+          PizzaPhotoStep.values.firstWhere((s) => s.name == key),
+          value,
+        )),
       ));
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(

@@ -1,5 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum PizzaStyle {
+  contemporanea,
+  napoletana,
+  newYork,
+  tondaClasica,
+  tondaRomana,
+  tegliaRomana,
+  padellino,
+  palaRomana,
+}
+
+extension PizzaStyleExtension on PizzaStyle {
+  String get displayName {
+    switch (this) {
+      case PizzaStyle.contemporanea: return 'Contemporánea';
+      case PizzaStyle.napoletana: return 'Napoletana';
+      case PizzaStyle.newYork: return 'New York';
+      case PizzaStyle.tondaClasica: return 'Tonda clásica';
+      case PizzaStyle.tondaRomana: return 'Tonda romana';
+      case PizzaStyle.tegliaRomana: return 'Teglia romana';
+      case PizzaStyle.padellino: return 'Padellino';
+      case PizzaStyle.palaRomana: return 'Pala romana';
+    }
+  }
+}
+
 class PizzaModel {
   final String id;
   final String userId;
@@ -8,14 +34,14 @@ class PizzaModel {
   final DateTime createdAt;
   
   // Technical details
-  final String? pizzaStyle;
+  final PizzaStyle? pizzaStyle;
   final String? flours;
   final String? preferment;
-  final String? prefermentPercentage;
-  final String? hydration;
-  final String? doughBallWeight;
+  final int? prefermentPercentage;
+  final num? hydration;
+  final num? doughBallWeight;
   final String? oven;
-  final String? cookingTemperature;
+  final num? cookingTemperature;
   final String? baseIngredient;
   final String? otherIngredients;
   
@@ -43,18 +69,18 @@ class PizzaModel {
   factory PizzaModel.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
-    // Handle both Map and List for backward compatibility
-    Map<String, String> urls = {};
-    if (data['imageUrls'] is Map) {
-      urls = Map<String, String>.from(data['imageUrls']);
-    } else if (data['imageUrls'] is List) {
-      final list = List<String>.from(data['imageUrls']);
-      // Convert list to map with generic keys if needed
-      for (int i = 0; i < list.length; i++) {
-        urls['photo_$i'] = list[i];
-      }
-    } else if (data['imageUrl'] != null) {
-      urls['photo_0'] = data['imageUrl'] as String;
+    final imageUrlsData = data['imageUrls'];
+    final Map<String, String> urls = imageUrlsData is Map 
+        ? Map<String, String>.from(imageUrlsData) 
+        : {};
+
+    PizzaStyle? style;
+    if (data['pizzaStyle'] != null) {
+      try {
+        style = PizzaStyle.values.firstWhere(
+          (e) => e.name == data['pizzaStyle'] || e.displayName == data['pizzaStyle'],
+        );
+      } catch (_) {}
     }
 
     return PizzaModel(
@@ -63,7 +89,7 @@ class PizzaModel {
       imageUrls: urls,
       thumbnailUrl: data['thumbnailUrl'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      pizzaStyle: data['pizzaStyle'],
+      pizzaStyle: style,
       flours: data['flours'],
       preferment: data['preferment'],
       prefermentPercentage: data['prefermentPercentage'],
@@ -80,10 +106,11 @@ class PizzaModel {
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
+      'pizzaId': id,
       'imageUrls': imageUrls,
       'thumbnailUrl': thumbnailUrl,
       'createdAt': FieldValue.serverTimestamp(),
-      'pizzaStyle': pizzaStyle,
+      'pizzaStyle': pizzaStyle?.name,
       'flours': flours,
       'preferment': preferment,
       'prefermentPercentage': prefermentPercentage,
