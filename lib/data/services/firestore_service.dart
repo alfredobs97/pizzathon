@@ -28,25 +28,18 @@ class FirestoreService {
     }
   }
 
-  Future<int> getPizzaCount(String uid) async {
-    final querySnapshot = await _db
-        .collection(_pizzaCollectionName)
-        .where('userId', isEqualTo: uid)
-        .count()
-        .get();
-    return querySnapshot.count ?? 0;
-  }
+  String generatePizzaId() => _db.collection(_pizzaCollectionName).doc().id;
 
   Future<void> savePizzaParticipation({
     required String userId,
-    required int pizzaNumber,
+    required String pizzaId,
     required Map<String, dynamic> pizzaData,
     required Map<String, String> imageUrls,
   }) async {
-    await _db.collection(_pizzaCollectionName).add({
+    await _db.collection(_pizzaCollectionName).doc(pizzaId).set({
       ...pizzaData,
       'userId': userId,
-      'pizzaNumber': pizzaNumber,
+      'pizzaId': pizzaId,
       'imageUrls': imageUrls,
       'createdAt': FieldValue.serverTimestamp(),
     });

@@ -260,21 +260,17 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         'otherIngredients': state.otherIngredients,
       };
 
-      // 1. Get pizza count for numbering
-      final count = await _firestoreService.getPizzaCount(userId);
-      final pizzaNumber = count + 1;
+      final pizzaId = _firestoreService.generatePizzaId();
 
-      // 2. Upload images to Storage
       final imageUrls = await _pizzaStorageService.uploadPizzaParticipation(
         userId: userId,
         images: state.confirmedImages,
-        pizzaNumber: pizzaNumber,
+        pizzaId: pizzaId,
       );
 
-      // 3. Save all data to Firestore
       await _firestoreService.savePizzaParticipation(
         userId: userId,
-        pizzaNumber: pizzaNumber,
+        pizzaId: pizzaId,
         pizzaData: pizzaData,
         imageUrls: imageUrls,
       );

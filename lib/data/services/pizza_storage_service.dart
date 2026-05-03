@@ -14,7 +14,7 @@ class PizzaStorageService {
   Future<Map<String, String>> uploadPizzaParticipation({
     required String userId,
     required Map<PizzaPhotoStep, Uint8List> images,
-    required int pizzaNumber,
+    required String pizzaId,
   }) async {
     final Map<String, String> imageUrls = {};
 
@@ -22,7 +22,7 @@ class PizzaStorageService {
       final step = entry.key;
       final bytes = entry.value;
 
-      final path = '$_storageRootPath/$userId/$pizzaNumber/${step.name}.jpg';
+      final path = '$_storageRootPath/$userId/$pizzaId/${step.name}.jpg';
 
       final ref = _storage.ref().child(path);
 
@@ -31,7 +31,7 @@ class PizzaStorageService {
         customMetadata: {
           'userId': userId,
           'step': step.name,
-          'pizzaNumber': pizzaNumber.toString(),
+          'pizzaId': pizzaId,
         },
       );
 
