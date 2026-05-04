@@ -28,6 +28,23 @@ class FirestoreService {
     }
   }
 
+  String generatePizzaId() => _db.collection(_pizzaCollectionName).doc().id;
+
+  Future<void> savePizzaParticipation({
+    required String userId,
+    required String pizzaId,
+    required Map<String, dynamic> pizzaData,
+    required Map<String, String> imageUrls,
+  }) async {
+    await _db.collection(_pizzaCollectionName).doc(pizzaId).set({
+      ...pizzaData,
+      'userId': userId,
+      'pizzaId': pizzaId,
+      'imageUrls': imageUrls,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   Future<bool> isUserEnrolled(String uid) async {
     final doc = await _db.collection(_userCollectionName).doc(uid).get();
     return doc.exists;
