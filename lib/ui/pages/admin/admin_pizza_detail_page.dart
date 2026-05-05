@@ -57,7 +57,10 @@ class AdminPizzaDetailPage extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       flex: 1,
-                      child: AdminPizzaHistorySection(userId: pizza.userId),
+                      child: AdminPizzaHistorySection(
+                        userId: pizza.userId,
+                        currentPizzaDate: pizza.createdAt,
+                      ),
                     ),
                     Expanded(
                       flex: 1,

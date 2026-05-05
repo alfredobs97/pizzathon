@@ -9,10 +9,13 @@ class AdminPizzaReviewCubit extends Cubit<AdminPizzaReviewState> {
 
   AdminPizzaReviewCubit(this._firestoreService) : super(const AdminPizzaReviewState());
 
-  Future<void> loadUserHistory(String userId) async {
+  Future<void> loadUserHistory(String userId, {DateTime? beforeDate}) async {
     emit(state.copyWith(status: AdminPizzaReviewStatus.loadingHistory));
     try {
-      final result = await _firestoreService.getPizzasFromUserPaginated(uid: userId);
+      final result = await _firestoreService.getPizzasFromUserPaginated(
+        uid: userId,
+        beforeDate: beforeDate,
+      );
       emit(
         state.copyWith(status: AdminPizzaReviewStatus.historyLoaded, previousPizzas: result.pizzas),
       );

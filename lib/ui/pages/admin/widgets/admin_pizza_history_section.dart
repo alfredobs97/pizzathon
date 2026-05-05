@@ -7,8 +7,13 @@ import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_state.d
 
 class AdminPizzaHistorySection extends StatefulWidget {
   final String userId;
+  final DateTime? currentPizzaDate;
 
-  const AdminPizzaHistorySection({super.key, required this.userId});
+  const AdminPizzaHistorySection({
+    super.key,
+    required this.userId,
+    this.currentPizzaDate,
+  });
 
   @override
   State<AdminPizzaHistorySection> createState() =>
@@ -33,8 +38,9 @@ class _AdminPizzaHistorySectionState extends State<AdminPizzaHistorySection> {
               final state = context.read<AdminPizzaReviewCubit>().state;
               if (state.previousPizzas.isEmpty) {
                 context.read<AdminPizzaReviewCubit>().loadUserHistory(
-                  widget.userId,
-                );
+                      widget.userId,
+                      beforeDate: widget.currentPizzaDate,
+                    );
               }
             }
           },

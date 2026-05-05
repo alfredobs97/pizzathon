@@ -82,13 +82,16 @@ class FirestoreService {
   Future<({List<PizzaModel> pizzas, DocumentSnapshot? lastDocument})> getPizzasFromUserPaginated({
     required String uid,
     DocumentSnapshot? lastDocument,
+    DateTime? beforeDate,
     int limit = 5,
   }) async {
-    Query query = _db
-        .collection(_pizzaCollectionName)
-        .where('userId', isEqualTo: uid)
-        .orderBy('createdAt', descending: true)
-        .limit(limit);
+    Query query = _db.collection(_pizzaCollectionName).where('userId', isEqualTo: uid);
+
+    if (beforeDate != null) {
+      query = query.where('createdAt', isLessThan: beforeDate);
+    }
+
+    query = query.orderBy('createdAt', descending: true).limit(limit);
 
     if (lastDocument != null) {
       query = query.startAfterDocument(lastDocument);
