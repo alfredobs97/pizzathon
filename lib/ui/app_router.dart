@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
+import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'package:pizzathon/ui/blocs/enrollment_state.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
+import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
@@ -21,6 +25,7 @@ class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
   static const String adminRoute = '/capo';
+  static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
   static const String pizzaSuccessRoute = '/pizza-enviada';
@@ -60,6 +65,27 @@ class AppRouter {
           GoRoute(
             path: adminRoute,
             pageBuilder: (context, state) => _fadeTransition(state, const AdminPage()),
+            routes: [
+              GoRoute(
+                path: 'pizza',
+                pageBuilder: (context, state) {
+                  final pizza = state.extra as PizzaModel;
+                  return _fadeTransition(
+                    state,
+                    BlocProvider(
+                      create: (context) {
+                        final cubit = AdminPizzaReviewCubit(context.read<FirestoreService>());
+                        if (pizza.pizzaStyle != null) {
+                          cubit.loadStyleCount(pizza.pizzaStyle!);
+                        }
+                        return cubit;
+                      },
+                      child: AdminPizzaDetailPage(pizza: pizza),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -69,7 +95,7 @@ class AppRouter {
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
     ],
-     redirect: (context, state) {
+    redirect: (context, state) {
       if ((state.matchedLocation == adminRoute) && !isAdmin(context)) {
         return landingRoute;
       }
