@@ -15,6 +15,7 @@ class AdminPizzaReviewCubit extends Cubit<AdminPizzaReviewState> {
       final result = await _firestoreService.getPizzasFromUserPaginated(
         uid: userId,
         beforeDate: beforeDate,
+        status: PizzaStatus.approved,
       );
       emit(
         state.copyWith(status: AdminPizzaReviewStatus.historyLoaded, previousPizzas: result.pizzas),

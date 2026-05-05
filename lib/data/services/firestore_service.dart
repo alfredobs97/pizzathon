@@ -83,12 +83,17 @@ class FirestoreService {
     required String uid,
     DocumentSnapshot? lastDocument,
     DateTime? beforeDate,
+    PizzaStatus? status,
     int limit = 5,
   }) async {
     Query query = _db.collection(_pizzaCollectionName).where('userId', isEqualTo: uid);
 
     if (beforeDate != null) {
       query = query.where('createdAt', isLessThan: beforeDate);
+    }
+
+    if (status != null) {
+      query = query.where('status', isEqualTo: status.name);
     }
 
     query = query.orderBy('createdAt', descending: true).limit(limit);
