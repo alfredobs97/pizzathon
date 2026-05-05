@@ -7,8 +7,7 @@ import '../../domain/models/pizza_model.dart';
 class FirestoreService {
   final FirebaseFirestore _db;
 
-  FirestoreService({FirebaseFirestore? firestore})
-    : _db = firestore ?? FirebaseFirestore.instance;
+  FirestoreService({FirebaseFirestore? firestore}) : _db = firestore ?? FirebaseFirestore.instance;
 
   static const String _userCollectionName = 'users_2026_05';
   static const String _pizzaCollectionName = 'pizzas_2026_05';
@@ -54,8 +53,10 @@ class FirestoreService {
     await _db.collection(_userCollectionName).doc(uid).update({'banned': true});
   }
 
-  Future<({List<UserModel> users, DocumentSnapshot? lastDocument})>
-  getUsersPaginated({DocumentSnapshot? lastDocument, int limit = 10}) async {
+  Future<({List<UserModel> users, DocumentSnapshot? lastDocument})> getUsersPaginated({
+    DocumentSnapshot? lastDocument,
+    int limit = 10,
+  }) async {
     Query query = _db
         .collection(_userCollectionName)
         .orderBy('createdAt', descending: true)
@@ -67,18 +68,12 @@ class FirestoreService {
 
     final snapshot = await query.get();
 
-    final users = snapshot.docs
-        .map((doc) => UserModel.fromDocument(doc))
-        .toList();
+    final users = snapshot.docs.map((doc) => UserModel.fromDocument(doc)).toList();
 
-    return (
-      users: users,
-      lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null,
-    );
+    return (users: users, lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null);
   }
 
-  Future<({List<PizzaModel> pizzas, DocumentSnapshot? lastDocument})>
-  getPizzasFromUserPaginated({
+  Future<({List<PizzaModel> pizzas, DocumentSnapshot? lastDocument})> getPizzasFromUserPaginated({
     required String uid,
     DocumentSnapshot? lastDocument,
     int limit = 5,
@@ -95,13 +90,64 @@ class FirestoreService {
 
     final snapshot = await query.get();
 
-    final pizzas = snapshot.docs
-        .map((doc) => PizzaModel.fromDocument(doc))
-        .toList();
+    final pizzas = snapshot.docs.map((doc) => PizzaModel.fromDocument(doc)).toList();
 
-    return (
-      pizzas: pizzas,
-      lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null,
-    );
+    return (pizzas: pizzas, lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null);
+  }
+
+  Future<({List<PizzaModel> pizzas, DocumentSnapshot? lastDocument})> getPizzasByStatusPaginated({
+    required PizzaStatus status,
+    DocumentSnapshot? lastDocument,
+    int limit = 10,
+  }) async {
+    Query query = _db
+        .collection(_pizzaCollectionName)
+        .where('status', isEqualTo: status.name)
+        .orderBy('createdAt', descending: false)
+        .limit(limit);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    final snapshot = await query.get();
+
+    final pizzas = snapshot.docs.map((doc) => PizzaModel.fromDocument(doc)).toList();
+
+    return (pizzas: pizzas, lastDocument: snapshot.docs.isNotEmpty ? snapshot.docs.last : null);
+  }
+
+  Future<void> reviewPizza({
+    required String pizzaId,
+    required String userId,
+    required PizzaStatus status,
+    int? score,
+    String? comment,
+  }) async {
+    final pizzaRef = _db.collection(_pizzaCollectionName).doc(pizzaId);
+    final userRef = _db.collection(_userCollectionName).doc(userId);
+
+    await _db.runTransaction((transaction) async {
+      transaction.update(pizzaRef, {
+        'status': status.name,
+        'score': score,
+        'adminComment': comment,
+        'reviewedAt': FieldValue.serverTimestamp(),
+      });
+
+      if (status == PizzaStatus.approved && score != null && score > 0) {
+        transaction.update(userRef, {'score': FieldValue.increment(score)});
+      }
+    });
+  }
+
+  Future<int> getPizzaCountByStyle(PizzaStyle style) async {
+    final snapshot = await _db
+        .collection(_pizzaCollectionName)
+        .where('pizzaStyle', isEqualTo: style.name)
+        .where('status', isEqualTo: PizzaStatus.approved.name)
+        .count()
+        .get();
+    return snapshot.count ?? 0;
   }
 }
