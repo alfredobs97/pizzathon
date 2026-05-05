@@ -13,15 +13,11 @@ class AdminPizzaReviewCubit extends Cubit<AdminPizzaReviewState> {
     emit(state.copyWith(status: AdminPizzaReviewStatus.loadingHistory));
     try {
       final result = await _firestoreService.getPizzasFromUserPaginated(uid: userId);
-      emit(state.copyWith(
-        status: AdminPizzaReviewStatus.historyLoaded,
-        previousPizzas: result.pizzas,
-      ));
+      emit(
+        state.copyWith(status: AdminPizzaReviewStatus.historyLoaded, previousPizzas: result.pizzas),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: AdminPizzaReviewStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(state.copyWith(status: AdminPizzaReviewStatus.error, errorMessage: e.toString()));
     }
   }
 
@@ -53,11 +49,7 @@ class AdminPizzaReviewCubit extends Cubit<AdminPizzaReviewState> {
       emit(state.copyWith(status: AdminPizzaReviewStatus.success));
     } catch (e) {
       debugPrint('Error reviewing pizza: $e');
-      emit(state.copyWith(
-        status: AdminPizzaReviewStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(state.copyWith(status: AdminPizzaReviewStatus.error, errorMessage: e.toString()));
     }
   }
 }
-
