@@ -13,6 +13,7 @@ import 'package:pizzathon/data/services/pizza_validation_service.dart';
 import 'package:pizzathon/domain/models/compression_settings.dart';
 import 'package:pizzathon/domain/models/pizza_photo_step.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
+import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
@@ -24,6 +25,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final AuthService _authService;
   final PizzaStorageService _pizzaStorageService;
   final FirestoreService _firestoreService;
+  final UploadLimitService _uploadLimitService;
 
   PocImagesCubit(
     this._imageProcessingService,
@@ -34,6 +36,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     this._authService,
     this._pizzaStorageService,
     this._firestoreService,
+    this._uploadLimitService,
   ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
@@ -282,6 +285,8 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         pizzaData: pizza.toMap(),
         imageUrls: imageUrlsMap,
       );
+
+      await _uploadLimitService.incrementLimitCache(userId);
 
       emit(state.copyWith(
         isSubmitting: false,
