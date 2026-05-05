@@ -134,18 +134,6 @@ class FirestoreService {
     final userRef = _db.collection(_userCollectionName).doc(userId);
 
     await _db.runTransaction((transaction) async {
-      final pizzaDoc = await transaction.get(pizzaRef);
-      if (!pizzaDoc.exists) {
-        throw Exception('Pizza not found');
-      }
-
-      final pizzaData = pizzaDoc.data()!;
-      final oldStatus = PizzaStatus.values.firstWhere(
-        (e) => e.name == pizzaData['status'],
-        orElse: () => PizzaStatus.pending,
-      );
-      final oldScore = (pizzaData['score'] as int?) ?? 0;
-
       transaction.update(pizzaRef, {
         'status': status.name,
         'score': score,
@@ -153,20 +141,8 @@ class FirestoreService {
         'reviewedAt': FieldValue.serverTimestamp(),
       });
 
-      int scoreDelta = 0;
-
-      // Subtract old score if it was approved
-      if (oldStatus == PizzaStatus.approved) {
-        scoreDelta -= oldScore;
-      }
-
-      // Add new score if it is approved
-      if (status == PizzaStatus.approved && score != null) {
-        scoreDelta += score;
-      }
-
-      if (scoreDelta != 0) {
-        transaction.update(userRef, {'score': FieldValue.increment(scoreDelta)});
+      if (status == PizzaStatus.approved && score != null && score > 0) {
+        transaction.update(userRef, {'score': FieldValue.increment(score)});
       }
     });
   }
