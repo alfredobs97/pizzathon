@@ -76,6 +76,19 @@ class _AdminPizzaReviewPanelState extends State<AdminPizzaReviewPanel> {
               )
             else
               _buildScoreSelector(),
+            if (!isReviewed) ...[
+              const SizedBox(height: 24),
+              _buildActionButton(context, 'APROBAR', theme.colorScheme.primary, () {
+                if (_selectedScore == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Por favor, selecciona una puntuación.')),
+                  );
+                  return;
+                }
+                widget.onApprove(_selectedScore!, _commentController.text);
+              }),
+            ],
+
             const SizedBox(height: 24),
             if (isReviewed)
               Column(
@@ -115,16 +128,6 @@ class _AdminPizzaReviewPanelState extends State<AdminPizzaReviewPanel> {
                 ),
               ),
             if (!isReviewed) ...[
-              const SizedBox(height: 24),
-              _buildActionButton(context, 'APROBAR', theme.colorScheme.primary, () {
-                if (_selectedScore == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Por favor, selecciona una puntuación.')),
-                  );
-                  return;
-                }
-                widget.onApprove(_selectedScore!, _commentController.text);
-              }),
               const SizedBox(height: 24),
               _buildActionButton(
                 context,
