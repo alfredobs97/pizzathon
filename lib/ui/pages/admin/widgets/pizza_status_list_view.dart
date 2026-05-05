@@ -7,7 +7,9 @@ import '../../../blocs/admin_pizzas/admin_pizzas_cubit.dart';
 import '../../../blocs/admin_pizzas/admin_pizzas_state.dart';
 
 class PizzaStatusListView extends StatefulWidget {
-  const PizzaStatusListView({super.key});
+  final PizzaStatus status;
+
+  const PizzaStatusListView({super.key, required this.status});
 
   @override
   State<PizzaStatusListView> createState() => _PizzaStatusListViewState();
@@ -30,7 +32,7 @@ class _PizzaStatusListViewState extends State<PizzaStatusListView> {
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<AdminPizzasListCubit>().loadMorePizzas();
+      context.read<AdminPizzasCubit>().fetchPizzas(widget.status, isLoadMore: true);
     }
   }
 
@@ -43,18 +45,31 @@ class _PizzaStatusListViewState extends State<PizzaStatusListView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AdminPizzasListCubit, AdminPizzasListState>(
-      builder: (context, state) => switch (state) {
-        AdminPizzasListLoading() => const _LoadingView(),
-        AdminPizzasListError(:final message) => _ErrorView(message: message),
-        AdminPizzasListLoaded(:final pizzas, :final hasReachedMax) =>
-          pizzas.isEmpty
-              ? const _EmptyView()
-              : _PizzaListView(
-                  pizzas: pizzas,
-                  hasReachedMax: hasReachedMax,
-                  scrollController: _scrollController,
-                ),
+    return BlocBuilder<AdminPizzasCubit, AdminPizzasState>(
+      buildWhen: (previous, current) =>
+          previous.getForStatus(widget.status) != current.getForStatus(widget.status),
+      builder: (context, state) {
+        final listState = state.getForStatus(widget.status);
+
+        if (listState.isLoading && listState.pizzas.isEmpty) {
+          return const _LoadingView();
+        }
+
+        if (listState.errorMessage != null && listState.pizzas.isEmpty) {
+          return _ErrorView(message: listState.errorMessage!);
+        }
+
+        if (listState.pizzas.isEmpty) {
+          return const _EmptyView();
+        }
+
+        return _PizzaListView(
+          pizzas: listState.pizzas,
+          hasReachedMax: listState.hasReachedMax,
+          isLoadingMore: listState.isLoading,
+          scrollController: _scrollController,
+          status: widget.status,
+        );
       },
     );
   }
@@ -87,9 +102,7 @@ class _EmptyView extends StatelessWidget {
     return Center(
       child: Text(
         'No hay pizzas en esta categoría.',
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(color: Colors.black),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
       ),
     );
   }
@@ -98,18 +111,22 @@ class _EmptyView extends StatelessWidget {
 class _PizzaListView extends StatelessWidget {
   final List<PizzaModel> pizzas;
   final bool hasReachedMax;
+  final bool isLoadingMore;
   final ScrollController scrollController;
+  final PizzaStatus status;
 
   const _PizzaListView({
     required this.pizzas,
     required this.hasReachedMax,
+    required this.isLoadingMore,
     required this.scrollController,
+    required this.status,
   });
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => context.read<AdminPizzasListCubit>().loadInitialPizzas(),
+      onRefresh: () => context.read<AdminPizzasCubit>().fetchPizzas(status),
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         controller: scrollController,
@@ -132,24 +149,21 @@ class _PizzaListView extends StatelessWidget {
 class _PizzaListItem extends StatelessWidget {
   final PizzaModel pizza;
   const _PizzaListItem({required this.pizza});
+@override
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final dateStr = DateFormat('EEEE d - HH:mm', 'es').format(pizza.createdAt);
+  final formattedDate = dateStr[0].toUpperCase() + dateStr.substring(1);
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dateStr = DateFormat('EEEE d - HH:mm', 'es').format(pizza.createdAt);
-    final formattedDate = dateStr[0].toUpperCase() + dateStr.substring(1);
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6.0),
+    child: InkWell(
+      onTap: () async {
+        await context.push('/capo/pizza', extra: pizza);
+        // El admin refrescará manualmente cuando quiera ver los cambios
+      },
+      borderRadius: BorderRadius.circular(12),
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: InkWell(
-        onTap: () async {
-          final result = await context.push('/capo/pizza', extra: pizza);
-          // Si se aprueba/rechaza con éxito, recargamos la lista
-          if (result == true && context.mounted) {
-            context.read<AdminPizzasListCubit>().loadInitialPizzas();
-          }
-        },
-        borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.primary,

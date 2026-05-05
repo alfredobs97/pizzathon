@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../data/services/firestore_service.dart';
 import '../../../../domain/models/pizza_model.dart';
-import '../../../blocs/admin_pizzas/admin_pizzas_cubit.dart';
 import 'pizza_status_list_view.dart';
 
 class AdminPizzasTabView extends StatelessWidget {
@@ -20,48 +17,37 @@ class AdminPizzasTabView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: TabBar.secondary(
-              isScrollable: false,
-              dividerColor: Colors.transparent,
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: colorScheme.onSecondaryContainer,
+                isScrollable: false,
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: colorScheme.onSecondaryContainer,
+                ),
+                labelColor: colorScheme.secondary,
+                unselectedLabelColor: colorScheme.secondary,
+                labelStyle: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedLabelStyle: theme.textTheme.bodyLarge,
+                tabs: const [
+                  Tab(text: 'Nuevas'),
+                  Tab(text: 'Aprobadas'),
+                  Tab(text: 'Rechazadas'),
+                ],
               ),
-              labelColor: colorScheme.secondary,
-              unselectedLabelColor: colorScheme.secondary,
-              labelStyle: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+            ),
+            const Expanded(
+              child: TabBarView(
+                children: [
+                  _KeepAliveWrapper(child: PizzaStatusListView(status: PizzaStatus.pending)),
+                  _KeepAliveWrapper(child: PizzaStatusListView(status: PizzaStatus.approved)),
+                  _KeepAliveWrapper(child: PizzaStatusListView(status: PizzaStatus.rejected)),
+                ],
               ),
-              unselectedLabelStyle: theme.textTheme.bodyLarge,
-              tabs: const [
-                Tab(text: 'Nuevas'),
-                Tab(text: 'Aprobadas'),
-                Tab(text: 'Rechazadas'),
-              ],
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                _buildStatusList(context, PizzaStatus.pending),
-                _buildStatusList(context, PizzaStatus.approved),
-                _buildStatusList(context, PizzaStatus.rejected),
-              ],
-            ),
-          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatusList(BuildContext context, PizzaStatus status) {
-    return _KeepAliveWrapper(
-      child: BlocProvider(
-        create: (context) =>
-            AdminPizzasListCubit(context.read<FirestoreService>(), status)
-              ..loadInitialPizzas(),
-        child: const PizzaStatusListView(),
       ),
     );
   }
