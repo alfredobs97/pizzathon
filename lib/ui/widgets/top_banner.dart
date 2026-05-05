@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/domain/models/user_extension.dart';
+import 'package:pizzathon/ui/blocs/auth_cubit.dart';
+import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 
 class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
@@ -17,27 +21,29 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(
-        minHeight: isMobile ? 0 : screenWidth * (42 / 1440),
-      ),
+      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
       color: Theme.of(context).colorScheme.secondary,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Stack(
         alignment: Alignment.center,
         children: [
           child,
-          /*  Positioned(
-            right: 0,
-            child: IconButton(
-              icon: Icon(
-                Icons.menu,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              onPressed: () {
-                AppShell.openDrawer();
-              },
-            ),
-          ), */
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is AuthAuthenticated && state.user.isAdmin) {
+                return Positioned(
+                  right: 0,
+                  child: IconButton(
+                    icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.onPrimary),
+                    onPressed: () {
+                      AppShell.openDrawer();
+                    },
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ],
       ),
     );
@@ -56,9 +62,9 @@ class TopBanner extends StatelessWidget implements PreferredSizeWidget {
       child: Text(
         'Buscamos 100 MEJORES talentos en Pizza',
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
       ),
     );
   }
