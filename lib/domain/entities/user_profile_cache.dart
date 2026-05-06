@@ -11,8 +11,8 @@ class UserProfileCache {
     required this.lastUpdated,
   });
 
-  bool get isExpired {
+  bool isExpired(Duration duration) {
     final now = DateTime.now();
-    return now.difference(lastUpdated).inMinutes >= 5;
+    return now.difference(lastUpdated) >= duration;
   }
 }

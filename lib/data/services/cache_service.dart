@@ -5,10 +5,13 @@ class CacheService {
   UserPizzasCache? _userPizzasCache;
   UserProfileCache? _userProfileCache;
 
+  static const Duration _pizzasTTL = Duration(minutes: 20);
+  static const Duration _profileTTL = Duration(minutes: 20);
+
   UserPizzasCache? getUserPizzas() {
     final cache = _userPizzasCache;
     if (cache == null) return null;
-    if (cache.isExpired) {
+    if (cache.isExpired(_pizzasTTL)) {
       _userPizzasCache = null;
       return null;
     }
@@ -26,7 +29,7 @@ class CacheService {
   UserProfileCache? getUserProfile() {
     final cache = _userProfileCache;
     if (cache == null) return null;
-    if (cache.isExpired) {
+    if (cache.isExpired(_profileTTL)) {
       _userProfileCache = null;
       return null;
     }

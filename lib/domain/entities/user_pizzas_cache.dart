@@ -7,8 +7,6 @@ class UserPizzasCache {
   final DateTime lastUpdated;
   final bool hasReachedMax;
 
-  static const int cacheDurationMinutes = 20;
-
   UserPizzasCache({
     required this.pizzas,
     this.lastDocument,
@@ -16,8 +14,8 @@ class UserPizzasCache {
     required this.hasReachedMax,
   });
 
-  bool get isExpired {
+  bool isExpired(Duration duration) {
     final now = DateTime.now();
-    return now.difference(lastUpdated).inMinutes >= cacheDurationMinutes;
+    return now.difference(lastUpdated) >= duration;
   }
 }
