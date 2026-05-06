@@ -27,8 +27,6 @@ class UploadLimitService {
       return false;
     }
 
-    // Return null if cache data is missing or not reaching limit yet,
-    // to signal that we should check Firestore.
     return null;
   }
 
@@ -45,9 +43,7 @@ class UploadLimitService {
       endOfDay: endOfDay,
     );
 
-    // Update Cache
     await _prefs.setInt(slotKey, dbCount);
-
     return dbCount < maxPizzasPerDay;
   }
   Future<void> incrementLimitCache(String userId) async {
