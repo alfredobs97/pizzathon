@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 
 class PizzaCard extends StatelessWidget {
@@ -10,33 +10,31 @@ class PizzaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String pizzaName = pizza.metadata?['name'] ?? 'Teglia Romana';
-    final String pizzaDayTime = pizza.metadata?['day'] ?? 'Dia 1 · 17:42h';
+    final String pizzaName = pizza.pizzaStyle?.displayName ?? 'Sin estilo';
+    final String pizzaDayTime = DateFormat("d 'de' MMMM · HH:mm'h'", 'es').format(pizza.createdAt);
+    final String? imageUrl = pizza.imageUrls.values.firstOrNull;
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
-        ],
-        image: DecorationImage(
-          image: CachedNetworkImageProvider(pizza.imageUrls.firstOrNull ?? ''),
-          fit: BoxFit.cover,
-        ),
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))],
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        image: imageUrl != null
+            ? DecorationImage(image: CachedNetworkImageProvider(imageUrl), fit: BoxFit.cover)
+            : null,
       ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          // Gradient overlay to make text readable regardless of the background image
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               Colors.black.withValues(alpha: 0.1),
-              Colors.black.withValues(alpha: 0.5),
-              Colors.black.withValues(alpha: 0.1),
+              Colors.black.withValues(alpha: 0.6),
+              Colors.black.withValues(alpha: 0.2),
             ],
-            stops: const [0.0, 0.5, 1.0],
+            stops: const [0.0, 0.6, 1.0],
           ),
         ),
         child: Center(
@@ -44,46 +42,49 @@ class PizzaCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                pizzaName,
+                pizzaName.toUpperCase(),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.archivoBlack(
-                  fontSize: 28,
-                  height: 1.0,
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   color: Colors.white,
                   shadows: const [
-                    Shadow(
-                      color: Colors.black45,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
+                    Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2)),
                   ],
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                pizzaDayTime,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.archivo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withValues(alpha: 0.9),
-                  shadows: const [
-                    Shadow(
-                      color: Colors.black45,
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  pizzaDayTime,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
                 ),
               ),
+              if (pizza.status != PizzaStatus.approved) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
+                  child: Text(
+                    pizza.status.displayName.toUpperCase(),
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
   }
-}
-
-extension on Map<String, String> {
-  get firstOrNull => null;
 }

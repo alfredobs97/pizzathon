@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pizzathon/data/services/cache_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
@@ -37,12 +38,13 @@ class ProfilePage extends StatelessWidget {
                 return BlocProvider<UserPizzasCubit>(
                   create: (context) => UserPizzasCubit(
                     firestoreService: context.read<FirestoreService>(),
+                    cacheService: context.read<CacheService>(),
                     userId: user.uid,
                   )..fetchInitialPizzas(),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Container(
                           color: Theme.of(context).colorScheme.onSurface,
                           child: Column(
                             children: [
@@ -82,11 +84,10 @@ class ProfilePage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        UserPizzasList(user: user),
-
-                        const SizedBox(height: 40),
-                      ],
-                    ),
+                      ),
+                      UserPizzasList(user: user),
+                      const SliverToBoxAdapter(child: SizedBox(height: 40)),
+                    ],
                   ),
                 );
               },
