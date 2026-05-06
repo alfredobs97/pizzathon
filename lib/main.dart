@@ -89,7 +89,6 @@ void main() async {
               context.read<AuthService>(),
               context.read<PizzaStorageService>(),
               context.read<FirestoreService>(),
-              context.read<CacheService>(),
             ),
           ),
         ],
