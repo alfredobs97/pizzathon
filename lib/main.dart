@@ -15,6 +15,7 @@ import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/pizza_validation_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'firebase_options.dart';
 import 'data/services/auth_service.dart';
@@ -25,6 +26,7 @@ import 'ui/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('es', null);
   usePathUrlStrategy();
 
   final errorTracker = SentryErrorTrackerService();

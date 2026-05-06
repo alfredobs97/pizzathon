@@ -1,43 +1,55 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/domain/models/user_extension.dart';
+import 'package:pizzathon/ui/blocs/auth_cubit.dart';
+import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 
 class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
   final Widget child;
+  final List<Widget>? actions;
 
-  const BaseTopBanner({super.key, required this.child});
+  const BaseTopBanner({super.key, required this.child, this.actions});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 800;
 
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(
-        minHeight: isMobile ? 0 : screenWidth * (42 / 1440),
-      ),
-      color: Theme.of(context).colorScheme.secondary,
+      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
+      color: colorScheme.secondary,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Stack(
         alignment: Alignment.center,
         children: [
           child,
-          /*  Positioned(
-            right: 0,
-            child: IconButton(
-              icon: Icon(
-                Icons.menu,
-                color: Theme.of(context).colorScheme.onPrimary,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (actions != null) ...actions!,
+              BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthAuthenticated && state.user.isAdmin) {
+                    return IconButton(
+                      icon: Icon(Icons.menu, color: colorScheme.onPrimary),
+                      onPressed: () {
+                        AppShell.openDrawer();
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
-              onPressed: () {
-                AppShell.openDrawer();
-              },
-            ),
-          ), */
+            ],
+          ),
         ],
       ),
     );
@@ -45,7 +57,8 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class TopBanner extends StatelessWidget implements PreferredSizeWidget {
-  const TopBanner({super.key});
+  final List<Widget>? actions;
+  const TopBanner({super.key, this.actions});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -53,19 +66,21 @@ class TopBanner extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return BaseTopBanner(
+      actions: actions,
       child: Text(
         'Buscamos 100 MEJORES talentos en Pizza',
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
       ),
     );
   }
 }
 
 class CountdownTopBanner extends StatefulWidget implements PreferredSizeWidget {
-  const CountdownTopBanner({super.key});
+  final List<Widget>? actions;
+  const CountdownTopBanner({super.key, this.actions});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -113,6 +128,7 @@ class _CountdownTopBannerState extends State<CountdownTopBanner> {
     final minutes = _timeLeft.inMinutes % 60;
 
     return BaseTopBanner(
+      actions: widget.actions,
       child: Text(
         'Quedan $days dias $hours horas $minutes minutos',
         textAlign: TextAlign.center,

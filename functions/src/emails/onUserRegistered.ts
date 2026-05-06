@@ -1,26 +1,20 @@
 /* eslint-disable */
 
 import * as logger from "firebase-functions/logger";
-import * as nodemailer from "nodemailer";
-import { onDocumentWritten } from "firebase-functions/firestore";
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+import { onDocumentCreated } from "firebase-functions/firestore";
+import { transporter, FROM_ADDRESS } from "./mailer";
 
 const userCollection = "users_2026_05";
 
-export const sendWelcomeEmail = onDocumentWritten(
+export const sendWelcomeEmail = onDocumentCreated(
   `${userCollection}/{userId}`,
   async (event) => {
-    const snapshot = event.data?.after;
+    const snapshot = event.data;
 
-    const emailDestino = snapshot?.data()?.email;
-    const nombreUsuario = snapshot?.data()?.displayName || "nuevo usuario";
+    if (!snapshot) return null;
+
+    const emailDestino = snapshot.data()?.email;
+    const nombreUsuario = snapshot.data()?.displayName || "nuevo usuario";
 
     if (!emailDestino) {
       logger.warn(`UID ${event.params.userId} sin email. Abortando.`);
@@ -28,7 +22,7 @@ export const sendWelcomeEmail = onDocumentWritten(
     }
 
     const mailOptions = {
-      from: `"Equipo Pizzathon" <${process.env.EMAIL_USER}>`,
+      from: FROM_ADDRESS,
       to: emailDestino,
       subject: "Confirmación inscripción Pizzathon",
       text: `Hola ${nombreUsuario},\n\nTu inscripción a Pizzathon ha sido aceptada y a partir de aquí tu email será tu acceso a la competición.\n\n

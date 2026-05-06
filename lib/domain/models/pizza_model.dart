@@ -26,12 +26,22 @@ extension PizzaStyleExtension on PizzaStyle {
   }
 }
 
+enum PizzaStatus {
+  pending('Sin valorar'),
+  approved('Aprobada'),
+  rejected('Rechazada');
+
+  final String displayName;
+  const PizzaStatus(this.displayName);
+}
+
 class PizzaModel {
   final String id;
   final String userId;
   final Map<String, String> imageUrls;
   final String? thumbnailUrl;
   final DateTime createdAt;
+  final PizzaStatus status;
   
   // Technical details
   final PizzaStyle? pizzaStyle;
@@ -44,6 +54,8 @@ class PizzaModel {
   final num? cookingTemperature;
   final String? baseIngredient;
   final String? otherIngredients;
+  final int? score;
+  final String? adminComment;
   
   final Map<String, dynamic>? metadata;
 
@@ -53,6 +65,7 @@ class PizzaModel {
     required this.imageUrls,
     this.thumbnailUrl,
     required this.createdAt,
+    this.status = PizzaStatus.pending,
     this.pizzaStyle,
     this.flours,
     this.preferment,
@@ -63,6 +76,8 @@ class PizzaModel {
     this.cookingTemperature,
     this.baseIngredient,
     this.otherIngredients,
+    this.score,
+    this.adminComment,
     this.metadata,
   });
 
@@ -83,12 +98,22 @@ class PizzaModel {
       } catch (_) {}
     }
 
+    PizzaStatus status = PizzaStatus.pending;
+    if (data['status'] != null) {
+      try {
+        status = PizzaStatus.values.firstWhere(
+          (e) => e.name == data['status'],
+        );
+      } catch (_) {}
+    }
+
     return PizzaModel(
       id: doc.id,
       userId: data['userId'] ?? '',
       imageUrls: urls,
       thumbnailUrl: data['thumbnailUrl'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      status: status,
       pizzaStyle: style,
       flours: data['flours'],
       preferment: data['preferment'],
@@ -99,6 +124,8 @@ class PizzaModel {
       cookingTemperature: data['cookingTemperature'],
       baseIngredient: data['baseIngredient'],
       otherIngredients: data['otherIngredients'],
+      score: data['score'],
+      adminComment: data['adminComment'],
       metadata: data['metadata'],
     );
   }
@@ -110,6 +137,7 @@ class PizzaModel {
       'imageUrls': imageUrls,
       'thumbnailUrl': thumbnailUrl,
       'createdAt': FieldValue.serverTimestamp(),
+      'status': status.name,
       'pizzaStyle': pizzaStyle?.name,
       'flours': flours,
       'preferment': preferment,
@@ -120,6 +148,8 @@ class PizzaModel {
       'cookingTemperature': cookingTemperature,
       'baseIngredient': baseIngredient,
       'otherIngredients': otherIngredients,
+      'score': score,
+      'adminComment': adminComment,
       'metadata': metadata,
     };
   }
