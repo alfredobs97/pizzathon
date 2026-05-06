@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../domain/models/user_model.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final User user;
+  final UserModel user;
+  final int pizzaCount;
 
-  const ProfileHeader({super.key, required this.user});
+  const ProfileHeader({super.key, required this.user, required this.pizzaCount});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class ProfileHeader extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '#7', // Placeholder rank
+                          '#--', // Rank placeholder
                           style: GoogleFonts.climateCrisis(
                             fontSize: 40,
                             wordSpacing: 1,
@@ -42,22 +43,20 @@ class ProfileHeader extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          '24 Puntos', // Placeholder points
-                          style: Theme.of(context).textTheme.displayLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.15,
-                                height: 30 / 24,
-                              ),
+                          '${user.score} Puntos',
+                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.15,
+                            height: 30 / 24,
+                          ),
                         ),
                         Text(
-                          '5 Pizzas', // Placeholder pizzas
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w400,
-                              ),
+                          '$pizzaCount Pizzas',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ],
                     ),
@@ -66,15 +65,11 @@ class ProfileHeader extends StatelessWidget {
                   // Avatar
                   CircleAvatar(
                     radius: 55,
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.onPrimaryContainer,
-                    backgroundImage: user.photoURL != null
-                        ? CachedNetworkImageProvider(user.photoURL!)
+                    backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                    backgroundImage: user.photoUrl.isNotEmpty
+                        ? CachedNetworkImageProvider(user.photoUrl)
                         : null,
-                    child: user.photoURL == null
-                        ? const Icon(Icons.person, size: 55)
-                        : null,
+                    child: user.photoUrl.isEmpty ? const Icon(Icons.person, size: 55) : null,
                   ),
                 ],
               ),
@@ -83,10 +78,10 @@ class ProfileHeader extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  user.displayName?.toUpperCase() ?? '',
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  user.displayName.toUpperCase(),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.displayLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
               ),
             ],

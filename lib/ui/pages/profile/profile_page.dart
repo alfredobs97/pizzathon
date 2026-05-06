@@ -6,6 +6,8 @@ import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
+import 'package:pizzathon/ui/blocs/profile/profile_cubit.dart';
+import 'package:pizzathon/ui/blocs/profile/profile_state.dart';
 import 'package:pizzathon/ui/blocs/user_pizzas/user_pizzas_cubit.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/profile_header.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
@@ -33,14 +35,24 @@ class ProfilePage extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final user = state.user;
+                final authUser = state.user;
 
-                return BlocProvider<UserPizzasCubit>(
-                  create: (context) => UserPizzasCubit(
-                    firestoreService: context.read<FirestoreService>(),
-                    cacheService: context.read<CacheService>(),
-                    userId: user.uid,
-                  )..fetchInitialPizzas(),
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider<UserPizzasCubit>(
+                      create: (context) => UserPizzasCubit(
+                        firestoreService: context.read<FirestoreService>(),
+                        cacheService: context.read<CacheService>(),
+                        userId: authUser.uid,
+                      )..fetchInitialPizzas(),
+                    ),
+                    BlocProvider<ProfileCubit>(
+                      create: (context) => ProfileCubit(
+                        firestoreService: context.read<FirestoreService>(),
+                        cacheService: context.read<CacheService>(),
+                      )..loadProfile(authUser.uid),
+                    ),
+                  ],
                   child: CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
@@ -52,7 +64,25 @@ class ProfilePage extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(vertical: 20.0),
                                 child: SponsorBanner(),
                               ),
-                              ProfileHeader(user: user),
+                              BlocBuilder<ProfileCubit, ProfileState>(
+                                builder: (context, profileState) {
+                                  if (profileState is ProfileLoaded) {
+                                    return ProfileHeader(
+                                      user: profileState.user,
+                                      pizzaCount: profileState.pizzaCount,
+                                    );
+                                  }
+                                  if (profileState is ProfileError) {
+                                    return Center(child: Text(profileState.message));
+                                  }
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(40.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                },
+                              ),
                               const SizedBox(height: 16),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -85,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      UserPizzasList(user: user),
+                      UserPizzasList(user: authUser),
                       const SliverToBoxAdapter(child: SizedBox(height: 40)),
                     ],
                   ),
