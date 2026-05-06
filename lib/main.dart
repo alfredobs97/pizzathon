@@ -64,8 +64,11 @@ void main() async {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) =>
-                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>()),
+            create: (context) => AuthCubit(
+              context.read<AuthService>(),
+              context.read<ErrorTrackerService>(),
+              context.read<CacheService>(),
+            ),
           ),
           BlocProvider(
             create: (context) => EnrollmentCubit(
@@ -86,6 +89,7 @@ void main() async {
               context.read<AuthService>(),
               context.read<PizzaStorageService>(),
               context.read<FirestoreService>(),
+              context.read<CacheService>(),
             ),
           ),
         ],
