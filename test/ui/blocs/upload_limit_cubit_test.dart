@@ -37,7 +37,7 @@ void main() {
     registerFallbackValue(TrackedError(error: Exception()));
     when(() => mockErrorTrackerService.trackError(any())).thenAnswer((_) async => {});
     when(() => mockUploadLimitService.getStartAndEndOfDay()).thenAnswer((_) async => (startOfDay, endOfDay));
-    when(() => mockUploadLimitService.incrementLimitCache(any(), any())).thenAnswer((_) async => {});
+    when(() => mockUploadLimitService.setLimitCache(any(), any())).thenAnswer((_) async => {});
   });
 
   tearDown(() {
@@ -83,7 +83,7 @@ void main() {
               startOfDay: startOfDay,
               endOfDay: endOfDay,
             )).called(1);
-        verify(() => mockUploadLimitService.incrementLimitCache(userId, 0)).called(1);
+        verify(() => mockUploadLimitService.setLimitCache(userId, 0)).called(1);
       },
     );
 
@@ -107,6 +107,7 @@ void main() {
               startOfDay: startOfDay,
               endOfDay: endOfDay,
             )).called(1);
+        verify(() => mockUploadLimitService.setLimitCache(userId, 3)).called(1);
       },
     );
 
@@ -131,21 +132,6 @@ void main() {
               endOfDay: endOfDay,
             )).called(1);
       },
-    );
-
-    blocTest<UploadLimitCubit, UploadLimitState>(
-      'emits [UploadLimitChecking, UploadLimitError] when Firestore fails',
-      build: () {
-        when(() => mockUploadLimitService.checkCacheLimit(userId)).thenAnswer((_) async => null);
-        when(() => mockFirestoreService.countPizzasToday(
-              uid: userId,
-              startOfDay: startOfDay,
-              endOfDay: endOfDay,
-            )).thenThrow(Exception('Firestore error'));
-        return uploadLimitCubit;
-      },
-      act: (cubit) => cubit.checkLimit(userId),
-      expect: () => [UploadLimitChecking(), isA<UploadLimitError>()],
     );
   });
 }

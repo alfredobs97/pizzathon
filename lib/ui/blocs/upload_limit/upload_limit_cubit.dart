@@ -52,7 +52,7 @@ class UploadLimitCubit extends Cubit<UploadLimitState> {
       }
 
       try {
-        await _uploadLimitService.incrementLimitCache(userId, count);
+        await _uploadLimitService.setLimitCache(userId, count);
       } catch (e, stackTrace) {
         _errorTrackerService.trackError(
           TrackedError(
@@ -60,7 +60,7 @@ class UploadLimitCubit extends Cubit<UploadLimitState> {
             stackTrace: stackTrace,
             extra: {
               'component': 'UploadLimitCubit',
-              'action': 'incrementLimitCache',
+              'action': 'setLimitCache',
               'userId': userId,
             },
           ),

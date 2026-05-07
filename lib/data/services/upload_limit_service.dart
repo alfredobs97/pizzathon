@@ -11,7 +11,11 @@ class UploadLimitCacheService {
     required SharedPreferences prefs,
     Future<DateTime> Function()? nowProvider,
   }) : _prefs = prefs,
-       _nowProvider = nowProvider ?? (() => NTP.now());
+       _nowProvider = nowProvider ??
+           (() => NTP.now().timeout(
+                 const Duration(seconds: 3),
+                 onTimeout: () => DateTime.now(),
+               ).catchError((_) => DateTime.now()));
 
   Future<bool?> checkCacheLimit(String userId) async {
     final now = await _nowProvider();
@@ -41,12 +45,11 @@ class UploadLimitCacheService {
     await _prefs.setInt(slotKey, currentCount + 1);
   }
 
-  Future<void> incrementLimitCache(String userId, int increment) async {
+  Future<void> setLimitCache(String userId, int count) async {
     final now = await _nowProvider();
     final slotKey = _getSlotKey(userId, now);
 
-    final currentCount = _prefs.getInt(slotKey) ?? 0;
-    await _prefs.setInt(slotKey, currentCount + increment);
+    await _prefs.setInt(slotKey, count);
   }
 
   String _getSlotKey(String userId, DateTime date) {

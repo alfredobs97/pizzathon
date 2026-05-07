@@ -13,8 +13,24 @@ import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/user_pizzas_list.dart';
 import 'package:pizzathon/ui/widgets/top_banner.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = context.read<AuthCubit>().state;
+      if (authState is AuthAuthenticated) {
+        context.read<UploadLimitCubit>().checkLimit(authState.user.uid);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +59,7 @@ class ProfilePage extends StatelessWidget {
                     userId: user.uid,
                   )..fetchInitialPizzas(),
                   child: BlocProvider.value(
-                    value: context.read<UploadLimitCubit>()..checkLimit(user.uid),
+                    value: context.read<UploadLimitCubit>(),
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
@@ -61,6 +77,7 @@ class ProfilePage extends StatelessWidget {
                                   builder: (context, limitState) {
                                     final bool isReached = limitState is UploadLimitReached;
                                     final bool isChecking = limitState is UploadLimitChecking;
+                                    final bool isError = limitState is UploadLimitError;
 
                                     return Column(
                                       children: [
@@ -72,9 +89,16 @@ class ProfilePage extends StatelessWidget {
                                               width: 320,
                                               height: 56,
                                               child: ElevatedButton(
-                                                onPressed: (isReached || isChecking)
+                                                onPressed: (isReached || isChecking || isError)
                                                     ? null
-                                                    : () => context.push(AppRouter.newPizzaRoute),
+                                                    : () async {
+                                                      await context.push(AppRouter.newPizzaRoute);
+                                                      if (context.mounted) {
+                                                        context
+                                                            .read<UploadLimitCubit>()
+                                                            .checkLimit(user.uid);
+                                                      }
+                                                    },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: theme.colorScheme.primary,
                                                   foregroundColor: theme.colorScheme.onPrimary,
@@ -110,6 +134,17 @@ class ProfilePage extends StatelessWidget {
                                                 color: theme.colorScheme.error,
                                                 fontWeight: FontWeight.bold,
                                               ),
+                                            ),
+                                          ),
+                                        if (isError)
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 12.0),
+                                            child: Text(
+                                              (limitState as UploadLimitError).message,
+                                              style: theme.textTheme.bodySmall?.copyWith(
+                                                color: theme.colorScheme.error,
+                                              ),
+                                              textAlign: TextAlign.center,
                                             ),
                                           ),
                                       ],
