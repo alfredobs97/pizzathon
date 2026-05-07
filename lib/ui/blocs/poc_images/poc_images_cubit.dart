@@ -25,7 +25,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final AuthService _authService;
   final PizzaStorageService _pizzaStorageService;
   final FirestoreService _firestoreService;
-  final UploadLimitService _uploadLimitService;
+  final UploadLimitCacheService _uploadLimitService;
 
   PocImagesCubit(
     this._imageProcessingService,
@@ -71,7 +71,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       final originalSize = originalBytes.length;
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
-      
+
       final compressedFile = await _imageProcessingService.compressImage(
         file,
         originalBytes,
@@ -81,10 +81,10 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       if (compressedFile != null) {
         final compressedBytes = await compressedFile.readAsBytes();
         final compressedSize = compressedBytes.length;
-        
+
         final updatedOriginalSizes = Map<PizzaPhotoStep, int>.from(state.originalSizes);
         final updatedCompressedSizes = Map<PizzaPhotoStep, int>.from(state.compressedSizes);
-        
+
         updatedOriginalSizes[state.currentStep] = originalSize;
         updatedCompressedSizes[state.currentStep] = compressedSize;
 
@@ -97,29 +97,18 @@ class PocImagesCubit extends Cubit<PocImagesState> {
           ),
         );
       } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: "No se pudo comprimir la imagen.",
-          ),
-        );
+        emit(state.copyWith(isLoading: false, errorMessage: "No se pudo comprimir la imagen."));
       }
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(
         TrackedError(
           error: e,
           stackTrace: stackTrace,
-          extra: {
-            'component': 'PocImagesCubit',
-            'action': 'pickAndCompressImages',
-          },
+          extra: {'component': 'PocImagesCubit', 'action': 'pickAndCompressImages'},
         ),
       );
       emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: "Ups! Error inesperado: ${e.toString()}",
-        ),
+        state.copyWith(isLoading: false, errorMessage: "Ups! Error inesperado: ${e.toString()}"),
       );
     }
   }
@@ -127,9 +116,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   void confirmImage() {
     if (state.pendingImage == null) return;
 
-    final updatedConfirmed = Map<PizzaPhotoStep, XFile>.from(
-      state.confirmedImages,
-    );
+    final updatedConfirmed = Map<PizzaPhotoStep, XFile>.from(state.confirmedImages);
     updatedConfirmed[state.currentStep] = state.pendingImage!;
 
     if (state.currentStep == PizzaPhotoStep.bottom) {
@@ -154,12 +141,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
   void nextPhotoStep() {
     if (state.currentStep == PizzaPhotoStep.bottom) {
-      emit(
-        state.copyWith(
-          mainStep: WizardStep.formulario,
-          clearPendingImage: true,
-        ),
-      );
+      emit(state.copyWith(mainStep: WizardStep.formulario, clearPendingImage: true));
     } else {
       final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
       emit(state.copyWith(currentStep: nextStep, clearPendingImage: true));
@@ -191,10 +173,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     );
   }
 
-  void saveIngredients({
-    required String baseIngredient,
-    required String otherIngredients,
-  }) {
+  void saveIngredients({required String baseIngredient, required String otherIngredients}) {
     emit(
       state.copyWith(
         baseIngredient: baseIngredient,
@@ -205,12 +184,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   }
 
   void redoChanges() {
-    emit(
-      state.copyWith(
-        mainStep: WizardStep.fotos,
-        currentStep: PizzaPhotoStep.front,
-      ),
-    );
+    emit(state.copyWith(mainStep: WizardStep.fotos, currentStep: PizzaPhotoStep.front));
   }
 
   void goBackMainStep() {
@@ -235,9 +209,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       return;
     }
     if (state.baseIngredient == null || state.otherIngredients == null) {
-      emit(
-        state.copyWith(errorMessage: "Faltan los ingredientes de la pizza."),
-      );
+      emit(state.copyWith(errorMessage: "Faltan los ingredientes de la pizza."));
       return;
     }
 
@@ -286,25 +258,23 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         imageUrls: imageUrlsMap,
       );
 
-      await _uploadLimitService.incrementLimitCache(userId);
+      await _uploadLimitService.incrementLimitCacheByOne(userId);
 
-      emit(state.copyWith(
-        isSubmitting: false,
-        isFinished: true,
-        imageUrls: imageUrlsMap.map((key, value) => MapEntry(
-          PizzaPhotoStep.values.firstWhere((s) => s.name == key),
-          value,
-        )),
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          isFinished: true,
+          imageUrls: imageUrlsMap.map(
+            (key, value) => MapEntry(PizzaPhotoStep.values.firstWhere((s) => s.name == key), value),
+          ),
+        ),
+      );
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(
         TrackedError(
           error: e,
           stackTrace: stackTrace,
-          extra: {
-            'component': 'PocImagesCubit',
-            'action': 'submitPizza',
-          },
+          extra: {'component': 'PocImagesCubit', 'action': 'submitPizza'},
         ),
       );
       emit(

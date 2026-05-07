@@ -1,84 +1,68 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MockFirestoreService extends Mock implements FirestoreService {}
-
 void main() {
-  late UploadLimitService service;
-  late MockFirestoreService mockFirestore;
+  late UploadLimitCacheService service;
   late SharedPreferences prefs;
 
   const String userId = 'test_user_123';
-  final DateTime fakeNow = DateTime(2026, 5, 5, 12, 0); 
+  final DateTime fakeNow = DateTime(2026, 5, 5, 12, 0);
   final String slotKey = 'limit_${userId}_2026-05-05';
 
-  setUpAll(() {
-    registerFallbackValue(DateTime(2000));
-  });
-
   setUp(() async {
-    mockFirestore = MockFirestoreService();
     SharedPreferences.setMockInitialValues({});
     prefs = await SharedPreferences.getInstance();
 
-    service = UploadLimitService(
-      firestoreService: mockFirestore,
+    service = UploadLimitCacheService(
       prefs: prefs,
       nowProvider: () async => fakeNow,
     );
-
-    when(() => mockFirestore.countPizzasToday(
-          uid: any(named: 'uid'),
-          startOfDay: any(named: 'startOfDay'),
-          endOfDay: any(named: 'endOfDay'),
-        )).thenAnswer((_) async => 0);
   });
 
-  group('UploadLimitService - Cache & Firestore Split', () {
+  group('UploadLimitCacheService Tests', () {
     test('checkCacheLimit returns null when cache is empty', () async {
       final result = await service.checkCacheLimit(userId);
       expect(result, isNull);
     });
 
     test('checkCacheLimit returns false when limit reached in cache', () async {
-      await prefs.setInt(slotKey, 3);
+      await prefs.setInt(slotKey, UploadLimitCacheService.maxPizzasPerDay);
       final result = await service.checkCacheLimit(userId);
       expect(result, isFalse);
     });
 
-    test('checkFirestoreLimit updates cache and returns true if under limit', () async {
-      when(() => mockFirestore.countPizzasToday(
-            uid: any(named: 'uid'),
-            startOfDay: any(named: 'startOfDay'),
-            endOfDay: any(named: 'endOfDay'),
-          )).thenAnswer((_) async => 1);
-
-      final result = await service.checkFirestoreLimit(userId);
-
-      expect(result, isTrue);
-      expect(prefs.getInt(slotKey), 1);
+    test('checkCacheLimit returns null when under limit in cache', () async {
+      await prefs.setInt(slotKey, UploadLimitCacheService.maxPizzasPerDay - 1);
+      final result = await service.checkCacheLimit(userId);
+      expect(result, isNull);
     });
 
-    test('checkFirestoreLimit updates cache and returns false if limit reached', () async {
-      when(() => mockFirestore.countPizzasToday(
-            uid: any(named: 'uid'),
-            startOfDay: any(named: 'startOfDay'),
-            endOfDay: any(named: 'endOfDay'),
-          )).thenAnswer((_) async => 3);
+    test('incrementLimitCache correctly increments the value in SharedPreferences', () async {
+      await service.incrementLimitCache(userId, 1);
+      expect(prefs.getInt(slotKey), 1);
 
-      final result = await service.checkFirestoreLimit(userId);
-
-      expect(result, isFalse);
+      await service.incrementLimitCache(userId, 2);
       expect(prefs.getInt(slotKey), 3);
     });
 
-    test('incrementLimitCache works as expected', () async {
-      await prefs.setInt(slotKey, 1);
-      await service.incrementLimitCache(userId);
-      expect(prefs.getInt(slotKey), 2);
+    test('getStartAndEndOfDay returns correct time range for the day', () async {
+      final (start, end) = await service.getStartAndEndOfDay();
+
+      expect(start, DateTime(fakeNow.year, fakeNow.month, fakeNow.day));
+      expect(end, DateTime(fakeNow.year, fakeNow.month, fakeNow.day, 23, 59, 59));
+    });
+
+    test('key generation respects date and user', () async {
+      // We can indirectly test this by changing the fakeNow in a new service instance
+      final otherDate = DateTime(2026, 12, 31);
+      final otherService = UploadLimitCacheService(
+        prefs: prefs,
+        nowProvider: () async => otherDate,
+      );
+
+      await otherService.incrementLimitCache(userId, 1);
+      expect(prefs.getInt('limit_${userId}_2026-12-31'), 1);
     });
   });
 }

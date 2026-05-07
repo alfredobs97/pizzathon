@@ -1,22 +1,17 @@
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-import 'firestore_service.dart';
 
-class UploadLimitService {
-  final FirestoreService _firestoreService;
+class UploadLimitCacheService {
   final SharedPreferences _prefs;
   final Future<DateTime> Function() _nowProvider;
 
   static const int maxPizzasPerDay = 3;
 
-  UploadLimitService({
-    required FirestoreService firestoreService,
+  UploadLimitCacheService({
     required SharedPreferences prefs,
     Future<DateTime> Function()? nowProvider,
-  })  : _firestoreService = firestoreService,
-        _prefs = prefs,
-        _nowProvider = nowProvider ?? (() => NTP.now());
+  }) : _prefs = prefs,
+       _nowProvider = nowProvider ?? (() => NTP.now());
 
   Future<bool?> checkCacheLimit(String userId) async {
     final now = await _nowProvider();
@@ -30,28 +25,28 @@ class UploadLimitService {
     return null;
   }
 
-  Future<bool> checkFirestoreLimit(String userId) async {
+  Future<(DateTime, DateTime)> getStartAndEndOfDay() async {
     final now = await _nowProvider();
-    final slotKey = _getSlotKey(userId, now);
-
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
-
-    final dbCount = await _firestoreService.countPizzasToday(
-      uid: userId,
-      startOfDay: startOfDay,
-      endOfDay: endOfDay,
+    return (
+      DateTime(now.year, now.month, now.day),
+      DateTime(now.year, now.month, now.day, 23, 59, 59),
     );
-
-    await _prefs.setInt(slotKey, dbCount);
-    return dbCount < maxPizzasPerDay;
   }
-  Future<void> incrementLimitCache(String userId) async {
+
+  Future<void> incrementLimitCacheByOne(String userId) async {
     final now = await _nowProvider();
     final slotKey = _getSlotKey(userId, now);
-    
+
     final currentCount = _prefs.getInt(slotKey) ?? 0;
     await _prefs.setInt(slotKey, currentCount + 1);
+  }
+
+  Future<void> incrementLimitCache(String userId, int increment) async {
+    final now = await _nowProvider();
+    final slotKey = _getSlotKey(userId, now);
+
+    final currentCount = _prefs.getInt(slotKey) ?? 0;
+    await _prefs.setInt(slotKey, currentCount + increment);
   }
 
   String _getSlotKey(String userId, DateTime date) {
@@ -60,5 +55,4 @@ class UploadLimitService {
     final day = date.day.toString().padLeft(2, '0');
     return 'limit_${userId}_$year-$month-$day';
   }
-
 }

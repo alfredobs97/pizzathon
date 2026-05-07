@@ -61,12 +61,7 @@ void main() async {
         RepositoryProvider(create: (context) => LocalStorageService()),
         RepositoryProvider(create: (context) => RemoteConfigService()..init()),
         RepositoryProvider<ErrorTrackerService>(create: (context) => errorTracker),
-        RepositoryProvider(
-          create: (context) => UploadLimitService(
-            firestoreService: context.read<FirestoreService>(),
-            prefs: prefs,
-          ),
-        ),
+        RepositoryProvider(create: (context) => UploadLimitCacheService(prefs: prefs)),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -85,7 +80,8 @@ void main() async {
           ),
           BlocProvider(
             create: (context) => UploadLimitCubit(
-              context.read<UploadLimitService>(),
+              context.read<UploadLimitCacheService>(),
+              context.read<FirestoreService>(),
               context.read<ErrorTrackerService>(),
             ),
           ),
@@ -99,7 +95,7 @@ void main() async {
               context.read<AuthService>(),
               context.read<PizzaStorageService>(),
               context.read<FirestoreService>(),
-              context.read<UploadLimitService>(),
+              context.read<UploadLimitCacheService>(),
             ),
           ),
         ],
