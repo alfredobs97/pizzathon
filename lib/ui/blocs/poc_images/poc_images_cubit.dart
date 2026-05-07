@@ -258,7 +258,20 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         imageUrls: imageUrlsMap,
       );
 
-      await _uploadLimitService.incrementLimitCacheByOne(userId);
+      try {
+        await _uploadLimitService.incrementLimitCacheByOne(userId);
+      } catch (e, stackTrace) {
+        _errorTrackerService.trackError(
+          TrackedError(
+            error: e,
+            stackTrace: stackTrace,
+            extra: {
+              'component': 'PocImagesCubit',
+              'action': 'submitPizza: incrementLimitCacheByOne',
+            },
+          ),
+        );
+      }
 
       emit(
         state.copyWith(
