@@ -92,35 +92,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 onPressed: (isReached || isChecking || isError)
                                                     ? null
                                                     : () async {
-                                                      await context.push(AppRouter.newPizzaRoute);
-                                                      if (context.mounted) {
-                                                        context
-                                                            .read<UploadLimitCubit>()
-                                                            .checkLimit(user.uid);
-                                                      }
-                                                    },
+                                                        await context.push(AppRouter.newPizzaRoute);
+                                                        if (context.mounted) {
+                                                          context
+                                                              .read<UploadLimitCubit>()
+                                                              .checkLimit(user.uid);
+                                                        }
+                                                      },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: theme.colorScheme.primary,
                                                   foregroundColor: theme.colorScheme.onPrimary,
+                                                  disabledBackgroundColor: Colors.grey.shade300,
+                                                  disabledForegroundColor: Colors.grey.shade600,
+                                                  textStyle: theme.textTheme.bodyLarge,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius: BorderRadius.circular(30),
                                                   ),
                                                 ),
                                                 child: isChecking
                                                     ? const SizedBox(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child: CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        color: Colors.white,
-                                                      ),
-                                                    )
-                                                    : Text(
-                                                      'Nueva Pizza',
-                                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                                        color: theme.colorScheme.onPrimary,
-                                                      ),
-                                                    ),
+                                                        height: 20,
+                                                        width: 20,
+                                                        child: CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
+                                                    : Text(isReached ? 'Listo por hoy' : 'Nueva Pizza'),
                                               ),
                                             ),
                                           ),
@@ -140,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 12.0),
                                             child: Text(
-                                              (limitState as UploadLimitError).message,
+                                              limitState.message,
                                               style: theme.textTheme.bodySmall?.copyWith(
                                                 color: theme.colorScheme.error,
                                               ),
