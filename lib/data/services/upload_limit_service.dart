@@ -1,28 +1,28 @@
 import 'package:ntp/ntp.dart';
+import 'package:pizzathon/domain/entities/pizza_limit_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadLimitCacheService {
   final SharedPreferences _prefs;
   final Future<DateTime> Function() _nowProvider;
 
-  static const int maxPizzasPerDay = 3;
-
   UploadLimitCacheService({
     required SharedPreferences prefs,
     Future<DateTime> Function()? nowProvider,
   }) : _prefs = prefs,
-       _nowProvider = nowProvider ??
-           (() => NTP.now().timeout(
-                 const Duration(seconds: 3),
-                 onTimeout: () => DateTime.now(),
-               ).catchError((_) => DateTime.now()));
+       _nowProvider =
+           nowProvider ??
+           (() => NTP
+               .now()
+               .timeout(const Duration(seconds: 3), onTimeout: () => DateTime.now())
+               .catchError((_) => DateTime.now()));
 
   Future<bool?> checkCacheLimit(String userId) async {
     final now = await _nowProvider();
     final slotKey = _getSlotKey(userId, now);
 
     final cachedCount = _prefs.getInt(slotKey);
-    if (cachedCount != null && cachedCount >= maxPizzasPerDay) {
+    if (cachedCount != null && cachedCount >= PizzaLimitConstants.maxPizzasPerDay) {
       return false;
     }
 
