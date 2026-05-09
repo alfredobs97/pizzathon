@@ -27,30 +27,33 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
       constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
       color: colorScheme.secondary,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          child,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (actions != null) ...actions!,
-              BlocBuilder<AuthCubit, AuthState>(
-                builder: (context, state) {
-                  if (state is AuthAuthenticated && state.user.isAdmin) {
-                    return IconButton(
-                      icon: Icon(Icons.menu, color: colorScheme.onPrimary),
-                      onPressed: () {
-                        AppShell.openDrawer();
-                      },
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-            ],
-          ),
-        ],
+      child: SafeArea(
+        bottom: false,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            child,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (actions != null) ...actions!,
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthAuthenticated && state.user.isAdmin) {
+                      return IconButton(
+                        icon: Icon(Icons.menu, color: colorScheme.onPrimary),
+                        onPressed: () {
+                          AppShell.openDrawer();
+                        },
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
