@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pizzathon/domain/entities/pizza_limit_constants.dart';
+import 'package:pizzathon/ui/app_router.dart';
 
 Future<bool> showExitConfirmationDialog(BuildContext context) async {
   final theme = Theme.of(context);
@@ -74,6 +77,54 @@ void showErrorDialog(BuildContext context, String errorMessage, ThemeData theme)
           ),
         ),
       ],
+    ),
+  );
+}
+
+void showLimitExceededDialog(BuildContext context) {
+  final theme = Theme.of(context);
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) => PopScope(
+      canPop: false,
+      child: AlertDialog(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Column(
+          children: [
+            Icon(Icons.info_outline, color: theme.colorScheme.primary, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              "Límite alcanzado",
+              style: theme.textTheme.displayMedium?.copyWith(
+                color: theme.colorScheme.secondary,
+                fontSize: 22,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: Text(
+          "Has alcanzado el límite de ${PizzaLimitConstants.maxPizzasPerDay} pizzas por hoy. ¡Vuelve mañana!",
+          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.secondary),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                context.go(AppRouter.profileRoute);
+              },
+              style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.primary),
+              child: const Text("Vale"),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
