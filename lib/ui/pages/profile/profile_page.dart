@@ -25,10 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authState = context.read<AuthCubit>().state;
-      if (authState is AuthAuthenticated) {
-        context.read<UploadLimitCubit>().checkLimit(authState.user.uid);
-      }
+      context.read<UploadLimitCubit>().checkLimit();
     });
   }
 
@@ -96,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         if (context.mounted) {
                                                           context
                                                               .read<UploadLimitCubit>()
-                                                              .checkLimit(user.uid);
+                                                              .checkLimit();
                                                         }
                                                       },
                                                 style: ElevatedButton.styleFrom(
@@ -118,7 +115,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           color: Colors.white,
                                                         ),
                                                       )
-                                                    : Text(isReached ? 'Listo por hoy' : 'Nueva Pizza'),
+                                                    : Text(
+                                                        isReached ? 'Listo por hoy' : 'Nueva Pizza',
+                                                      ),
                                               ),
                                             ),
                                           ),

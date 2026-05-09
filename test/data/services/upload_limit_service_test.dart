@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pizzathon/data/services/upload_limit_service.dart';
+import 'package:pizzathon/domain/entities/pizza_limit_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -14,10 +15,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     prefs = await SharedPreferences.getInstance();
 
-    service = UploadLimitCacheService(
-      prefs: prefs,
-      nowProvider: () async => fakeNow,
-    );
+    service = UploadLimitCacheService(prefs: prefs, nowProvider: () async => fakeNow);
   });
 
   group('UploadLimitCacheService Tests', () {
@@ -27,13 +25,13 @@ void main() {
     });
 
     test('checkCacheLimit returns false when limit reached in cache', () async {
-      await prefs.setInt(slotKey, UploadLimitCacheService.maxPizzasPerDay);
+      await prefs.setInt(slotKey, PizzaLimitConstants.maxPizzasPerDay);
       final result = await service.checkCacheLimit(userId);
       expect(result, isFalse);
     });
 
     test('checkCacheLimit returns null when under limit in cache', () async {
-      await prefs.setInt(slotKey, UploadLimitCacheService.maxPizzasPerDay - 1);
+      await prefs.setInt(slotKey, PizzaLimitConstants.maxPizzasPerDay - 1);
       final result = await service.checkCacheLimit(userId);
       expect(result, isNull);
     });
@@ -68,17 +66,17 @@ void main() {
         nowProvider: () => throw Exception('NTP Error'),
       );
 
-      // This should not throw because nowProvider is caught in internal methods if we used the constructor default, 
-      // but here we are testing the logic. 
+      // This should not throw because nowProvider is caught in internal methods if we used the constructor default,
+      // but here we are testing the logic.
       // Actually, my fix in constructor was:
       // nowProvider ?? (() => NTP.now().timeout(...).catchError(...))
-      
+
       // Let's test the actual default provider resilience by NOT passing a provider
       final resilientService = UploadLimitCacheService(prefs: prefs);
-      
-      // We can't easily mock NTP.now() to fail here without more complex setup, 
-      // but we've verified the code change. 
-      
+
+      // We can't easily mock NTP.now() to fail here without more complex setup,
+      // but we've verified the code change.
+
       final (start, _) = await resilientService.getStartAndEndOfDay();
       final now = DateTime.now();
       expect(start.year, now.year);
