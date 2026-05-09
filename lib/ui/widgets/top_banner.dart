@@ -37,17 +37,10 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 if (actions != null) ...actions!,
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    if (state is AuthAuthenticated && state.user.isAdmin) {
-                      return IconButton(
-                        icon: Icon(Icons.menu, color: colorScheme.onPrimary),
-                        onPressed: () {
-                          AppShell.openDrawer();
-                        },
-                      );
-                    }
-                    return const SizedBox.shrink();
+                IconButton(
+                  icon: Icon(Icons.menu, color: colorScheme.onPrimary),
+                  onPressed: () {
+                    AppShell.openDrawer();
                   },
                 ),
               ],
