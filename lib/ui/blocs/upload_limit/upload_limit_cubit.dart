@@ -3,6 +3,7 @@ import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/domain/entities/pizza_limit_constants.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
+import '../../../data/services/auth_service.dart';
 import '../../../data/services/upload_limit_service.dart';
 import 'upload_limit_state.dart';
 
@@ -10,11 +11,21 @@ class UploadLimitCubit extends Cubit<UploadLimitState> {
   final UploadLimitCacheService _uploadLimitService;
   final FirestoreService _firestoreService;
   final ErrorTrackerService _errorTrackerService;
+  final AuthService _authService;
 
-  UploadLimitCubit(this._uploadLimitService, this._firestoreService, this._errorTrackerService)
-    : super(UploadLimitInitial());
+  UploadLimitCubit(
+    this._uploadLimitService,
+    this._firestoreService,
+    this._errorTrackerService,
+    this._authService,
+  ) : super(UploadLimitInitial());
 
-  Future<void> checkLimit(String userId) async {
+  Future<void> checkLimit() async {
+    final userId = _authService.currentUser?.uid;
+    if (userId == null) {
+      emit(const UploadLimitError('Usuario no autenticado'));
+      return;
+    }
     try {
       emit(UploadLimitChecking());
 
@@ -58,11 +69,7 @@ class UploadLimitCubit extends Cubit<UploadLimitState> {
           TrackedError(
             error: e,
             stackTrace: stackTrace,
-            extra: {
-              'component': 'UploadLimitCubit',
-              'action': 'setLimitCache',
-              'userId': userId,
-            },
+            extra: {'component': 'UploadLimitCubit', 'action': 'setLimitCache', 'userId': userId},
           ),
         );
       }

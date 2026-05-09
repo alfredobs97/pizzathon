@@ -17,6 +17,11 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
+  void checkAuth() {
+    final user = _authService.currentUser;
+    emit(user != null ? AuthAuthenticated(user) : AuthUnauthenticated());
+  }
+
   Future<void> login() async {
     emit(AuthLoading());
     try {

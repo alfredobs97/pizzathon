@@ -69,22 +69,25 @@ void main() async {
         providers: [
           BlocProvider(
             create: (context) =>
-                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>()),
+                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>())
+                  ..checkAuth(),
           ),
           BlocProvider(
+            lazy: false,
             create: (context) => EnrollmentCubit(
               context.read<FirestoreService>(),
               context.read<AuthService>(),
               context.read<LocalStorageService>(),
               context.read<RemoteConfigService>(),
               context.read<ErrorTrackerService>(),
-            ),
+            )..checkUserEnrollment(),
           ),
           BlocProvider(
             create: (context) => UploadLimitCubit(
               context.read<UploadLimitCacheService>(),
               context.read<FirestoreService>(),
               context.read<ErrorTrackerService>(),
+              context.read<AuthService>(),
             ),
           ),
           BlocProvider(
