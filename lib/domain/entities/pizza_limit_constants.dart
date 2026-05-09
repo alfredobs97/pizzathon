@@ -1,3 +1,3 @@
 class PizzaLimitConstants {
-  static const int maxPizzasPerDay = 1;
+  static const int maxPizzasPerDay = 3;
 }
