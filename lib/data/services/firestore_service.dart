@@ -179,4 +179,14 @@ class FirestoreService {
         .get();
     return snapshot.count ?? 0;
   }
+
+  Future<int> getUserPizzaCount(String uid) async {
+    final snapshot = await _db
+        .collection(_pizzaCollectionName)
+        .where('userId', isEqualTo: uid)
+        .where('status', isEqualTo: PizzaStatus.approved.name)
+        .count()
+        .get();
+    return snapshot.count ?? 0;
+  }
 }

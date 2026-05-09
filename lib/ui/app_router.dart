@@ -9,6 +9,7 @@ import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'package:pizzathon/ui/blocs/enrollment_state.dart';
+import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
@@ -19,7 +20,6 @@ import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:pizzathon/ui/pages/profile/profile_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
-import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
 
@@ -52,7 +52,7 @@ class AppRouter {
             onExit: (context, state) async {
               final isFinished = context.read<PocImagesCubit>().state.isFinished;
               final isLimitExceeded = context.read<UploadLimitCubit>().state is UploadLimitReached;
-              
+
               if (isFinished || isLimitExceeded) {
                 return true;
               }
