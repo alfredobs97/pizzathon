@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pizzathon/data/services/auth_service.dart';
-import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
@@ -61,7 +59,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
           }
 
           if (state.isFinished) {
-            context.go(AppRouter.pizzaSuccessRoute);
+            showSuccessDialog(context);
           } else {
             // Animate to the new step if it changed
             if (_pageController.hasClients &&

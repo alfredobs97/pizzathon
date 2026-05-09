@@ -14,7 +14,6 @@ import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
-import 'package:pizzathon/ui/pages/pizza_wizard/pizza_success_page.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -31,7 +30,6 @@ class AppRouter {
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
-  static const String pizzaSuccessRoute = '/pizza-enviada';
 
   final _router = GoRouter(
     initialLocation: landingRoute,
@@ -63,10 +61,6 @@ class AppRouter {
               return result;
             },
             pageBuilder: (context, state) => _fadeTransition(state, const PizzaWizardPage()),
-          ),
-          GoRoute(
-            path: pizzaSuccessRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const PizzaSuccessPage()),
           ),
           GoRoute(
             path: profileRoute,

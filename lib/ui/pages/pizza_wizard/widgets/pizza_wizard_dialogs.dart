@@ -128,3 +128,51 @@ void showLimitExceededDialog(BuildContext context) {
     ),
   );
 }
+
+void showSuccessDialog(BuildContext context) {
+  final theme = Theme.of(context);
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) => PopScope(
+      canPop: false,
+      child: AlertDialog(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Column(
+          children: [
+            Icon(Icons.check_circle_outline, color: theme.colorScheme.primary, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              "¡Pizza recibida!",
+              style: theme.textTheme.displayMedium?.copyWith(
+                color: theme.colorScheme.secondary,
+                fontSize: 22,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: Text(
+          "La revisaremos lo antes posible.",
+          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.secondary),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                context.go(AppRouter.profileRoute);
+              },
+              style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.primary),
+              child: const Text("Ir a mi perfil"),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
