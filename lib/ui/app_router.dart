@@ -9,6 +9,7 @@ import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'package:pizzathon/ui/blocs/enrollment_state.dart';
+import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
@@ -49,6 +50,9 @@ class AppRouter {
           GoRoute(
             path: newPizzaRoute,
             onExit: (context, state) async {
+              final pocState = context.read<PocImagesCubit>().state;
+              if (pocState.isFinished) return true;
+
               final result = await showExitConfirmationDialog(context);
               return result;
             },

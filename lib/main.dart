@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:pizzathon/data/services/cache_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
 import 'package:pizzathon/data/services/pizza_storage_service.dart';
@@ -54,6 +55,7 @@ void main() async {
       providers: [
         RepositoryProvider(create: (context) => AuthService()),
         RepositoryProvider(create: (context) => FirestoreService()),
+        RepositoryProvider(create: (context) => CacheService()),
         RepositoryProvider(create: (context) => PizzaStorageService()),
         RepositoryProvider(create: (context) => LocalStorageService()),
         RepositoryProvider(create: (context) => RemoteConfigService()..init()),
@@ -62,8 +64,11 @@ void main() async {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) =>
-                AuthCubit(context.read<AuthService>(), context.read<ErrorTrackerService>()),
+            create: (context) => AuthCubit(
+              context.read<AuthService>(),
+              context.read<ErrorTrackerService>(),
+              context.read<CacheService>(),
+            ),
           ),
           BlocProvider(
             create: (context) => EnrollmentCubit(
