@@ -28,12 +28,12 @@ class LandingPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              TopBanner(),
-              HeroSection(),
-              MainSponsorSection(),
-              InfoSection(),
-              TeamSection(),
-              SponsorSection(),
+              //TopBanner(),
+              //HeroSection(),
+              //MainSponsorSection(),
+              //InfoSection(),
+              //TeamSection(),
+              //SponsorSection(),
               Footer(),
             ],
           ),
