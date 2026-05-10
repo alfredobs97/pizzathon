@@ -25,7 +25,7 @@ jobs:
         run: echo '${{ secrets.APP_SECRETS_DEV_JSON }}' > secrets.json
 
       - name: Build Web
-        run: flutter build web --release --source-maps --dart-define-from-file secrets.json
+        run: flutter build web --release --source-maps --pwa-strategy=none --dart-define-from-file secrets.json
 
       - name: Upload Source Maps to Sentry
         run: dart run sentry_dart_plugin
