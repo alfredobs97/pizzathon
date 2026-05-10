@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -28,9 +27,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
-        );
+        throw UnsupportedError('DefaultFirebaseOptions are not supported for this platform.');
     }
   }
 
@@ -41,6 +38,7 @@ class DefaultFirebaseOptions {
     projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
     storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
     authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN'),
+    databaseURL: String.fromEnvironment('FIREBASE_DATABASE_URL'),
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -49,6 +47,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '727941411451',
     projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
     storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+    databaseURL: String.fromEnvironment('FIREBASE_DATABASE_URL'),
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -59,9 +58,8 @@ class DefaultFirebaseOptions {
     storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
     iosClientId: String.fromEnvironment('FIREBASE_IOS_CLIENT_ID'),
     iosBundleId: 'com.pizzathon.app',
+    databaseURL: String.fromEnvironment('FIREBASE_DATABASE_URL'),
   );
 
-  static const String webClientId = String.fromEnvironment(
-    'FIREBASE_WEB_CLIENT_ID',
-  );
+  static const String webClientId = String.fromEnvironment('FIREBASE_WEB_CLIENT_ID');
 }
