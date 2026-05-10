@@ -8,6 +8,7 @@ import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/local_storage_service.dart';
 import 'package:pizzathon/data/services/pizza_storage_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/data/services/rtdb_service.dart';
 import 'package:pizzathon/data/services/sentry_bloc_observer.dart';
 import 'package:pizzathon/data/services/sentry_error_tracker_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
@@ -55,6 +56,7 @@ void main() async {
       providers: [
         RepositoryProvider(create: (context) => AuthService()),
         RepositoryProvider(create: (context) => FirestoreService()),
+        RepositoryProvider(create: (context) => RtdbService()),
         RepositoryProvider(create: (context) => CacheService()),
         RepositoryProvider(create: (context) => PizzaStorageService()),
         RepositoryProvider(create: (context) => LocalStorageService()),

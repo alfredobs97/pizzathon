@@ -15,14 +15,16 @@ class ProfileLoading extends ProfileState {}
 class ProfileLoaded extends ProfileState {
   final UserModel user;
   final int pizzaCount;
+  final int? rank;
 
   const ProfileLoaded({
     required this.user,
     required this.pizzaCount,
+    this.rank,
   });
 
   @override
-  List<Object?> get props => [user, pizzaCount];
+  List<Object?> get props => [user, pizzaCount, rank];
 }
 
 class ProfileError extends ProfileState {

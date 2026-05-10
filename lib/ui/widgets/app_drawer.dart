@@ -60,6 +60,12 @@ class AppDrawer extends StatelessWidget {
                         text: 'Participantes',
                         onTap: () => context.go(AppRouter.participantsRoute),
                       ),
+                      const SizedBox(height: 8),
+                      _DrawerItem(
+                        icon: Icons.leaderboard,
+                        text: 'Scoreboard',
+                        onTap: () => context.go(AppRouter.scoreboardRoute),
+                      ),
                     ],
                     if (isAdmin) ...[
                       const Divider(color: Colors.white24, height: 40),

@@ -6,8 +6,14 @@ import '../../../../domain/models/user_model.dart';
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
   final int pizzaCount;
+  final int? rank;
 
-  const ProfileHeader({super.key, required this.user, required this.pizzaCount});
+  const ProfileHeader({
+    super.key,
+    required this.user,
+    required this.pizzaCount,
+    this.rank,
+  });
 
   @override
   Widget build(BuildContext context) {

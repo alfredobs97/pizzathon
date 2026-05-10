@@ -11,12 +11,14 @@ import {setGlobalOptions} from "firebase-functions";
 import {initializeApp} from "firebase-admin/app";
 import {sendWelcomeEmail} from "./emails/onUserRegistered";
 import {onPizzaReviewed as _onPizzaReviewed} from "./emails/onPizzaReviewed";
+import {updateScoreboard as _updateScoreboard} from "./updateScoreboard";
 
 // Initialize Firebase Admin
 initializeApp();
 
 export const onUserRegistered = sendWelcomeEmail;
 export const onPizzaReviewed = _onPizzaReviewed;
+export const updateScoreboard = _updateScoreboard;
 
 setGlobalOptions({maxInstances: 10});
 

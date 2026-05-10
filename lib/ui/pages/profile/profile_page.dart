@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pizzathon/data/services/cache_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/rtdb_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
@@ -49,6 +50,7 @@ class ProfilePage extends StatelessWidget {
                     BlocProvider<ProfileCubit>(
                       create: (context) => ProfileCubit(
                         firestoreService: context.read<FirestoreService>(),
+                        rtdbService: context.read<RtdbService>(),
                         cacheService: context.read<CacheService>(),
                       )..loadProfile(authUser.uid),
                     ),
@@ -70,6 +72,7 @@ class ProfilePage extends StatelessWidget {
                                     return ProfileHeader(
                                       user: profileState.user,
                                       pizzaCount: profileState.pizzaCount,
+                                      rank: profileState.rank,
                                     );
                                   }
                                   if (profileState is ProfileError) {

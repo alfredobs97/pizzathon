@@ -20,11 +20,13 @@ import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dar
 import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:pizzathon/ui/pages/profile/profile_page.dart';
+import 'package:pizzathon/ui/pages/scoreboard/scoreboard_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
+  static const String scoreboardRoute = '/puntuacion';
   static const String adminRoute = '/capo';
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
@@ -61,6 +63,10 @@ class AppRouter {
           GoRoute(
             path: pizzaSuccessRoute,
             pageBuilder: (context, state) => _fadeTransition(state, const PizzaSuccessPage()),
+          ),
+          GoRoute(
+            path: scoreboardRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const ScoreboardPage()),
           ),
           GoRoute(
             path: profileRoute,
