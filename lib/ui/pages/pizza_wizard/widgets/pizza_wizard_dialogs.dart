@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pizzathon/domain/entities/pizza_limit_constants.dart';
 import 'package:pizzathon/ui/app_router.dart';
+import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
+import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
 
 Future<bool> showExitConfirmationDialog(BuildContext context) async {
   final theme = Theme.of(context);
@@ -166,6 +169,7 @@ void showSuccessDialog(BuildContext context) {
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 context.go(AppRouter.profileRoute);
+                context.read<PocImagesCubit>().resetWizard();
               },
               style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.primary),
               child: const Text("Ir a mi perfil"),
