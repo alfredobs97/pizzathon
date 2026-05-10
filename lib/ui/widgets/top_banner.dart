@@ -13,18 +13,18 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
   const BaseTopBanner({super.key, required this.child, this.actions});
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(56);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 800;
+    //final screenWidth = MediaQuery.of(context).size.width;
+    //final isMobile = screenWidth < 800;
 
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
+      //constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
       color: Colors.pinkAccent,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Stack(
