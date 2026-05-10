@@ -28,7 +28,7 @@ class LandingPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              //TopBanner(),
+              TopBanner(),
               HeroSection(),
               MainSponsorSection(),
               InfoSection(),
