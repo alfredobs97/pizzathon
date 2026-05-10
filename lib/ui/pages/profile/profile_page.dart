@@ -113,6 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ProfileHeader(
                     user: user,
                     pizzaCount: pizzaCount,
+                    rank: state.rank,
                     isPublic: isPublic,
                     onShare: () => context.read<ProfileCubit>().generateShareLink(user),
                   ),

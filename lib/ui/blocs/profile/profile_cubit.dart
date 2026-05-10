@@ -23,11 +23,13 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> loadProfile(String uid) async {
     final cached = _cacheService.getUserProfile();
     if (cached != null && cached.user.uid == uid) {
+      final rank = await _rtdbService.getUserRank(uid);
       emit(
         state.copyWith(
           status: ProfileStatus.loaded,
           user: cached.user,
           pizzaCount: cached.pizzaCount,
+          rank: rank,
         ),
       );
       return;
@@ -80,7 +82,14 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
 
       final pizzaCount = await _firestoreService.getUserPizzaCount(user.uid);
-      emit(state.copyWith(status: ProfileStatus.loaded, user: user, pizzaCount: pizzaCount));
+      final rank = await _rtdbService.getUserRank(user.uid);
+      
+      emit(state.copyWith(
+        status: ProfileStatus.loaded, 
+        user: user, 
+        pizzaCount: pizzaCount,
+        rank: rank,
+      ));
     } catch (e) {
       emit(state.copyWith(status: ProfileStatus.error, errorMessage: e.toString()));
     }

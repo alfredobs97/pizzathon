@@ -45,7 +45,7 @@ class ProfileHeader extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '#--', // Rank placeholder
+                              rank != null ? '#$rank' : '#--',
                               style: GoogleFonts.climateCrisis(
                                 fontSize: 40,
                                 wordSpacing: 1,

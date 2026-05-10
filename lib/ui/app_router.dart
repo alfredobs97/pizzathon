@@ -108,10 +108,6 @@ class AppRouter {
             pageBuilder: (context, state) => _fadeTransition(state, const ScoreboardPage()),
           ),
           GoRoute(
-            path: profileRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const ProfilePage()),
-          ),
-          GoRoute(
             path: publicProfileRoute,
             pageBuilder: (context, state) {
               final userSlug = state.pathParameters['userSlug']!;
