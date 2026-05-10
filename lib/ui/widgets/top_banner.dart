@@ -25,7 +25,7 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
     return Container(
       width: double.infinity,
       constraints: BoxConstraints(minHeight: isMobile ? 0 : screenWidth * (42 / 1440)),
-      color: colorScheme.secondary,
+      color: Colors.pinkAccent,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Stack(
         alignment: Alignment.center,
