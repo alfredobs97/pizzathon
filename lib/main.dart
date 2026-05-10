@@ -16,7 +16,10 @@ import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/pizza_validation_service.dart';
+import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
+import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'firebase_options.dart';
@@ -37,6 +40,8 @@ void main() async {
   Bloc.observer = SentryBlocObserver();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  final prefs = await SharedPreferences.getInstance();
 
   // Global error capture
   FlutterError.onError = (details) {
@@ -62,6 +67,7 @@ void main() async {
         RepositoryProvider(create: (context) => LocalStorageService()),
         RepositoryProvider(create: (context) => RemoteConfigService()..init()),
         RepositoryProvider<ErrorTrackerService>(create: (context) => errorTracker),
+        RepositoryProvider(create: (context) => UploadLimitCacheService(prefs: prefs)),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -70,15 +76,24 @@ void main() async {
               context.read<AuthService>(),
               context.read<ErrorTrackerService>(),
               context.read<CacheService>(),
-            ),
+            )..checkAuth(),
           ),
           BlocProvider(
+            lazy: false,
             create: (context) => EnrollmentCubit(
               context.read<FirestoreService>(),
               context.read<AuthService>(),
               context.read<LocalStorageService>(),
               context.read<RemoteConfigService>(),
               context.read<ErrorTrackerService>(),
+            )..checkUserEnrollment(),
+          ),
+          BlocProvider(
+            create: (context) => UploadLimitCubit(
+              context.read<UploadLimitCacheService>(),
+              context.read<FirestoreService>(),
+              context.read<ErrorTrackerService>(),
+              context.read<AuthService>(),
             ),
           ),
           BlocProvider(
@@ -91,6 +106,7 @@ void main() async {
               context.read<AuthService>(),
               context.read<PizzaStorageService>(),
               context.read<FirestoreService>(),
+              context.read<UploadLimitCacheService>(),
             ),
           ),
         ],
@@ -110,6 +126,14 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       routerConfig: AppRouter().router,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.noScaling,
+          ),
+          child: child!,
+        );
+      },
     );
   }
 }

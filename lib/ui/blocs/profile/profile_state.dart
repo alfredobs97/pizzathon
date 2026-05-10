@@ -1,37 +1,43 @@
 import 'package:equatable/equatable.dart';
 import '../../../domain/models/user_model.dart';
 
-sealed class ProfileState extends Equatable {
-  const ProfileState();
+enum ProfileStatus { initial, loading, loaded, error }
 
-  @override
-  List<Object?> get props => [];
-}
-
-class ProfileInitial extends ProfileState {}
-
-class ProfileLoading extends ProfileState {}
-
-class ProfileLoaded extends ProfileState {
-  final UserModel user;
+class ProfileState extends Equatable {
+  final ProfileStatus status;
+  final UserModel? user;
   final int pizzaCount;
+  final String? errorMessage;
+  final String? shareUrl;
   final int? rank;
 
-  const ProfileLoaded({
-    required this.user,
-    required this.pizzaCount,
+  const ProfileState({
+    this.status = ProfileStatus.initial,
+    this.user,
+    this.pizzaCount = 0,
+    this.errorMessage,
+    this.shareUrl,
     this.rank,
   });
 
+  ProfileState copyWith({
+    ProfileStatus? status,
+    UserModel? user,
+    int? pizzaCount,
+    String? errorMessage,
+    String? shareUrl,
+    int? rank,
+  }) {
+    return ProfileState(
+      status: status ?? this.status,
+      user: user ?? this.user,
+      pizzaCount: pizzaCount ?? this.pizzaCount,
+      errorMessage: errorMessage ?? this.errorMessage,
+      shareUrl: shareUrl,
+      rank: rank ?? this.rank,
+    );
+  }
+
   @override
-  List<Object?> get props => [user, pizzaCount, rank];
-}
-
-class ProfileError extends ProfileState {
-  final String message;
-
-  const ProfileError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [status, user, pizzaCount, errorMessage, shareUrl, rank];
 }
