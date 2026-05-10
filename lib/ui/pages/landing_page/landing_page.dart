@@ -29,10 +29,10 @@ class LandingPage extends StatelessWidget {
           child: Column(
             children: [
               TopBanner(),
-              HeroSection(),
-              MainSponsorSection(),
-              InfoSection(),
-              TeamSection(),
+              // HeroSection(),
+              // MainSponsorSection(),
+              // InfoSection(),
+              // TeamSection(),
               SponsorSection(),
               Footer(),
             ],
