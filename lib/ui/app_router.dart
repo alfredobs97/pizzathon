@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pizzathon/data/services/cache_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
@@ -10,6 +11,8 @@ import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'package:pizzathon/ui/blocs/enrollment_state.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
+import 'package:pizzathon/ui/blocs/profile/profile_cubit.dart';
+import 'package:pizzathon/ui/blocs/user_pizzas/user_pizzas_cubit.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
@@ -29,6 +32,7 @@ class AppRouter {
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
+  static const String publicProfileRoute = '/p/:userSlug';
   static const String pizzaSuccessRoute = '/pizza-enviada';
 
   final _router = GoRouter(
@@ -64,7 +68,60 @@ class AppRouter {
           ),
           GoRoute(
             path: profileRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const ProfilePage()),
+            pageBuilder: (context, state) {
+              final authState = context.read<AuthCubit>().state;
+              final String userId = authState is AuthAuthenticated ? authState.user.uid : '';
+
+              return _fadeTransition(
+                state,
+                MultiBlocProvider(
+                  providers: [
+                    BlocProvider<UserPizzasCubit>(
+                      create: (context) => UserPizzasCubit(
+                        firestoreService: context.read<FirestoreService>(),
+                        cacheService: context.read<CacheService>(),
+                      ),
+                    ),
+                    BlocProvider<ProfileCubit>(
+                      create: (context) => ProfileCubit(
+                        firestoreService: context.read<FirestoreService>(),
+                        cacheService: context.read<CacheService>(),
+                      )..loadProfile(userId),
+                    ),
+                  ],
+                  child: const ProfilePage(),
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: publicProfileRoute,
+            pageBuilder: (context, state) {
+              final userSlug = state.pathParameters['userSlug']!;
+              // El slug puede ser "shortId-nombre" o solo "uid"
+              final identifier = userSlug.split('-').first;
+
+              return _fadeTransition(
+                state,
+                MultiBlocProvider(
+                  providers: [
+                    BlocProvider<UserPizzasCubit>(
+                      create: (context) => UserPizzasCubit(
+                        firestoreService: context.read<FirestoreService>(),
+                        cacheService: context.read<CacheService>(),
+                      ),
+                    ),
+                    BlocProvider<ProfileCubit>(
+                      create: (context) => ProfileCubit(
+                        firestoreService: context.read<FirestoreService>(),
+                        cacheService: context.read<CacheService>(),
+                      )..loadPublicProfile(identifier),
+                    ),
+                  ],
+                  child: ProfilePage(publicIdentifier: identifier),
+                ),
+              );
+            },
           ),
           GoRoute(
             path: adminRoute,
@@ -100,6 +157,12 @@ class AppRouter {
       ),
     ],
     redirect: (context, state) {
+      // public routes
+      if (state.matchedLocation.startsWith('/p/')) {
+        return null;
+      }
+
+      // private routes
       if ((state.matchedLocation == adminRoute) && !isAdmin(context)) {
         return landingRoute;
       }
