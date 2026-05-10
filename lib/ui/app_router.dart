@@ -33,7 +33,7 @@ class AppRouter {
   static const String nonFoundPage = '/not-found';
 
   final _router = GoRouter(
-    initialLocation: nonFoundPage,
+    initialLocation: landingRoute,
     errorBuilder: (context, state) => const NotFoundPage(),
     observers: [SentryNavigatorObserver()],
     routes: [
