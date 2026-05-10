@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pizzathon/domain/models/user_extension.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
@@ -37,7 +36,7 @@ class BaseTopBanner extends StatelessWidget implements PreferredSizeWidget {
               if (actions != null) ...actions!,
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
-                  if (state is AuthAuthenticated && state.user.isAdmin) {
+                  if (state is AuthAuthenticated) {
                     return IconButton(
                       icon: Icon(Icons.menu, color: colorScheme.onPrimary),
                       onPressed: () {

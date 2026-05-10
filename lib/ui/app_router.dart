@@ -18,12 +18,13 @@ import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
-import 'package:pizzathon/ui/pages/pizza_wizard/pizza_success_page.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:pizzathon/ui/pages/profile/profile_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
+import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
+import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
 
 class AppRouter {
   static const String landingRoute = '/';
@@ -33,7 +34,7 @@ class AppRouter {
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
   static const String publicProfileRoute = '/p/:userSlug';
-  static const String pizzaSuccessRoute = '/pizza-enviada';
+  static const String nonFoundPage = '/not-found';
 
   final _router = GoRouter(
     initialLocation: landingRoute,
@@ -43,6 +44,10 @@ class AppRouter {
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
+          GoRoute(
+            path: nonFoundPage,
+            pageBuilder: (context, state) => _fadeTransition(state, const NotFoundPage()),
+          ),
           GoRoute(
             path: landingRoute,
             pageBuilder: (context, state) => _fadeTransition(state, const LandingPage()),
@@ -54,17 +59,17 @@ class AppRouter {
           GoRoute(
             path: newPizzaRoute,
             onExit: (context, state) async {
-              final pocState = context.read<PocImagesCubit>().state;
-              if (pocState.isFinished) return true;
+              final isFinished = context.read<PocImagesCubit>().state.isFinished;
+              final isLimitExceeded = context.read<UploadLimitCubit>().state is UploadLimitReached;
+
+              if (isFinished || isLimitExceeded) {
+                return true;
+              }
 
               final result = await showExitConfirmationDialog(context);
               return result;
             },
             pageBuilder: (context, state) => _fadeTransition(state, const PizzaWizardPage()),
-          ),
-          GoRoute(
-            path: pizzaSuccessRoute,
-            pageBuilder: (context, state) => _fadeTransition(state, const PizzaSuccessPage()),
           ),
           GoRoute(
             path: profileRoute,
