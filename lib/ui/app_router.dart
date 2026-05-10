@@ -30,15 +30,20 @@ class AppRouter {
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
+  static const String nonFoundPage = '/not-found';
 
   final _router = GoRouter(
-    initialLocation: landingRoute,
+    initialLocation: nonFoundPage,
     errorBuilder: (context, state) => const NotFoundPage(),
     observers: [SentryNavigatorObserver()],
     routes: [
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
+          GoRoute(
+            path: nonFoundPage,
+            pageBuilder: (context, state) => _fadeTransition(state, const NotFoundPage()),
+          ),
           GoRoute(
             path: landingRoute,
             pageBuilder: (context, state) => _fadeTransition(state, const LandingPage()),
