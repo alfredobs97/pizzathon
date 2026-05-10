@@ -10,6 +10,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_remote_config
   firebase_storage
   sentry_flutter
+  share_plus
   url_launcher_windows
 )
 

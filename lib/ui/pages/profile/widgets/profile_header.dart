@@ -6,8 +6,16 @@ import '../../../../domain/models/user_model.dart';
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
   final int pizzaCount;
+  final bool isPublic;
+  final VoidCallback? onShare;
 
-  const ProfileHeader({super.key, required this.user, required this.pizzaCount});
+  const ProfileHeader({
+    super.key,
+    required this.user,
+    required this.pizzaCount,
+    this.isPublic = false,
+    this.onShare,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +39,28 @@ class ProfileHeader extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '#--', // Rank placeholder
-                          style: GoogleFonts.climateCrisis(
-                            fontSize: 40,
-                            wordSpacing: 1,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).colorScheme.primary,
-                            height: 1.0,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '#--', // Rank placeholder
+                              style: GoogleFonts.climateCrisis(
+                                fontSize: 40,
+                                wordSpacing: 1,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.primary,
+                                height: 1.0,
+                              ),
+                            ),
+                            if (!isPublic)
+                              IconButton(
+                                icon: Icon(
+                                  Icons.share,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                onPressed: onShare,
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Text(

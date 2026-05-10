@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SponsorBanner extends StatelessWidget {
   const SponsorBanner({super.key});
@@ -12,14 +11,12 @@ class SponsorBanner extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
+        SizedBox(
           width: 80,
           height: 40,
-          decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
           child: CachedNetworkImage(
             imageUrl: sponsorImageUrl,
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
+            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => const Icon(Icons.business),
             fit: BoxFit.contain,
           ),
