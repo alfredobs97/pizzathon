@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-            const TopBanner(),
+            const CountdownTopBanner(),
             const EnrollSectionWidget(),
             const Expanded(child: UserListWidget()),
             const Footer(),

@@ -46,7 +46,7 @@ class HeroSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Primera edición - 11 / 17 Mayo 2026',
+                  'Primera edición - 11 / 18 Mayo 2026',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
