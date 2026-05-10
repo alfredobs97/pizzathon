@@ -8,27 +8,30 @@ class SponsorBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     const sponsorImageUrl = 'https://i.ibb.co/6RfjhFx9/alfa-forni-logo-negro-1.png';
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 80,
-          height: 40,
-          child: CachedNetworkImage(
-            imageUrl: sponsorImageUrl,
-            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => const Icon(Icons.business),
-            fit: BoxFit.contain,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 100,
+            height: 55,
+            child: CachedNetworkImage(
+              imageUrl: sponsorImageUrl,
+              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.business),
+              fit: BoxFit.contain,
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'Patrocinador principal',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.secondary),
-        ),
-      ],
+          const SizedBox(width: 16),
+          Text(
+            'Patrocinador principal',
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: const Color(0xFF2D1414), fontSize: 16),
+          ),
+        ],
+      ),
     );
   }
 }

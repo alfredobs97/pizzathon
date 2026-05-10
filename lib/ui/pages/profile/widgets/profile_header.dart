@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../../domain/models/user_model.dart';
+import 'package:pizzathon/domain/models/user_model.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
@@ -46,12 +45,11 @@ class ProfileHeader extends StatelessWidget {
                           children: [
                             Text(
                               rank != null ? '#$rank' : '#--',
-                              style: GoogleFonts.climateCrisis(
-                                fontSize: 40,
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                fontSize: 36,
                                 wordSpacing: 1,
                                 fontWeight: FontWeight.w400,
                                 color: Theme.of(context).colorScheme.primary,
-                                height: 1.0,
                               ),
                             ),
                             if (!isPublic)
@@ -102,9 +100,9 @@ class ProfileHeader extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   user.displayName.toUpperCase(),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.displayLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ),
             ],

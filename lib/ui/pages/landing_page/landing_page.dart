@@ -21,7 +21,7 @@ class LandingPage extends StatelessWidget {
       listenWhen: (previous, current) => previous is AuthLoading && current is AuthAuthenticated,
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go(AppRouter.participantsRoute);
+          context.go(AppRouter.profileRoute);
         }
       },
       child: const Scaffold(

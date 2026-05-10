@@ -56,14 +56,8 @@ class AppDrawer extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       _DrawerItem(
-                        icon: Icons.people,
-                        text: 'Participantes',
-                        onTap: () => context.go(AppRouter.participantsRoute),
-                      ),
-                      const SizedBox(height: 8),
-                      _DrawerItem(
                         icon: Icons.leaderboard,
-                        text: 'Scoreboard',
+                        text: 'Ranking',
                         onTap: () => context.go(AppRouter.scoreboardRoute),
                       ),
                     ],

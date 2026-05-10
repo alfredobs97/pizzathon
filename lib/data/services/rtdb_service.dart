@@ -1,10 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import '../../firebase_options.dart';
 import '../../domain/models/scoreboard_entry.dart';
 
 class RtdbService {
   final FirebaseDatabase _db;
 
-  RtdbService({FirebaseDatabase? database}) : _db = database ?? FirebaseDatabase.instance;
+  RtdbService({FirebaseDatabase? database})
+      : _db = database ??
+            FirebaseDatabase.instanceFor(
+              app: Firebase.app(),
+              databaseURL: DefaultFirebaseOptions.currentPlatform.databaseURL,
+            );
 
   static const String _scoreboardPath = 'scoreboard';
 

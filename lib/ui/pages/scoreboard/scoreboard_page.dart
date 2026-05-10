@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pizzathon/data/services/rtdb_service.dart';
+import 'package:pizzathon/domain/models/scoreboard_entry.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_cubit.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_state.dart';
+import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
 
 class ScoreboardPage extends StatelessWidget {
   const ScoreboardPage({super.key});
@@ -15,9 +18,8 @@ class ScoreboardPage extends StatelessWidget {
     final currentUserId = authState is AuthAuthenticated ? authState.user.uid : null;
 
     return BlocProvider(
-      create: (context) => ScoreboardCubit(
-        rtdbService: context.read<RtdbService>(),
-      )..init(currentUserId),
+      create: (context) =>
+          ScoreboardCubit(rtdbService: context.read<RtdbService>())..init(currentUserId),
       child: const ScoreboardView(),
     );
   }
@@ -28,124 +30,144 @@ class ScoreboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scoreboard'),
-      ),
-      body: BlocBuilder<ScoreboardCubit, ScoreboardState>(
-        builder: (context, state) {
-          if (state is ScoreboardLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      backgroundColor: theme.colorScheme.onSurface,
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 0, left: 24.0, right: 24.0),
+        child: BlocBuilder<ScoreboardCubit, ScoreboardState>(
+          builder: (context, state) {
+            if (state is ScoreboardLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state is ScoreboardError) {
-            return Center(child: Text('Error: ${state.message}'));
-          }
+            if (state is ScoreboardError) {
+              return Center(child: Text('Error: ${state.message}'));
+            }
 
-          if (state is ScoreboardLoaded) {
-            return Column(
-              children: [
-                if (state.userRank != null)
-                  _UserRankBanner(rank: state.userRank!),
-                if (state.lastUpdated != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Última actualización: ${state.lastUpdated}',
-                      style: Theme.of(context).textTheme.labelSmall,
+            if (state is ScoreboardLoaded) {
+              return CustomScrollView(
+                slivers: [
+                  const SliverToBoxAdapter(
+                    child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: Text(
+                        'PIZZATHON',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.climateCrisis(
+                          fontSize: 32,
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                     ),
                   ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: state.topEntries.length,
-                    itemBuilder: (context, index) {
-                      final entry = state.topEntries[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: entry.photoUrl.isNotEmpty
-                              ? NetworkImage(entry.photoUrl)
-                              : null,
-                          child: entry.photoUrl.isEmpty
-                              ? const Icon(Icons.person)
-                              : null,
-                        ),
-                        title: Text(entry.displayName),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${entry.score} pts',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 16),
-                            _RankBadge(rank: entry.rank),
-                          ],
-                        ),
-                      );
-                    },
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final entry = state.topEntries[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: _RankingCard(rank: entry.rank, entry: entry),
+                        );
+                      }, childCount: state.topEntries.length),
+                    ),
                   ),
-                ),
-              ],
-            );
-          }
+                ],
+              );
+            }
 
-          return const SizedBox.shrink();
-        },
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
 }
 
-class _UserRankBanner extends StatelessWidget {
+class _RankingCard extends StatelessWidget {
   final int rank;
+  final ScoreboardEntry entry;
 
-  const _UserRankBanner({required this.rank});
+  const _RankingCard({required this.rank, required this.entry});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Column(
-        children: [
-          const Text('Tu posición actual'),
-          Text(
-            '#$rank',
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RankBadge extends StatelessWidget {
-  final int rank;
-
-  const _RankBadge({required this.rank});
-
-  @override
-  Widget build(BuildContext context) {
-    Color color = Colors.grey;
-    if (rank == 1) color = Colors.amber;
-    if (rank == 2) color = Colors.blueGrey.shade300;
-    if (rank == 3) color = Colors.orange.shade800;
+    final theme = Theme.of(context);
 
     return Container(
+      height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(12),
+        color: theme.colorScheme.onSecondaryContainer,
+        borderRadius: BorderRadius.circular(24),
       ),
-      child: Text(
-        '#$rank',
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Rank Number
+            SizedBox(
+              width: 55,
+              child: Text(
+                '#$rank',
+                style: theme.textTheme.displayLarge?.copyWith(
+                  fontSize: 36,
+                  color: theme.colorScheme.secondary,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+
+            // Avatar
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(color: theme.colorScheme.onSurface, shape: BoxShape.circle),
+              child: entry.photoUrl.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: Image.network(entry.photoUrl, fit: BoxFit.cover),
+                    )
+                  : const Icon(Icons.person, color: Colors.grey, size: 32),
+            ),
+
+            const SizedBox(width: 10),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 130),
+                    child: Text(
+                      entry.displayName,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.secondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.clip,
+                    ),
+                  ),
+                  Text(
+                    '${entry.score} PUNTOS',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
