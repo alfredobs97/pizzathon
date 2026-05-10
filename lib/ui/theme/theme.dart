@@ -21,44 +21,17 @@ class AppTheme {
         surface: Color(0xFF1E1E1E),
         onSurface: Colors.white,
       ),
-      /* textTheme: TextTheme(
-        displayLarge: GoogleFonts.archivoBlack(
-          fontSize: 24,
-          fontWeight: FontWeight.w900,
-        ),
-        displayMedium: GoogleFonts.archivoBlack(
-          fontSize: 20,
-          fontWeight: FontWeight.w900,
-        ),
-        headlineSmall: GoogleFonts.archivoBlack(
-          fontSize: 24,
-          fontWeight: FontWeight.w400,
-        ),
-        titleLarge: GoogleFonts.archivo(
-          fontSize: 20,
-          fontWeight: FontWeight.w400,
-        ),
-        titleMedium: GoogleFonts.archivo(
-          fontSize: 14,
-          fontWeight: FontWeight.w900,
-        ),
-        bodyLarge: GoogleFonts.archivoBlack(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-        ),
-        bodyMedium: GoogleFonts.archivo(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        bodySmall: GoogleFonts.archivo(
-          fontSize: 10,
-          fontWeight: FontWeight.w400,
-        ),
-        labelMedium: GoogleFonts.archivo(
-          fontSize: 10,
-          fontWeight: FontWeight.w400,
-        ),
-      ), */
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.archivoBlack(fontSize: 24, fontWeight: FontWeight.w900),
+        displayMedium: GoogleFonts.archivoBlack(fontSize: 20, fontWeight: FontWeight.w900),
+        headlineSmall: GoogleFonts.archivoBlack(fontSize: 24, fontWeight: FontWeight.w400),
+        titleLarge: GoogleFonts.archivo(fontSize: 20, fontWeight: FontWeight.w400),
+        titleMedium: GoogleFonts.archivo(fontSize: 14, fontWeight: FontWeight.w900),
+        bodyLarge: GoogleFonts.archivoBlack(fontSize: 16, fontWeight: FontWeight.w400),
+        bodyMedium: GoogleFonts.archivo(fontSize: 16, fontWeight: FontWeight.w500),
+        bodySmall: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
+        labelMedium: GoogleFonts.archivo(fontSize: 10, fontWeight: FontWeight.w400),
+      ),
       dialogTheme: DialogThemeData(
         backgroundColor: const Color(0xFFF8EEE3),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
