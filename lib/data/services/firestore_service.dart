@@ -59,6 +59,21 @@ class FirestoreService {
     await _db.collection(_userCollectionName).doc(uid).update({'banned': true});
   }
 
+  Future<int> countPizzasToday({
+    required String uid,
+    required DateTime startOfDay,
+    required DateTime endOfDay,
+  }) async {
+    final query = _db
+        .collection(_pizzaCollectionName)
+        .where('userId', isEqualTo: uid)
+        .where('createdAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        .where('createdAt', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay));
+
+    final snapshot = await query.get();
+    return snapshot.docs.length;
+  }
+
   Future<({List<UserModel> users, DocumentSnapshot? lastDocument})> getUsersPaginated({
     DocumentSnapshot? lastDocument,
     int limit = 10,

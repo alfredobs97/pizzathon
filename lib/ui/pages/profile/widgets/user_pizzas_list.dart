@@ -13,118 +13,99 @@ class UserPizzasList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification scrollInfo) {
-        if (scrollNotification(scrollInfo)) {
-          context.read<UserPizzasCubit>().fetchMorePizzas();
+    return BlocBuilder<UserPizzasCubit, UserPizzasState>(
+      builder: (context, state) {
+        if (state is UserPizzasLoading) {
+          return const SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
-        return false;
-      },
-      child: BlocBuilder<UserPizzasCubit, UserPizzasState>(
-        builder: (context, state) {
-          if (state is UserPizzasLoading) {
-            return const SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
 
-          if (state is UserPizzasError) {
+        if (state is UserPizzasError) {
+          return SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Text('Error: ${state.message}', style: const TextStyle(color: Colors.red)),
+              ),
+            ),
+          );
+        }
+
+        if (state is UserPizzasLoaded) {
+          if (state.pizzas.isEmpty) {
             return SliverToBoxAdapter(
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
-                  child: Text(
-                    'Error: ${state.message}',
-                    style: const TextStyle(color: Colors.red),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.local_pizza,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No has subido ninguna pizza aún.',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             );
           }
 
-          if (state is UserPizzasLoaded) {
-            if (state.pizzas.isEmpty) {
-              return SliverToBoxAdapter(
-                child: Center(
+          return SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            sliver: SliverMainAxisGroup(
+              slivers: [
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.local_pizza,
-                          size: 48,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No has subido ninguna pizza aún.',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                        ),
-                      ],
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      'Pizzas de ${user.displayName}',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.archivo(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   ),
                 ),
-              );
-            }
-
-            return SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              sliver: SliverMainAxisGroup(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        'Pizzas de ${user.displayName}',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.archivo(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 400,
+                    mainAxisSpacing: 24,
+                    crossAxisSpacing: 24,
+                    childAspectRatio: 1.0,
+                  ),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final pizza = state.pizzas[index];
+                    return PizzaCard(pizza: pizza);
+                  }, childCount: state.pizzas.length),
+                ),
+                if (!state.hasReachedMax)
+                  const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
                       ),
                     ),
                   ),
-                  SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 400,
-                      mainAxisSpacing: 24,
-                      crossAxisSpacing: 24,
-                      childAspectRatio: 1.0,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final pizza = state.pizzas[index];
-                        return PizzaCard(pizza: pizza);
-                      },
-                      childCount: state.pizzas.length,
-                    ),
-                  ),
-                  if (!state.hasReachedMax)
-                    const SliverToBoxAdapter(
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            );
-          }
+              ],
+            ),
+          );
+        }
 
-          return const SliverToBoxAdapter(child: SizedBox.shrink());
-        },
-      ),
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
+      },
     );
-  }
-
-  bool scrollNotification(ScrollNotification scrollInfo) {
-    return scrollInfo.metrics.pixels >= (scrollInfo.metrics.maxScrollExtent - 200);
   }
 }

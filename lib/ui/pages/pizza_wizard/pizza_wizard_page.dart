@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pizzathon/data/services/auth_service.dart';
-import 'package:pizzathon/data/services/image_metadata_service.dart';
-import 'package:pizzathon/data/services/image_processing_service.dart';
-import 'package:pizzathon/data/services/pizza_storage_service.dart';
-import 'package:pizzathon/data/services/pizza_validation_service.dart';
-import 'package:pizzathon/data/services/remote_config_service.dart';
-import 'package:pizzathon/domain/services/error_tracker_service.dart';
-import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
+import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
+import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
 import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_photo_step_view.dart';
 import 'widgets/pizza_confirmation_step.dart';
 import 'widgets/pizza_details_form.dart';
@@ -31,6 +25,11 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<UploadLimitCubit>().checkLimit();
+      }
+    });
   }
 
   @override
@@ -43,72 +42,75 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return BlocConsumer<PocImagesCubit, PocImagesState>(
-      listenWhen: (previous, current) =>
-          previous.mainStep != current.mainStep ||
-          previous.isFinished != current.isFinished ||
-          previous.errorMessage != current.errorMessage,
+    return BlocListener<UploadLimitCubit, UploadLimitState>(
       listener: (context, state) {
-        if (state.errorMessage != null) {
-          showErrorDialog(context, state.errorMessage!, theme);
-        }
-
-        if (state.isFinished) {
-          context.go(AppRouter.pizzaSuccessRoute);
-        } else {
-          // Animate to the new step if it changed
-          if (_pageController.hasClients &&
-              _pageController.page?.round() != state.mainStep.index) {
-            _pageController.animateToPage(
-              state.mainStep.index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          }
+        if (state is UploadLimitReached) {
+          showLimitExceededDialog(context);
         }
       },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            elevation: 0,
-            title: _buildStepper(context, state, theme),
-            centerTitle: true,
-            leading: IconButton(
-              icon: Icon(Icons.close, color: theme.colorScheme.secondary),
-              onPressed: () async {
-                final shouldExit = await showExitConfirmationDialog(context);
-                if (shouldExit && context.mounted) {
-                  context.pop();
-                }
-              },
-            ),
-          ),
-          body: Center(
-            child: SizedBox(
-              width: 480,
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  const PizzaPhotoStepView(),
-                  _buildDetailsStep(context, state, theme),
-                  const PizzaIngredientsStep(),
-                  const PizzaConfirmationStep(),
-                ],
+      child: BlocConsumer<PocImagesCubit, PocImagesState>(
+        listenWhen: (previous, current) =>
+            previous.mainStep != current.mainStep ||
+            previous.isFinished != current.isFinished ||
+            previous.errorMessage != current.errorMessage,
+        listener: (context, state) {
+          if (state.errorMessage != null) {
+            showErrorDialog(context, state.errorMessage!, theme);
+          }
+
+          if (state.isFinished) {
+            showSuccessDialog(context);
+          } else {
+            // Animate to the new step if it changed
+            if (_pageController.hasClients &&
+                _pageController.page?.round() != state.mainStep.index) {
+              _pageController.animateToPage(
+                state.mainStep.index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              elevation: 0,
+              title: _buildStepper(context, state, theme),
+              centerTitle: true,
+              leading: IconButton(
+                icon: Icon(Icons.close, color: theme.colorScheme.secondary),
+                onPressed: () async {
+                  final shouldExit = await showExitConfirmationDialog(context);
+                  if (shouldExit && context.mounted) {
+                    context.pop();
+                  }
+                },
               ),
             ),
-          ),
-        );
-      },
+            body: Center(
+              child: SizedBox(
+                width: 480,
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    const PizzaPhotoStepView(),
+                    _buildDetailsStep(context, state, theme),
+                    const PizzaIngredientsStep(),
+                    const PizzaConfirmationStep(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildStepper(
-    BuildContext context,
-    PocImagesState state,
-    ThemeData theme,
-  ) {
+  Widget _buildStepper(BuildContext context, PocImagesState state, ThemeData theme) {
     if (state.mainStep == WizardStep.confirmacion) {
       return const SizedBox.shrink();
     }
@@ -123,9 +125,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: isCurrent
-                ? theme.colorScheme.onSecondaryContainer
-                : Colors.transparent,
+            color: isCurrent ? theme.colorScheme.onSecondaryContainer : Colors.transparent,
             shape: BoxShape.circle,
             border: Border.all(
               color: isCurrent ? theme.colorScheme.primary : Colors.transparent,
@@ -149,11 +149,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
     );
   }
 
-  Widget _buildDetailsStep(
-    BuildContext context,
-    PocImagesState state,
-    ThemeData theme,
-  ) {
+  Widget _buildDetailsStep(BuildContext context, PocImagesState state, ThemeData theme) {
     return const SingleChildScrollView(
       padding: EdgeInsets.all(24.0),
       child: Column(children: [PizzaDetailsForm(), SizedBox(height: 16)]),

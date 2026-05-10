@@ -27,7 +27,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
   ) : super(EnrollmentInitial()) {
     _authSubscription = _authService.authStateChanges.listen((user) {
       if (user != null) {
-        checkEnrollmentStatus();
+        checkUserEnrollment();
       } else {
         emit(
           EnrollmentStatusChecked(
@@ -49,7 +49,11 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
 
   Future<void> checkEnrollmentStatus() async {
     emit(EnrollmentLoading());
+    await checkEnrollmentAvailability();
+    await checkUserEnrollment();
+  }
 
+  Future<void> checkEnrollmentAvailability() async {
     try {
       await _remoteConfigService.forceFetch();
     } catch (e, stackTrace) {
@@ -62,38 +66,30 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
       );
       debugPrint('Error fetching remote config status: $e');
     }
+    _syncStatus();
+  }
 
+  Future<void> checkUserEnrollment() async {
     final user = _authService.currentUser;
-    final isActive = _remoteConfigService.isEnrollmentOpen;
-
     if (user == null) {
-      emit(
-        EnrollmentStatusChecked(
-          isEnrollmentActive: isActive,
-          isEnrolled: false,
-        ),
-      );
+      _syncStatus();
       return;
     }
 
     try {
-      final isEnrolledInCache = await _localStorageService.isUserEnrolled(
-        user.uid,
-      );
+      final isEnrolledInCache = await _localStorageService.isUserEnrolled(user.uid);
 
       if (isEnrolledInCache) {
         emit(
           EnrollmentStatusChecked(
-            isEnrollmentActive: isActive,
+            isEnrollmentActive: _remoteConfigService.isEnrollmentOpen,
             isEnrolled: true,
           ),
         );
         return;
       }
 
-      final isEnrolledInFirestore = await _firestoreService.isUserEnrolled(
-        user.uid,
-      );
+      final isEnrolledInFirestore = await _firestoreService.isUserEnrolled(user.uid);
 
       if (isEnrolledInFirestore) {
         await _localStorageService.saveEnrollment(user.uid);
@@ -101,7 +97,7 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
 
       emit(
         EnrollmentStatusChecked(
-          isEnrollmentActive: isActive,
+          isEnrollmentActive: _remoteConfigService.isEnrollmentOpen,
           isEnrolled: isEnrolledInFirestore,
         ),
       );
@@ -110,11 +106,23 @@ class EnrollmentCubit extends Cubit<EnrollmentState> {
         TrackedError(
           error: e,
           stackTrace: stackTrace,
-          extra: {'component': 'EnrollmentCubit', 'action': 'checkEnrollmentStatus'},
+          extra: {'component': 'EnrollmentCubit', 'action': 'checkUserEnrollment'},
         ),
       );
       emit(EnrollmentError(e.toString()));
     }
+  }
+
+  void _syncStatus() {
+    final isActive = _remoteConfigService.isEnrollmentOpen;
+    final currentState = state;
+
+    bool isEnrolled = false;
+    if (currentState is EnrollmentStatusChecked) {
+      isEnrolled = currentState.isEnrolled;
+    }
+
+    emit(EnrollmentStatusChecked(isEnrollmentActive: isActive, isEnrolled: isEnrolled));
   }
 
   Future<void> enroll() async {

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
 import '../../../data/services/cache_service.dart';
 import '../../../data/services/firestore_service.dart';
 import '../../../domain/entities/user_pizzas_cache.dart';
@@ -33,7 +34,11 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
 
     emit(UserPizzasLoading());
     try {
-      final result = await _firestoreService.getPizzasFromUserPaginated(uid: userId, limit: _limit);
+      final result = await _firestoreService.getPizzasFromUserPaginated(
+        uid: userId,
+        limit: _limit,
+        status: PizzaStatus.approved,
+      );
 
       final newCache = UserPizzasCache(
         pizzas: result.pizzas,
@@ -65,6 +70,7 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
         uid: userId,
         lastDocument: currentState.lastDocument,
         limit: _limit,
+        status: PizzaStatus.approved,
       );
 
       final updatedPizzas = [...currentState.pizzas, ...result.pizzas];
