@@ -166,7 +166,7 @@ Widget build(BuildContext context) {
 
         child: Container(
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary,
+            color: pizza.status == PizzaStatus.approved ? theme.colorScheme.secondaryContainer : theme.colorScheme.primary,
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

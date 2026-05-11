@@ -73,7 +73,38 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
 
                 if (profileState.status == ProfileStatus.error) {
-                  return Center(child: Text(profileState.errorMessage ?? 'Error'));
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline_rounded,
+                            color: Theme.of(context).colorScheme.error,
+                            size: 80,
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            '¡OCURRIÓ UN ERROR!',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.secondary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            profileState.errorMessage ?? 'Error al cargar el perfil',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.7),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
 
                 return _buildProfileContent(context, profileState, isPublic);
