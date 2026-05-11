@@ -25,9 +25,9 @@ class AdminPizzaReviewCubit extends Cubit<AdminPizzaReviewState> {
     }
   }
 
-  Future<void> loadStyleCount(PizzaStyle style) async {
+  Future<void> loadStyleCount(PizzaStyle style, String userId) async {
     try {
-      final count = await _firestoreService.getPizzaCountByStyle(style);
+      final count = await _firestoreService.getPizzaCountByStylePerUser(style: style, uid: userId);
       emit(state.copyWith(styleCount: count));
     } catch (e) {
       debugPrint('Error loading style count: $e');

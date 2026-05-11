@@ -67,7 +67,8 @@ class AppRouter {
               if (isFinished || isLimitExceeded) {
                 return true;
               }
-              final result = await showExitConfirmationDialog(context);if (result && context.mounted){
+              final result = await showExitConfirmationDialog(context);
+              if (result && context.mounted) {
                 context.read<PocImagesCubit>().resetWizard();
               }
               return result;
@@ -151,7 +152,7 @@ class AppRouter {
                       create: (context) {
                         final cubit = AdminPizzaReviewCubit(context.read<FirestoreService>());
                         if (pizza.pizzaStyle != null) {
-                          cubit.loadStyleCount(pizza.pizzaStyle!);
+                          cubit.loadStyleCount(pizza.pizzaStyle!, pizza.userId);
                         }
                         return cubit;
                       },
