@@ -8,28 +8,32 @@ import 'user_pizzas_state.dart';
 class UserPizzasCubit extends Cubit<UserPizzasState> {
   final FirestoreService _firestoreService;
   final CacheService _cacheService;
-  final String userId;
   static const int _limit = 5;
 
   UserPizzasCubit({
     required FirestoreService firestoreService,
     required CacheService cacheService,
-    required this.userId,
   }) : _firestoreService = firestoreService,
        _cacheService = cacheService,
        super(UserPizzasInitial());
 
-  Future<void> fetchInitialPizzas() async {
+  void emitInitial() => emit(UserPizzasInitial());
+
+  Future<void> fetchInitialPizzas(String userId) async {
     final cached = _cacheService.getUserPizzas();
     if (cached != null) {
-      emit(
-        UserPizzasLoaded(
-          pizzas: cached.pizzas,
-          lastDocument: cached.lastDocument,
-          hasReachedMax: cached.hasReachedMax,
-        ),
-      );
-      return;
+      if (cached.userId == userId) {
+        emit(
+          UserPizzasLoaded(
+            pizzas: cached.pizzas,
+            lastDocument: cached.lastDocument,
+            hasReachedMax: cached.hasReachedMax,
+          ),
+        );
+        return;
+      } else {
+        _cacheService.invalidateUserPizzas();
+      }
     }
 
     emit(UserPizzasLoading());
@@ -41,6 +45,7 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
       );
 
       final newCache = UserPizzasCache(
+        userId: userId,
         pizzas: result.pizzas,
         lastDocument: result.lastDocument,
         hasReachedMax: result.pizzas.length < _limit,
@@ -61,7 +66,7 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
     }
   }
 
-  Future<void> fetchMorePizzas() async {
+  Future<void> fetchMorePizzas(String userId) async {
     final currentState = state;
     if (currentState is! UserPizzasLoaded || currentState.hasReachedMax) return;
 
@@ -75,6 +80,7 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
 
       final updatedPizzas = [...currentState.pizzas, ...result.pizzas];
       final updatedCache = UserPizzasCache(
+        userId: userId,
         pizzas: updatedPizzas,
         lastDocument: result.lastDocument,
         hasReachedMax: result.pizzas.length < _limit,

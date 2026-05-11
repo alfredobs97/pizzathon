@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
@@ -188,5 +190,44 @@ class FirestoreService {
         .count()
         .get();
     return snapshot.count ?? 0;
+  }
+
+  Future<UserModel?> getUserByShortId(String shortId) async {
+    final query = await _db
+        .collection(_userCollectionName)
+        .where('shortId', isEqualTo: shortId)
+        .limit(1)
+        .get();
+
+    if (query.docs.isEmpty) return null;
+    return UserModel.fromDocument(query.docs.first);
+  }
+
+  Future<String> generateAndSaveShortId(String uid) async {
+    final userRef = _db.collection(_userCollectionName).doc(uid);
+
+    String shortId = '';
+    bool exists = true;
+
+    while (exists) {
+      shortId = _generateRandomString(6);
+      final query = await _db
+          .collection(_userCollectionName)
+          .where('shortId', isEqualTo: shortId)
+          .limit(1)
+          .get();
+      exists = query.docs.isNotEmpty;
+    }
+
+    await userRef.update({'shortId': shortId});
+    return shortId;
+  }
+
+  String _generateRandomString(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random();
+    return String.fromCharCodes(
+      Iterable.generate(length, (_) => chars.codeUnitAt(random.nextInt(chars.length))),
+    );
   }
 }

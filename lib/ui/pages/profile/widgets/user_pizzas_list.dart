@@ -1,13 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pizzathon/domain/models/user_model.dart';
 import 'package:pizzathon/ui/blocs/user_pizzas/user_pizzas_cubit.dart';
 import 'package:pizzathon/ui/blocs/user_pizzas/user_pizzas_state.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/pizza_card.dart';
 
 class UserPizzasList extends StatelessWidget {
-  final User user;
+  final UserModel user;
 
   const UserPizzasList({super.key, required this.user});
 
@@ -73,7 +73,7 @@ class UserPizzasList extends StatelessWidget {
                       style: GoogleFonts.archivo(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),
