@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,40 +50,42 @@ class ScoreboardView extends StatelessWidget {
             }
 
             if (state is ScoreboardLoaded) {
-              return CustomScrollView(
-                slivers: [
-                  const SliverToBoxAdapter(child: CountdownTopBanner()),
-                  const SliverToBoxAdapter(
-                    child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  SliverToBoxAdapter(
-                    child: Center(
-                      child: Text(
-                        'PIZZATHON',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.climateCrisis(
-                          fontSize: 32,
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w400,
+              return Center(
+                child: CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(child: CountdownTopBanner()),
+                    const SliverToBoxAdapter(
+                      child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
+                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                    SliverToBoxAdapter(
+                      child: Center(
+                        child: Text(
+                          'PIZZATHON',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.climateCrisis(
+                            fontSize: 32,
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    sliver: SliverList(
+                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                    SliverFixedExtentList(
+                      itemExtent: 78.0,
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        final entry = state.topEntries[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: _RankingCard(rank: entry.rank, entry: entry),
+                        //final entry = state.topEntries[index];
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: _RankingCard(rank: index + 1, entry: state.topEntries[0]),
+                          ),
                         );
-                      }, childCount: state.topEntries.length),
+                      }, childCount: 100),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
 
@@ -114,17 +117,19 @@ class _RankingCard extends StatelessWidget {
         },
         child: Container(
           height: 70,
+          width: 320,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Rank Number
                 SizedBox(
-                  width: 55,
+                  width: 80,
                   child: Text(
                     '#$rank',
+                    textAlign: TextAlign.right,
                     style: theme.textTheme.displayLarge?.copyWith(
                       fontSize: 36,
                       color: theme.colorScheme.secondary,
@@ -144,7 +149,19 @@ class _RankingCard extends StatelessWidget {
                   child: entry.photoUrl.isNotEmpty
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(28),
-                          child: Image.network(entry.photoUrl, fit: BoxFit.cover),
+                          child: CachedNetworkImage(
+                            imageUrl: entry.photoUrl,
+                            fit: BoxFit.cover,
+                            memCacheWidth: 100,
+                            memCacheHeight: 100,
+                            placeholder: (context, url) => Container(
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                            ),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              backgroundColor: theme.colorScheme.secondary,
+                              child: const Icon(Icons.person, color: Colors.white, size: 32),
+                            ),
+                          ),
                         )
                       : const Icon(Icons.person, color: Colors.grey, size: 32),
                 ),
