@@ -94,9 +94,9 @@ void main() async {
               context.read<FirestoreService>(),
               context.read<ErrorTrackerService>(),
               context.read<AuthService>(),
+              context.read<RemoteConfigService>(),
             ),
-          ),
-          BlocProvider(
+          ),          BlocProvider(
             create: (context) => PocImagesCubit(
               ImageProcessingService(),
               context.read<RemoteConfigService>(),

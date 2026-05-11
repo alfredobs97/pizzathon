@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
 import 'package:pizzathon/domain/entities/pizza_limit_constants.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
@@ -12,12 +13,14 @@ class UploadLimitCubit extends Cubit<UploadLimitState> {
   final FirestoreService _firestoreService;
   final ErrorTrackerService _errorTrackerService;
   final AuthService _authService;
+  final RemoteConfigService _remoteConfigService;
 
   UploadLimitCubit(
     this._uploadLimitService,
     this._firestoreService,
     this._errorTrackerService,
     this._authService,
+    this._remoteConfigService,
   ) : super(UploadLimitInitial());
 
   Future<void> checkLimit() async {
@@ -28,6 +31,11 @@ class UploadLimitCubit extends Cubit<UploadLimitState> {
     }
     try {
       emit(UploadLimitChecking());
+
+      if (!_remoteConfigService.isUploadEnabled) {
+        emit(UploadDisabledGlobally());
+        return;
+      }
 
       // 1. Try Cache first
       try {

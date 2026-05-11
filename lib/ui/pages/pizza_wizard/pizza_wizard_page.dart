@@ -82,10 +82,7 @@ class _PizzaWizardPageState extends State<PizzaWizardPage> {
               leading: IconButton(
                 icon: Icon(Icons.close, color: theme.colorScheme.secondary),
                 onPressed: () async {
-                  final shouldExit = await showExitConfirmationDialog(context);
-                  if (shouldExit && context.mounted) {
                     context.pop();
-                  }
                 },
               ),
             ),

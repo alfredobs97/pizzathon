@@ -8,9 +8,12 @@ class MainSponsorSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 365,
+      constraints: const BoxConstraints(minHeight: 365),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       color: Theme.of(context).colorScheme.onSecondaryContainer,
+      alignment: Alignment.center,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
@@ -43,8 +46,10 @@ class MainSponsorSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 40,
+            runSpacing: 20,
             children: [
               Link(
                 uri: Uri.parse('https://gimetal.it/'),
@@ -60,7 +65,6 @@ class MainSponsorSection extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(width: 40),
               Link(
                 uri: Uri.parse('https://biribox.com/'),
                 target: LinkTarget.blank,
@@ -71,6 +75,20 @@ class MainSponsorSection extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageUrl: 'https://i.ibb.co/V0HrVmnJ/biribox-3.png',
                       height: 65,
+                    ),
+                  );
+                },
+              ),
+              Link(
+                uri: Uri.parse('https://gourmet.spigaimpex.com/'),
+                target: LinkTarget.blank,
+                builder: (context, followLink) {
+                  return InkWell(
+                    hoverColor: Colors.transparent,
+                    onTap: followLink,
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://i.ibb.co/WNRZRs3m/logo-spiga-gourmet-1.png',
+                      height: 80,
                     ),
                   );
                 },

@@ -15,6 +15,8 @@ class UploadLimitAllowed extends UploadLimitState {}
 
 class UploadLimitReached extends UploadLimitState {}
 
+class UploadDisabledGlobally extends UploadLimitState {}
+
 class UploadLimitError extends UploadLimitState {
   final String message;
 
