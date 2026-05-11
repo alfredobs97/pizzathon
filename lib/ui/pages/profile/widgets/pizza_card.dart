@@ -10,8 +10,7 @@ class PizzaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String pizzaName = pizza.pizzaStyle?.displayName ?? 'Sin estilo';
-    final String? imageUrl = pizza.imageUrls.values.firstOrNull;
-
+    final String? imageUrl = pizza.imageUrls["front"];
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
