@@ -9,6 +9,7 @@ import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_cubit.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_state.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
+import 'package:pizzathon/ui/widgets/top_banner.dart';
 
 class ScoreboardPage extends StatelessWidget {
   const ScoreboardPage({super.key});
@@ -36,7 +37,7 @@ class ScoreboardView extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.onSurface,
       body: Padding(
-        padding: const EdgeInsets.only(bottom: 0, left: 24.0, right: 24.0),
+        padding: const EdgeInsets.only(bottom: 0),
         child: BlocBuilder<ScoreboardCubit, ScoreboardState>(
           builder: (context, state) {
             if (state is ScoreboardLoading) {
@@ -50,6 +51,7 @@ class ScoreboardView extends StatelessWidget {
             if (state is ScoreboardLoaded) {
               return CustomScrollView(
                 slivers: [
+                  const SliverToBoxAdapter(child: CountdownTopBanner()),
                   const SliverToBoxAdapter(
                     child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
                   ),
