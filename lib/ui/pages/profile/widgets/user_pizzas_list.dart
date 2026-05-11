@@ -27,7 +27,33 @@ class UserPizzasList extends StatelessWidget {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
-                child: Text('Error: ${state.message}', style: const TextStyle(color: Colors.red)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline_rounded,
+                      color: Theme.of(context).colorScheme.error,
+                      size: 60,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '¡ERROR AL CARGAR PIZZAS!',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.7),
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

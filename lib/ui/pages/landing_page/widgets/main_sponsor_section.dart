@@ -88,7 +88,7 @@ class MainSponsorSection extends StatelessWidget {
                     onTap: followLink,
                     child: CachedNetworkImage(
                       imageUrl: 'https://i.ibb.co/WNRZRs3m/logo-spiga-gourmet-1.png',
-                      height: 80,
+                      height: 85,
                     ),
                   );
                 },
