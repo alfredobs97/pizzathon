@@ -147,7 +147,7 @@ void showSuccessDialog(BuildContext context) {
             Icon(Icons.check_circle_outline, color: theme.colorScheme.primary, size: 48),
             const SizedBox(height: 16),
             Text(
-              "¡Pizza recibida!",
+              "¡Pizza enviada!",
               style: theme.textTheme.displayMedium?.copyWith(
                 color: theme.colorScheme.secondary,
                 fontSize: 22,
@@ -157,7 +157,7 @@ void showSuccessDialog(BuildContext context) {
           ],
         ),
         content: Text(
-          "La revisaremos lo antes posible.",
+          "Recibirás un email cuando revisemos tu pizza",
           style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.secondary),
           textAlign: TextAlign.center,
         ),

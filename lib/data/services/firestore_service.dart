@@ -172,10 +172,11 @@ class FirestoreService {
     });
   }
 
-  Future<int> getPizzaCountByStyle(PizzaStyle style) async {
+  Future<int> getPizzaCountByStylePerUser({required PizzaStyle style, required String uid}) async {
     final snapshot = await _db
         .collection(_pizzaCollectionName)
         .where('pizzaStyle', isEqualTo: style.name)
+        .where('userId', isEqualTo: uid)
         .where('status', isEqualTo: PizzaStatus.approved.name)
         .count()
         .get();

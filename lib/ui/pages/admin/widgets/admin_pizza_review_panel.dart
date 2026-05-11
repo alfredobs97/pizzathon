@@ -132,7 +132,7 @@ class _AdminPizzaReviewPanelState extends State<AdminPizzaReviewPanel> {
               _buildActionButton(
                 context,
                 'RECHAZAR',
-                theme.colorScheme.primary,
+                theme.colorScheme.secondary,
                 () => widget.onReject(_commentController.text),
               ),
             ],

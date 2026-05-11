@@ -31,7 +31,7 @@ import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
 class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
-  static const String scoreboardRoute = '/puntuacion';
+  static const String scoreboardRoute = '/ranking';
   static const String adminRoute = '/capo';
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
@@ -67,7 +67,8 @@ class AppRouter {
               if (isFinished || isLimitExceeded) {
                 return true;
               }
-              final result = await showExitConfirmationDialog(context);if (result && context.mounted){
+              final result = await showExitConfirmationDialog(context);
+              if (result && context.mounted) {
                 context.read<PocImagesCubit>().resetWizard();
               }
               return result;
@@ -151,7 +152,7 @@ class AppRouter {
                       create: (context) {
                         final cubit = AdminPizzaReviewCubit(context.read<FirestoreService>());
                         if (pizza.pizzaStyle != null) {
-                          cubit.loadStyleCount(pizza.pizzaStyle!);
+                          cubit.loadStyleCount(pizza.pizzaStyle!, pizza.userId);
                         }
                         return cubit;
                       },
