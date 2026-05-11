@@ -123,6 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         final bool isReached = limitState is UploadLimitReached;
                         final bool isChecking = limitState is UploadLimitChecking;
                         final bool isError = limitState is UploadLimitError;
+                        final bool isDisabled = limitState is UploadDisabledGlobally;
 
                         return Column(
                           children: [
@@ -161,7 +162,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.white,
                                             ),
                                           )
-                                        : Text(isReached ? 'Listo por hoy' : 'Nueva Pizza'),
+                                        : Text(
+                                            isDisabled
+                                                ? 'Subidas deshabilitadas'
+                                                : (isReached ? 'Listo por hoy' : 'Nueva Pizza'),
+                                          ),
                                   ),
                                 ),
                               ),

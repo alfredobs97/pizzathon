@@ -92,8 +92,8 @@ class _CountdownTopBannerState extends State<CountdownTopBanner> {
   late Timer _timer;
   Duration _timeLeft = Duration.zero;
 
-  // May 11, 2026, 12:00 Spanish time (CEST) = 10:00 UTC
-  final DateTime _targetDate = DateTime.utc(2026, 5, 11, 10, 0, 0);
+  // May 18, 2026, 12:00 Spanish time (CEST) = 10:00 UTC
+  final DateTime _targetDate = DateTime.utc(2026, 5, 18, 10, 0, 0);
 
   @override
   void initState() {
@@ -126,15 +126,30 @@ class _CountdownTopBannerState extends State<CountdownTopBanner> {
     final hours = _timeLeft.inHours % 24;
     final minutes = _timeLeft.inMinutes % 60;
 
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
     return BaseTopBanner(
       actions: widget.actions,
-      child: Text(
-        'Quedan $days dias $hours horas $minutes minutos',
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: Theme.of(context).colorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Pizzathon finaliza en',
+            textAlign: TextAlign.center,
+            style: textStyle,
+          ),
+          Text(
+            '$days DÍAS · $hours H · $minutes M',
+            textAlign: TextAlign.center,
+            style: textStyle?.copyWith(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ],
       ),
     );
   }

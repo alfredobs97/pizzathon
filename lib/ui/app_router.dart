@@ -61,12 +61,12 @@ class AppRouter {
             onExit: (context, state) async {
               final isFinished = context.read<PocImagesCubit>().state.isFinished;
               final isLimitExceeded = context.read<UploadLimitCubit>().state is UploadLimitReached;
-
               if (isFinished || isLimitExceeded) {
                 return true;
               }
-
-              final result = await showExitConfirmationDialog(context);
+              final result = await showExitConfirmationDialog(context);if (result && context.mounted){
+                context.read<PocImagesCubit>().resetWizard();
+              }
               return result;
             },
             pageBuilder: (context, state) => _fadeTransition(state, const PizzaWizardPage()),
