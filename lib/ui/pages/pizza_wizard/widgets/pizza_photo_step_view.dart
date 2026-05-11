@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,9 +60,25 @@ class PizzaPhotoStepView extends StatelessWidget {
                       fit: StackFit.expand,
                       children: [
                         if (hasPendingForThisStep)
-                          Image.memory(state.pendingImage!, fit: BoxFit.cover)
+                          FutureBuilder<Uint8List>(
+                            future: state.pendingImage!.readAsBytes(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Image.memory(snapshot.data!, fit: BoxFit.cover);
+                              }
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          )
                         else if (hasConfirmed)
-                          Image.memory(confirmedImage, fit: BoxFit.cover)
+                          FutureBuilder<Uint8List>(
+                            future: confirmedImage.readAsBytes(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Image.memory(snapshot.data!, fit: BoxFit.cover);
+                              }
+                              return const Center(child: CircularProgressIndicator());
+                            },
+                          )
                         else
                           ColorFiltered(
                             colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.saturation),

@@ -1,15 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pizzathon/domain/entities/validation_result.dart';
+import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
-import 'dart:typed_data';
-
-import '../../../data/services/image_processing_service.dart';
-import '../../../data/services/remote_config_service.dart';
-import '../../../data/services/image_metadata_service.dart';
-import '../../../data/services/pizza_validation_service.dart';
-import '../../../domain/models/compression_settings.dart';
-import '../../../domain/entities/validation_result.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
+import 'package:pizzathon/data/services/image_processing_service.dart';
+import 'package:pizzathon/data/services/auth_service.dart';
+import 'package:pizzathon/data/services/pizza_storage_service.dart';
+import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/pizza_validation_service.dart';
+import 'package:pizzathon/domain/models/compression_settings.dart';
+import 'package:pizzathon/domain/models/pizza_photo_step.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
+import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
@@ -18,6 +22,10 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final ImageMetadataService _metadataService;
   final PizzaValidationService _validationService;
   final ErrorTrackerService _errorTrackerService;
+  final AuthService _authService;
+  final PizzaStorageService _pizzaStorageService;
+  final FirestoreService _firestoreService;
+  final UploadLimitCacheService _uploadLimitService;
 
   PocImagesCubit(
     this._imageProcessingService,
@@ -25,6 +33,10 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     this._metadataService,
     this._validationService,
     this._errorTrackerService,
+    this._authService,
+    this._pizzaStorageService,
+    this._firestoreService,
+    this._uploadLimitService,
   ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
@@ -56,48 +68,47 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       }
 
       final originalBytes = metadata.bytes!;
+      final originalSize = originalBytes.length;
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
-      debugPrint("valor ANTES de la compresion: ${settings.quality}");
 
-      final compressedBytes = await _imageProcessingService.compressImage(
+      final compressedFile = await _imageProcessingService.compressImage(
+        file,
         originalBytes,
         settings: settings,
       );
 
-      debugPrint("valor DESPUES  de la compresion: ${settings.quality}");
+      if (compressedFile != null) {
+        final compressedBytes = await compressedFile.readAsBytes();
+        final compressedSize = compressedBytes.length;
 
-      if (compressedBytes != null) {
+        final updatedOriginalSizes = Map<PizzaPhotoStep, int>.from(state.originalSizes);
+        final updatedCompressedSizes = Map<PizzaPhotoStep, int>.from(state.compressedSizes);
+
+        updatedOriginalSizes[state.currentStep] = originalSize;
+        updatedCompressedSizes[state.currentStep] = compressedSize;
+
         emit(
           state.copyWith(
             isLoading: false,
-            pendingImage: await file.readAsBytes(),
+            pendingImage: compressedFile,
+            originalSizes: updatedOriginalSizes,
+            compressedSizes: updatedCompressedSizes,
           ),
         );
       } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: "No se pudo comprimir la imagen.",
-          ),
-        );
+        emit(state.copyWith(isLoading: false, errorMessage: "No se pudo comprimir la imagen."));
       }
     } catch (e, stackTrace) {
       _errorTrackerService.trackError(
         TrackedError(
           error: e,
           stackTrace: stackTrace,
-          extra: {
-            'component': 'PocImagesCubit',
-            'action': 'pickAndCompressImages',
-          },
+          extra: {'component': 'PocImagesCubit', 'action': 'pickAndCompressImages'},
         ),
       );
       emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: "Ups! Error inesperado: ${e.toString()}",
-        ),
+        state.copyWith(isLoading: false, errorMessage: "Ups! Error inesperado: ${e.toString()}"),
       );
     }
   }
@@ -105,9 +116,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   void confirmImage() {
     if (state.pendingImage == null) return;
 
-    final updatedConfirmed = Map<PizzaPhotoStep, Uint8List>.from(
-      state.confirmedImages,
-    );
+    final updatedConfirmed = Map<PizzaPhotoStep, XFile>.from(state.confirmedImages);
     updatedConfirmed[state.currentStep] = state.pendingImage!;
 
     if (state.currentStep == PizzaPhotoStep.bottom) {
@@ -132,12 +141,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
 
   void nextPhotoStep() {
     if (state.currentStep == PizzaPhotoStep.bottom) {
-      emit(
-        state.copyWith(
-          mainStep: WizardStep.formulario,
-          clearPendingImage: true,
-        ),
-      );
+      emit(state.copyWith(mainStep: WizardStep.formulario, clearPendingImage: true));
     } else {
       final nextStep = PizzaPhotoStep.values[state.currentStep.index + 1];
       emit(state.copyWith(currentStep: nextStep, clearPendingImage: true));
@@ -145,14 +149,14 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   }
 
   void savePizzaDetails({
-    required String pizzaStyle,
+    required PizzaStyle pizzaStyle,
     required String flours,
     required String preferment,
-    required String prefermentPercentage,
-    required String hydration,
-    required String doughBallWeight,
+    required int prefermentPercentage,
+    required num hydration,
+    required num doughBallWeight,
     required String oven,
-    required String cookingTemperature,
+    required num cookingTemperature,
   }) {
     emit(
       state.copyWith(
@@ -169,10 +173,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     );
   }
 
-  void saveIngredients({
-    required String baseIngredient,
-    required String otherIngredients,
-  }) {
+  void saveIngredients({required String baseIngredient, required String otherIngredients}) {
     emit(
       state.copyWith(
         baseIngredient: baseIngredient,
@@ -183,12 +184,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   }
 
   void redoChanges() {
-    emit(
-      state.copyWith(
-        mainStep: WizardStep.fotos,
-        currentStep: PizzaPhotoStep.front,
-      ),
-    );
+    emit(state.copyWith(mainStep: WizardStep.fotos, currentStep: PizzaPhotoStep.front));
   }
 
   void goBackMainStep() {
@@ -213,18 +209,87 @@ class PocImagesCubit extends Cubit<PocImagesState> {
       return;
     }
     if (state.baseIngredient == null || state.otherIngredients == null) {
-      emit(
-        state.copyWith(errorMessage: "Faltan los ingredientes de la pizza."),
-      );
+      emit(state.copyWith(errorMessage: "Faltan los ingredientes de la pizza."));
       return;
     }
 
     try {
       emit(state.copyWith(isSubmitting: true, errorMessage: null));
-      await Future.delayed(const Duration(seconds: 2));
 
-      emit(state.copyWith(isSubmitting: false, isFinished: true));
-    } catch (e) {
+      final userId = _authService.currentUser?.uid;
+      if (userId == null) {
+        throw Exception("Debes estar identificado para enviar tu pizza.");
+      }
+
+      final pizzaId = _firestoreService.generatePizzaId();
+
+      final uploadedImages = await _pizzaStorageService.uploadPizzaParticipation(
+        userId: userId,
+        images: state.confirmedImages,
+        pizzaId: pizzaId,
+      );
+
+      final Map<String, String> imageUrlsMap = {};
+      for (final link in uploadedImages) {
+        imageUrlsMap[link.step.name] = link.url;
+      }
+
+      final pizza = PizzaModel(
+        id: pizzaId,
+        userId: userId,
+        imageUrls: imageUrlsMap,
+        createdAt: DateTime.now(),
+        pizzaStyle: state.pizzaStyle,
+        flours: state.flours,
+        preferment: state.preferment,
+        prefermentPercentage: state.prefermentPercentage,
+        hydration: state.hydration,
+        doughBallWeight: state.doughBallWeight,
+        oven: state.oven,
+        cookingTemperature: state.cookingTemperature,
+        baseIngredient: state.baseIngredient,
+        otherIngredients: state.otherIngredients,
+      );
+
+      await _firestoreService.savePizzaParticipation(
+        userId: userId,
+        pizzaId: pizzaId,
+        pizzaData: pizza.toMap(),
+        imageUrls: imageUrlsMap,
+      );
+
+      try {
+        await _uploadLimitService.incrementLimitCacheByOne(userId);
+      } catch (e, stackTrace) {
+        _errorTrackerService.trackError(
+          TrackedError(
+            error: e,
+            stackTrace: stackTrace,
+            extra: {
+              'component': 'PocImagesCubit',
+              'action': 'submitPizza: incrementLimitCacheByOne',
+            },
+          ),
+        );
+      }
+
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          isFinished: true,
+          imageUrls: imageUrlsMap.map(
+            (key, value) => MapEntry(PizzaPhotoStep.values.firstWhere((s) => s.name == key), value),
+          ),
+        ),
+      );
+    } catch (e, stackTrace) {
+      _errorTrackerService.trackError(
+        TrackedError(
+          error: e,
+          stackTrace: stackTrace,
+          extra: {'component': 'PocImagesCubit', 'action': 'submitPizza'},
+        ),
+      );
       emit(
         state.copyWith(
           isSubmitting: false,

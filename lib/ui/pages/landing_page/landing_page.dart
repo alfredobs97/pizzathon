@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
+import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
 import 'package:pizzathon/ui/pages/landing_page/widgets/main_sponsor_section.dart';
 import 'package:pizzathon/ui/widgets/footer.dart';
 import 'package:pizzathon/ui/widgets/top_banner.dart';
@@ -19,16 +20,19 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listenWhen: (previous, current) => previous is AuthLoading && current is AuthAuthenticated,
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AuthAuthenticated) {
-          context.go(AppRouter.participantsRoute);
+          await context.read<EnrollmentCubit>().checkUserEnrollment();
+          if (context.mounted) {
+            context.go(AppRouter.profileRoute);
+          }
         }
       },
       child: const Scaffold(
         body: SingleChildScrollView(
           child: Column(
             children: [
-              TopBanner(),
+              CountdownTopBanner(),
               HeroSection(),
               MainSponsorSection(),
               InfoSection(),

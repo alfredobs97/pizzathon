@@ -1,25 +1,58 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
+import '../../../data/services/cache_service.dart';
 import '../../../data/services/firestore_service.dart';
+import '../../../domain/entities/user_pizzas_cache.dart';
 import 'user_pizzas_state.dart';
 
 class UserPizzasCubit extends Cubit<UserPizzasState> {
   final FirestoreService _firestoreService;
-  final String userId;
+  final CacheService _cacheService;
   static const int _limit = 5;
 
   UserPizzasCubit({
     required FirestoreService firestoreService,
-    required this.userId,
+    required CacheService cacheService,
   }) : _firestoreService = firestoreService,
+       _cacheService = cacheService,
        super(UserPizzasInitial());
 
-  Future<void> fetchInitialPizzas() async {
+  void emitInitial() => emit(UserPizzasInitial());
+
+  Future<void> fetchInitialPizzas(String userId) async {
+    final cached = _cacheService.getUserPizzas();
+    if (cached != null) {
+      if (cached.userId == userId) {
+        emit(
+          UserPizzasLoaded(
+            pizzas: cached.pizzas,
+            lastDocument: cached.lastDocument,
+            hasReachedMax: cached.hasReachedMax,
+          ),
+        );
+        return;
+      } else {
+        _cacheService.invalidateUserPizzas();
+      }
+    }
+
     emit(UserPizzasLoading());
     try {
       final result = await _firestoreService.getPizzasFromUserPaginated(
         uid: userId,
         limit: _limit,
+        status: PizzaStatus.approved,
       );
+
+      final newCache = UserPizzasCache(
+        userId: userId,
+        pizzas: result.pizzas,
+        lastDocument: result.lastDocument,
+        hasReachedMax: result.pizzas.length < _limit,
+        lastUpdated: DateTime.now(),
+      );
+
+      _cacheService.saveUserPizzas(newCache);
 
       emit(
         UserPizzasLoaded(
@@ -33,7 +66,7 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
     }
   }
 
-  Future<void> fetchMorePizzas() async {
+  Future<void> fetchMorePizzas(String userId) async {
     final currentState = state;
     if (currentState is! UserPizzasLoaded || currentState.hasReachedMax) return;
 
@@ -42,18 +75,28 @@ class UserPizzasCubit extends Cubit<UserPizzasState> {
         uid: userId,
         lastDocument: currentState.lastDocument,
         limit: _limit,
+        status: PizzaStatus.approved,
       );
+
+      final updatedPizzas = [...currentState.pizzas, ...result.pizzas];
+      final updatedCache = UserPizzasCache(
+        userId: userId,
+        pizzas: updatedPizzas,
+        lastDocument: result.lastDocument,
+        hasReachedMax: result.pizzas.length < _limit,
+        lastUpdated: DateTime.now(),
+      );
+
+      _cacheService.saveUserPizzas(updatedCache);
 
       emit(
         UserPizzasLoaded(
-          pizzas: [...currentState.pizzas, ...result.pizzas],
+          pizzas: updatedPizzas,
           lastDocument: result.lastDocument,
           hasReachedMax: result.pizzas.length < _limit,
         ),
       );
     } catch (e) {
-      // In case of error when loading more, we could just stay in the current state or show an error
-      // For now, let's keep it simple
       emit(UserPizzasError(e.toString()));
     }
   }

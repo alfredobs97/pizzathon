@@ -3,8 +3,8 @@ import 'package:pizzathon/domain/entities/validation_result.dart';
 import 'package:pizzathon/domain/entities/pizza_validation_rules.dart';
 
 class PizzaValidationService {
-  static final DateTime fechaInicio = DateTime(2026, 4, 20);
-  static final DateTime fechaFin = DateTime(2026, 4, 30, 23, 59, 59);
+  static final DateTime fechaInicio = DateTime(2026, 5, 11);
+  static final DateTime fechaFin = DateTime(2026, 5, 18, 23, 59, 59);
 
   final List<PizzaValidationRule> _rules = [
     const RequireExifDataRule(),

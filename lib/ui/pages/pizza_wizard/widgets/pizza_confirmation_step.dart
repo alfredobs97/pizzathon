@@ -1,7 +1,10 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_cubit.dart';
 import 'package:pizzathon/ui/blocs/poc_images/poc_images_state.dart';
+import 'package:pizzathon/domain/models/pizza_photo_step.dart';
+import 'package:pizzathon/domain/models/pizza_model.dart';
 
 class PizzaConfirmationStep extends StatelessWidget {
   const PizzaConfirmationStep({super.key});
@@ -28,7 +31,7 @@ class PizzaConfirmationStep extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 Text(
-                  "Repásala bien antes de enviarla al comite de expertos",
+                  "Revisa bien la información",
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.secondary.withValues(alpha: 0.6),
                   ),
@@ -46,7 +49,7 @@ class PizzaConfirmationStep extends StatelessWidget {
                   theme: theme,
                   title: "MASA Y FORMULACIÓN",
                   details: [
-                    _buildDetailRow(theme, "ESTILO", state.pizzaStyle),
+                    _buildDetailRow(theme, "ESTILO", state.pizzaStyle?.displayName),
                     _buildDetailRow(theme, "HARINAS", state.flours),
                     _buildDetailRow(
                       theme,
@@ -78,7 +81,7 @@ class PizzaConfirmationStep extends StatelessWidget {
                   title: "INGREDIENTES",
                   details: [
                     _buildDetailRow(theme, "BASE", state.baseIngredient),
-                    _buildDetailRow(theme, "RESTO", state.otherIngredients, isLongText: true),
+                    _buildDetailRow(theme, "RESTO", state.otherIngredients),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -122,7 +125,15 @@ class PizzaConfirmationStep extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 if (image != null)
-                  Image.memory(image, fit: BoxFit.cover)
+                  FutureBuilder<Uint8List>(
+                    future: image.readAsBytes(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Image.memory(snapshot.data!, fit: BoxFit.cover);
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                  )
                 else
                   Container(color: Colors.grey.shade200),
                 Positioned(
@@ -234,10 +245,7 @@ class PizzaConfirmationStep extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 4),
-          Divider(
-            height: 1,
-            color: theme.colorScheme.secondary.withValues(alpha: 0.05),
-          ),
+          Divider(height: 1, color: theme.colorScheme.secondary.withValues(alpha: 0.05)),
         ],
       ),
     );
@@ -266,14 +274,12 @@ class PizzaConfirmationStep extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     minimumSize: const Size(double.infinity, 60),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     elevation: 4,
                     shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
                   ),
                   child: Text(
-                    "ENVIAR AL CAPO DE LA PIZZA",
+                    "ENVIAR PIZZA",
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -282,17 +288,13 @@ class PizzaConfirmationStep extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextButton.icon(
+                TextButton(
                   onPressed: () => context.read<PocImagesCubit>().redoChanges(),
-                  icon: const Icon(Icons.refresh, size: 20),
-                  label: const Text("REHACER CAMBIOS"),
                   style: TextButton.styleFrom(
                     foregroundColor: theme.colorScheme.secondary.withValues(alpha: 0.5),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12,
-                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12),
                   ),
+                  child: const Text("MODIFICAR PIZZA"),
                 ),
               ],
             ),

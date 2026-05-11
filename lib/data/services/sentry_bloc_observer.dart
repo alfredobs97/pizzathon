@@ -2,6 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// [BlocObserver] that records BLoC transitions and errors as breadcrumbs in Sentry.
+///
+/// Uses [toString] of the BLoC for identification. BLoCs should override [toString]
+/// to provide a manual name and avoid issues with minification in production.
 class SentryBlocObserver extends BlocObserver {
   @override
   void onEvent(Bloc bloc, Object? event) {
@@ -10,7 +13,7 @@ class SentryBlocObserver extends BlocObserver {
       Breadcrumb(
         type: 'debug',
         category: 'bloc.event',
-        message: 'Event in ${bloc.runtimeType}',
+        message: 'Event in $bloc',
         data: {
           'event': event.toString(),
         },
@@ -25,7 +28,7 @@ class SentryBlocObserver extends BlocObserver {
       error,
       stackTrace: stackTrace,
       withScope: (scope) {
-        scope.setTag('bloc', bloc.runtimeType.toString());
+        scope.setTag('bloc', bloc.toString());
         scope.setContexts('bloc', {
           'state': bloc.state.toString(),
         });
@@ -40,7 +43,7 @@ class SentryBlocObserver extends BlocObserver {
       Breadcrumb(
         type: 'debug',
         category: 'bloc.change',
-        message: 'Change in ${bloc.runtimeType}',
+        message: 'Change in $bloc',
         data: {
           'currentState': change.currentState.toString(),
           'nextState': change.nextState.toString(),
@@ -56,7 +59,7 @@ class SentryBlocObserver extends BlocObserver {
       Breadcrumb(
         type: 'debug',
         category: 'bloc.lifecycle',
-        message: 'Created ${bloc.runtimeType}',
+        message: 'Created $bloc',
       ),
     );
   }
@@ -68,7 +71,7 @@ class SentryBlocObserver extends BlocObserver {
       Breadcrumb(
         type: 'debug',
         category: 'bloc.lifecycle',
-        message: 'Closed ${bloc.runtimeType}',
+        message: 'Closed $bloc',
       ),
     );
   }

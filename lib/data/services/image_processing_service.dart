@@ -14,17 +14,23 @@ class ImageProcessingService {
     }
   }
 
-  Future<Uint8List?> compressImage(
-    Uint8List imageBytes, {
+  Future<XFile?> compressImage(
+    XFile originalFile,
+    Uint8List originalBytes, {
     required CompressionSettings settings,
   }) async {
     try {
-      return await FlutterImageCompress.compressWithList(
-        imageBytes,
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        originalBytes,
         minHeight: settings.maxWidth,
         minWidth: settings.maxWidth,
         quality: settings.quality,
-        format: CompressFormat.jpeg,
+      );
+
+      return XFile.fromData(
+        compressedBytes,
+        mimeType: originalFile.mimeType ?? 'image/jpeg',
+        name: originalFile.name,
       );
     } catch (e) {
       return null;
