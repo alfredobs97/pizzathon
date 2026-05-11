@@ -75,14 +75,14 @@ class ScoreboardView extends StatelessWidget {
                     SliverFixedExtentList(
                       itemExtent: 78.0,
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        //final entry = state.topEntries[index];
+                        final entry = state.topEntries[index];
                         return Center(
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
-                            child: _RankingCard(rank: index + 1, entry: state.topEntries[0]),
+                            child: _RankingCard(rank: entry.rank, entry: entry),
                           ),
                         );
-                      }, childCount: 100),
+                      }, childCount: state.topEntries.length),
                     ),
                   ],
                 ),
