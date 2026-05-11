@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_cubit.dart';
 import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_state.dart';
+import 'package:pizzathon/ui/pages/admin/widgets/admin_pizza_history_detail_dialog.dart';
 
 class AdminPizzaHistorySection extends StatefulWidget {
   final String userId;
@@ -92,47 +93,51 @@ class _AdminPizzaHistorySectionState extends State<AdminPizzaHistorySection> {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final pizza = previousPizzas[index];
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1DAC1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                  return InkWell(
+                    onTap: () => AdminPizzaHistoryDetailDialog.show(context, pizza),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1DAC1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                pizza.pizzaStyle?.displayName ?? 'Pizza',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                              Text(
+                                DateFormat(
+                                  'EEEE d - HH:mm',
+                                  'es',
+                                ).format(pizza.createdAt),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.secondary.withValues(
+                                    alpha: 0.6,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (pizza.otherIngredients != null)
                             Text(
-                              pizza.pizzaStyle?.displayName ?? 'Pizza',
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              pizza.otherIngredients!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.secondary,
                               ),
                             ),
-                            Text(
-                              DateFormat(
-                                'EEEE d - HH:mm',
-                                'es',
-                              ).format(pizza.createdAt),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.secondary.withValues(
-                                  alpha: 0.6,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (pizza.otherIngredients != null)
-                          Text(
-                            pizza.otherIngredients!,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.secondary,
-                            ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },

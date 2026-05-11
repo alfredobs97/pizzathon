@@ -31,7 +31,7 @@ class PizzaConfirmationStep extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 Text(
-                  "Repásala bien antes de enviarla al comite de expertos",
+                  "Revisa bien la información",
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.secondary.withValues(alpha: 0.6),
                   ),
@@ -245,10 +245,7 @@ class PizzaConfirmationStep extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 4),
-          Divider(
-            height: 1,
-            color: theme.colorScheme.secondary.withValues(alpha: 0.05),
-          ),
+          Divider(height: 1, color: theme.colorScheme.secondary.withValues(alpha: 0.05)),
         ],
       ),
     );
@@ -277,14 +274,12 @@ class PizzaConfirmationStep extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     minimumSize: const Size(double.infinity, 60),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     elevation: 4,
                     shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
                   ),
                   child: Text(
-                    "ENVIAR AL CAPO DE LA PIZZA",
+                    "ENVIAR PIZZA",
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -293,17 +288,13 @@ class PizzaConfirmationStep extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextButton.icon(
+                TextButton(
                   onPressed: () => context.read<PocImagesCubit>().redoChanges(),
-                  icon: const Icon(Icons.refresh, size: 20),
-                  label: const Text("REHACER CAMBIOS"),
                   style: TextButton.styleFrom(
                     foregroundColor: theme.colorScheme.secondary.withValues(alpha: 0.5),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12,
-                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12),
                   ),
+                  child: const Text("MODIFICAR PIZZA"),
                 ),
               ],
             ),

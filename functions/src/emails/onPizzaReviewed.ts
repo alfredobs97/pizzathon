@@ -60,13 +60,13 @@ export const onPizzaReviewed = onDocumentUpdated(
     const adminComment = after.adminComment;
 
     const subject = `Tu pizza ha sido ${after.status === "approved" ? "aprobada" : "revisada"} - Pizzathon`;
-    
+
     let text = `Hola ${nombreUsuario},\n\nTu pizza de estilo ${pizzaStyle} del día ${fecha} ha sido ${statusLabel}.\n\n`;
     let html = `<p>Hola <b>${nombreUsuario}</b>,</p><p>Tu pizza de estilo <b>${pizzaStyle}</b> del día ${fecha} ha sido <b>${statusLabel}</b>.</p>`;
 
     if (adminComment && adminComment.trim().length > 0) {
-      text += `Comentario del administrador: ${adminComment}\n\n`;
-      html += `<p><b>Comentario del administrador:</b><br/>${adminComment}</p>`;
+      text += `Comentario del capo pizzathon: ${adminComment}\n\n`;
+      html += `<p><b>Comentario del capo pizzathon:</b><br/>${adminComment}</p>`;
     }
 
     text += "¡Gracias por participar en Pizzathon!";
