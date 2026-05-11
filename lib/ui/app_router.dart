@@ -31,7 +31,7 @@ import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
 class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
-  static const String scoreboardRoute = '/puntuacion';
+  static const String scoreboardRoute = '/ranking';
   static const String adminRoute = '/capo';
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
