@@ -58,6 +58,7 @@ class ProfileHeader extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           '${user.score} Puntos',
+                          maxLines: 2,
                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
                             color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w400,
