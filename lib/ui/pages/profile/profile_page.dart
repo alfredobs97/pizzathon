@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   width: 320,
                                   height: 56,
                                   child: ElevatedButton(
-                                    onPressed: (isReached || isChecking || isError)
+                                    onPressed: (isReached || isChecking || isError || isDisabled)
                                         ? null
                                         : () async {
                                             await context.push(AppRouter.newPizzaRoute);
