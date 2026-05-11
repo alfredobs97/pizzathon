@@ -52,16 +52,9 @@ class ProfileHeader extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
-                            if (!isPublic)
-                              IconButton(
-                                icon: Icon(
-                                  Icons.share,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                onPressed: onShare,
-                              ),
                           ],
                         ),
+
                         const SizedBox(height: 16),
                         Text(
                           '${user.score} Puntos',
@@ -105,6 +98,14 @@ class ProfileHeader extends StatelessWidget {
                   ),
                 ),
               ),
+              if (!isPublic)
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(
+                    icon: Icon(Icons.share, color: Theme.of(context).colorScheme.primary),
+                    onPressed: onShare,
+                  ),
+                ),
             ],
           ),
         ),
