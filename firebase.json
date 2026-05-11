@@ -142,5 +142,8 @@
       "enabled": true
     },
     "singleProjectMode": true
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "scoreboard": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}

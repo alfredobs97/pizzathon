@@ -1,27 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/services/cache_service.dart';
 import '../../../data/services/firestore_service.dart';
+import '../../../data/services/rtdb_service.dart';
 import '../../../domain/entities/user_profile_cache.dart';
 import '../../../domain/models/user_model.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final FirestoreService _firestoreService;
+  final RtdbService _rtdbService;
   final CacheService _cacheService;
 
-  ProfileCubit({required FirestoreService firestoreService, required CacheService cacheService})
-    : _firestoreService = firestoreService,
-      _cacheService = cacheService,
-      super(const ProfileState());
+  ProfileCubit({
+    required FirestoreService firestoreService,
+    required CacheService cacheService,
+    required RtdbService rtdbService,
+  }) : _firestoreService = firestoreService,
+       _cacheService = cacheService,
+       _rtdbService = rtdbService,
+       super(const ProfileState());
 
   Future<void> loadProfile(String uid) async {
     final cached = _cacheService.getUserProfile();
     if (cached != null && cached.user.uid == uid) {
+      final rank = await _rtdbService.getUserRank(uid);
       emit(
         state.copyWith(
           status: ProfileStatus.loaded,
           user: cached.user,
           pizzaCount: cached.pizzaCount,
+          rank: rank,
         ),
       );
       return;
@@ -36,6 +44,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
 
       final pizzaCount = await _firestoreService.getUserPizzaCount(uid);
+      final rank = await _rtdbService.getUserRank(uid);
 
       final newCache = UserProfileCache(
         user: user,
@@ -44,7 +53,14 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
       _cacheService.saveUserProfile(newCache);
 
-      emit(state.copyWith(status: ProfileStatus.loaded, user: user, pizzaCount: pizzaCount));
+      emit(
+        state.copyWith(
+          status: ProfileStatus.loaded,
+          user: user,
+          pizzaCount: pizzaCount,
+          rank: rank,
+        ),
+      );
     } catch (e) {
       emit(state.copyWith(status: ProfileStatus.error, errorMessage: e.toString()));
     }
@@ -66,7 +82,14 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
 
       final pizzaCount = await _firestoreService.getUserPizzaCount(user.uid);
-      emit(state.copyWith(status: ProfileStatus.loaded, user: user, pizzaCount: pizzaCount));
+      final rank = await _rtdbService.getUserRank(user.uid);
+      
+      emit(state.copyWith(
+        status: ProfileStatus.loaded, 
+        user: user, 
+        pizzaCount: pizzaCount,
+        rank: rank,
+      ));
     } catch (e) {
       emit(state.copyWith(status: ProfileStatus.error, errorMessage: e.toString()));
     }

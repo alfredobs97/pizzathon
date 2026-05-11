@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pizzathon/data/services/cache_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/rtdb_service.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
 import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_cubit.dart';
@@ -22,6 +23,7 @@ import 'package:pizzathon/ui/pages/pizza_wizard/widgets/pizza_wizard_dialogs.dar
 import 'package:pizzathon/ui/pages/pizza_wizard/pizza_wizard_page.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:pizzathon/ui/pages/profile/profile_page.dart';
+import 'package:pizzathon/ui/pages/scoreboard/scoreboard_page.dart';
 import 'package:pizzathon/ui/widgets/app_shell.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
@@ -29,6 +31,7 @@ import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_state.dart';
 class AppRouter {
   static const String landingRoute = '/';
   static const String participantsRoute = '/participantes';
+  static const String scoreboardRoute = '/puntuacion';
   static const String adminRoute = '/capo';
   static const String adminPizzaDetailRoute = '/capo/pizza';
   static const String newPizzaRoute = '/nueva-pizza';
@@ -91,6 +94,7 @@ class AppRouter {
                       create: (context) => ProfileCubit(
                         firestoreService: context.read<FirestoreService>(),
                         cacheService: context.read<CacheService>(),
+                        rtdbService: context.read<RtdbService>(),
                       )..loadProfile(userId),
                     ),
                   ],
@@ -98,6 +102,10 @@ class AppRouter {
                 ),
               );
             },
+          ),
+          GoRoute(
+            path: scoreboardRoute,
+            pageBuilder: (context, state) => _fadeTransition(state, const ScoreboardPage()),
           ),
           GoRoute(
             path: publicProfileRoute,
@@ -120,6 +128,7 @@ class AppRouter {
                       create: (context) => ProfileCubit(
                         firestoreService: context.read<FirestoreService>(),
                         cacheService: context.read<CacheService>(),
+                        rtdbService: context.read<RtdbService>(),
                       )..loadPublicProfile(identifier),
                     ),
                   ],

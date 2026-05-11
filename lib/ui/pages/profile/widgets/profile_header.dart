@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../../domain/models/user_model.dart';
+import 'package:pizzathon/domain/models/user_model.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
   final int pizzaCount;
+  final int? rank;
   final bool isPublic;
   final VoidCallback? onShare;
 
@@ -13,6 +13,7 @@ class ProfileHeader extends StatelessWidget {
     super.key,
     required this.user,
     required this.pizzaCount,
+    this.rank,
     this.isPublic = false,
     this.onShare,
   });
@@ -43,25 +44,17 @@ class ProfileHeader extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '#--', // Rank placeholder
-                              style: GoogleFonts.climateCrisis(
-                                fontSize: 40,
+                              rank != null ? '#$rank' : '#--',
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                fontSize: 36,
                                 wordSpacing: 1,
                                 fontWeight: FontWeight.w400,
                                 color: Theme.of(context).colorScheme.primary,
-                                height: 1.0,
                               ),
                             ),
-                            if (!isPublic)
-                              IconButton(
-                                icon: Icon(
-                                  Icons.share,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                onPressed: onShare,
-                              ),
                           ],
                         ),
+
                         const SizedBox(height: 16),
                         Text(
                           '${user.score} Puntos',
@@ -100,11 +93,19 @@ class ProfileHeader extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   user.displayName.toUpperCase(),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.displayLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ),
+              if (!isPublic)
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(
+                    icon: Icon(Icons.share, color: Theme.of(context).colorScheme.primary),
+                    onPressed: onShare,
+                  ),
+                ),
             ],
           ),
         ),

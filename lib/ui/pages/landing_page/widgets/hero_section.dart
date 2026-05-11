@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
+import 'package:pizzathon/ui/blocs/auth_state.dart';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
@@ -13,9 +16,7 @@ class HeroSection extends StatelessWidget {
     final isMobile = screenWidth < 800;
 
     double calculatedHeight = screenWidth * (522 / 1440);
-    final double heroHeight = isMobile
-        ? 400
-        : calculatedHeight.clamp(0.0, 522.0);
+    final double heroHeight = isMobile ? 500 : calculatedHeight.clamp(500.0, 700.0);
 
     return SizedBox(
       width: double.infinity,
@@ -33,9 +34,7 @@ class HeroSection extends StatelessWidget {
                   Container(color: Theme.of(context).colorScheme.primary),
               errorWidget: (context, url, error) => Container(
                 color: Colors.black26,
-                child: const Center(
-                  child: Icon(Icons.error, color: Colors.white, size: 40),
-                ),
+                child: const Center(child: Icon(Icons.error, color: Colors.white, size: 40)),
               ),
             ),
           ),
@@ -46,15 +45,16 @@ class HeroSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Primera edición - 11 / 18 Mayo 2026',
+                  'Primera edición · 11 / 18 Mayo 2026',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w400,
+                    fontSize: isMobile ? 18 : 24,
                   ),
                 ),
                 const SizedBox(height: 10),
 
-                // --- TÍTULO AUTO-AJUSTABLE ---
+                // --- TÍTULO ---
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(
@@ -76,41 +76,62 @@ class HeroSection extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 30),
-                SizedBox(
-                  height: 56,
-                  width: 240,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.8),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 16,
-                      ),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    onPressed: () {
+                const SizedBox(height: 40),
+
+                // --- BOTONES ---
+                _HeroButton(
+                  text: 'Soy Participante',
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    final authState = context.read<AuthCubit>().state;
+                    if (authState is AuthAuthenticated) {
+                      context.go(AppRouter.profileRoute);
+                    } else {
                       context.read<AuthCubit>().login();
-                    },
-                    child: const Text(
-                      'Entrar',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                _HeroButton(
+                  text: 'VER RANKING',
+                  color: Theme.of(context).colorScheme.secondary,
+                  onPressed: () {
+                    context.go(AppRouter.scoreboardRoute);
+                  },
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeroButton extends StatelessWidget {
+  final String text;
+  final Color color;
+  final VoidCallback onPressed;
+
+  const _HeroButton({required this.text, required this.color, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 64,
+      width: 280,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        ),
       ),
     );
   }

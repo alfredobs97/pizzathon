@@ -1,0 +1,4 @@
+PathAccessException: Creation failed, path = '/Users/a.bautista/.dart-cli-completion' (OS Error: Operation not permitted, errno = 1)
+Creation failed
+
+Path: /Users/a.bautista/fvm
