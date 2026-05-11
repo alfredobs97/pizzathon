@@ -57,7 +57,6 @@ class AppRouter {
             onExit: (context, state) async {
               final isFinished = context.read<PocImagesCubit>().state.isFinished;
               final isLimitExceeded = context.read<UploadLimitCubit>().state is UploadLimitReached;
-              
               if (isFinished || isLimitExceeded) {
                 return true;
               }

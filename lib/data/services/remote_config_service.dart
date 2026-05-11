@@ -9,6 +9,7 @@ class RemoteConfigService {
       await _remoteConfig.setDefaults(const {
         "is_enrollment_open": false,
         "image_compression_quality": 70,
+        "is_upload_enabled": false,
       });
 
       await _remoteConfig.setConfigSettings(
@@ -28,6 +29,8 @@ class RemoteConfigService {
   }
 
   bool get isEnrollmentOpen => _remoteConfig.getBool("is_enrollment_open");
+
+  bool get isUploadEnabled => _remoteConfig.getBool("is_upload_enabled");
 
   int get imageCompressionQuality =>
       _remoteConfig.getInt("image_compression_quality");

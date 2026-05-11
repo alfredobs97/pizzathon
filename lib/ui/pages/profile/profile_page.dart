@@ -112,6 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     final bool isReached = limitState is UploadLimitReached;
                                     final bool isChecking = limitState is UploadLimitChecking;
                                     final bool isError = limitState is UploadLimitError;
+                                    final bool isDisabled = limitState is UploadDisabledGlobally;
 
                                     return Column(
                                       children: [
@@ -123,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               width: 320,
                                               height: 56,
                                               child: ElevatedButton(
-                                                onPressed: (isReached || isChecking || isError)
+                                                onPressed: (isReached || isChecking || isError || isDisabled)
                                                     ? null
                                                     : () async {
                                                         await context.push(AppRouter.newPizzaRoute);
@@ -153,7 +154,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         ),
                                                       )
                                                     : Text(
-                                                        isReached ? 'Listo por hoy' : 'Nueva Pizza',
+                                                        isDisabled
+                                                            ? 'Subidas deshabilitadas'
+                                                            : (isReached ? 'Listo por hoy' : 'Nueva Pizza'),
                                                       ),
                                               ),
                                             ),
