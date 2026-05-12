@@ -7,11 +7,11 @@ class PizzaValidationService {
   static final DateTime fechaFin = DateTime(2026, 5, 18, 23, 59, 59);
 
   final List<PizzaValidationRule> _rules = [
-    const RequireExifDataRule(),
-    const DisallowScreenshotsRule(),
-    const RequireCameraMetadataRule(),
-    const DisallowAIGeneratedRule(),
-    ContestDateRangeRule(startDate: fechaInicio, endDate: fechaFin),
+    //const RequireExifDataRule(),
+    //const DisallowScreenshotsRule(),
+    //const RequireCameraMetadataRule(),
+    //const DisallowAIGeneratedRule(),
+    //const ContestDateRangeRule(startDate: fechaInicio, endDate: fechaFin),
   ];
 
   Future<ValidationResult> validate(PizzaImageMetadata metadata) async {
