@@ -29,8 +29,51 @@ class ScoreboardPage extends StatelessWidget {
   }
 }
 
-class ScoreboardView extends StatelessWidget {
+class ScoreboardView extends StatefulWidget {
   const ScoreboardView({super.key});
+
+  @override
+  State<ScoreboardView> createState() => _ScoreboardViewState();
+}
+
+class _ScoreboardViewState extends State<ScoreboardView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfNeedMoreData();
+    });
+  }
+
+  void _checkIfNeedMoreData() {
+    if (_isNearBottom) {
+      context.read<ScoreboardCubit>().loadMore();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isNearBottom) {
+      context.read<ScoreboardCubit>().loadMore();
+    }
+  }
+
+  bool get _isNearBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    // Disparar cuando falten 200px para llegar al final, 
+    // o si el scroll máximo es muy pequeño (pantalla larga).
+    return currentScroll >= (maxScroll - 200);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +120,7 @@ class ScoreboardView extends StatelessWidget {
           if (state is ScoreboardLoaded) {
             return Center(
               child: CustomScrollView(
+                controller: _scrollController,
                 slivers: [
                   const SliverToBoxAdapter(child: CountdownTopBanner()),
                   const SliverToBoxAdapter(
@@ -97,9 +141,16 @@ class ScoreboardView extends StatelessWidget {
                     ),
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  SliverFixedExtentList(
-                    itemExtent: 78.0,
+                  SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
+                      if (index >= state.topEntries.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
                       final entry = state.topEntries[index];
                       return Center(
                         child: Padding(
@@ -107,7 +158,7 @@ class ScoreboardView extends StatelessWidget {
                           child: _RankingCard(rank: entry.rank, entry: entry),
                         ),
                       );
-                    }, childCount: state.topEntries.length),
+                    }, childCount: state.hasMore ? state.topEntries.length + 1 : state.topEntries.length),
                   ),
                 ],
               ),
