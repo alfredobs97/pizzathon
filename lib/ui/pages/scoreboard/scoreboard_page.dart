@@ -10,6 +10,7 @@ import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_cubit.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_state.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
+import 'package:pizzathon/ui/pages/scoreboard/widgets/prizes_modal.dart';
 import 'package:pizzathon/ui/widgets/top_banner.dart';
 
 class ScoreboardPage extends StatelessWidget {
@@ -37,61 +38,84 @@ class ScoreboardView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.onSurface,
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 0),
-        child: BlocBuilder<ScoreboardCubit, ScoreboardState>(
-          builder: (context, state) {
-            if (state is ScoreboardLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      bottomNavigationBar: Material(
+        color: theme.colorScheme.primary,
+        child: InkWell(
+          onTap: () => PrizesModal.show(context),
+          child: Container(
+            height: 80,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.onPrimary, size: 32),
+                Text(
+                  'PREMIOS',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onPrimary,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.0,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: BlocBuilder<ScoreboardCubit, ScoreboardState>(
+        builder: (context, state) {
+          if (state is ScoreboardLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            if (state is ScoreboardError) {
-              return Center(child: Text('Error: ${state.message}'));
-            }
+          if (state is ScoreboardError) {
+            return Center(child: Text('Error: ${state.message}'));
+          }
 
-            if (state is ScoreboardLoaded) {
-              return Center(
-                child: CustomScrollView(
-                  slivers: [
-                    const SliverToBoxAdapter(child: CountdownTopBanner()),
-                    const SliverToBoxAdapter(
-                      child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
-                    ),
-                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: Text(
-                          'PIZZATHON',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.climateCrisis(
-                            fontSize: 32,
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.w400,
-                          ),
+          if (state is ScoreboardLoaded) {
+            return Center(
+              child: CustomScrollView(
+                slivers: [
+                  const SliverToBoxAdapter(child: CountdownTopBanner()),
+                  const SliverToBoxAdapter(
+                    child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: Text(
+                        'PIZZATHON',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.climateCrisis(
+                          fontSize: 32,
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
-                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                    SliverFixedExtentList(
-                      itemExtent: 78.0,
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final entry = state.topEntries[index];
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: _RankingCard(rank: entry.rank, entry: entry),
-                          ),
-                        );
-                      }, childCount: state.topEntries.length),
-                    ),
-                  ],
-                ),
-              );
-            }
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverFixedExtentList(
+                    itemExtent: 78.0,
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final entry = state.topEntries[index];
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: _RankingCard(rank: entry.rank, entry: entry),
+                        ),
+                      );
+                    }, childCount: state.topEntries.length),
+                  ),
+                ],
+              ),
+            );
+          }
 
-            return const SizedBox.shrink();
-          },
-        ),
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
