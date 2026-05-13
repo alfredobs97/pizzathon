@@ -5,7 +5,6 @@ import 'scoreboard_state.dart';
 class ScoreboardCubit extends Cubit<ScoreboardState> {
   final RtdbService _rtdbService;
   static const int _pageSize = 10;
-  int _currentLimit = _pageSize;
 
   ScoreboardCubit({required RtdbService rtdbService})
     : _rtdbService = rtdbService,
@@ -13,7 +12,6 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
 
   Future<void> init(String? currentUserId) async {
     emit(ScoreboardLoading());
-    _currentLimit = _pageSize;
 
     try {
       final lastUpdated = await _rtdbService.getLastUpdated();
@@ -23,13 +21,13 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
         userRank = await _rtdbService.getUserRank(currentUserId);
       }
 
-      final entries = await _rtdbService.getTopEntries(limit: _currentLimit);
+      final entries = await _rtdbService.getTopEntries(limit: _pageSize);
 
       emit(ScoreboardLoaded(
         topEntries: entries,
         userRank: userRank,
         lastUpdated: lastUpdated,
-        hasMore: entries.length >= _currentLimit,
+        hasMore: entries.length >= _pageSize,
       ));
     } catch (e) {
       emit(ScoreboardError(e.toString()));
@@ -45,13 +43,19 @@ class ScoreboardCubit extends Cubit<ScoreboardState> {
     emit(currentState.copyWith(isFetchingMore: true));
 
     try {
-      _currentLimit += _pageSize;
-      final entries = await _rtdbService.getTopEntries(limit: _currentLimit);
+      // Use the last entry's index as the starting point for the next page
+      final lastEntry = currentState.topEntries.last;
+      final startAfterKey = (lastEntry.rank - 1).toString();
+
+      final newEntries = await _rtdbService.getTopEntries(
+        limit: _pageSize, 
+        startAfterKey: startAfterKey,
+      );
 
       emit(currentState.copyWith(
-        topEntries: entries,
+        topEntries: [...currentState.topEntries, ...newEntries],
         isFetchingMore: false,
-        hasMore: entries.length >= _currentLimit,
+        hasMore: newEntries.length >= _pageSize,
       ));
     } catch (e) {
       emit(currentState.copyWith(isFetchingMore: false));
