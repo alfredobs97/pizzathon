@@ -14,6 +14,7 @@ import 'package:pizzathon/domain/models/compression_settings.dart';
 import 'package:pizzathon/domain/models/pizza_photo_step.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/data/services/upload_limit_service.dart';
+import 'package:pizzathon/data/services/heic_conversion_service.dart';
 import 'poc_images_state.dart';
 
 class PocImagesCubit extends Cubit<PocImagesState> {
@@ -26,6 +27,7 @@ class PocImagesCubit extends Cubit<PocImagesState> {
   final PizzaStorageService _pizzaStorageService;
   final FirestoreService _firestoreService;
   final UploadLimitCacheService _uploadLimitService;
+  final HeicConversionService _heicConversionService;
 
   PocImagesCubit(
     this._imageProcessingService,
@@ -37,13 +39,14 @@ class PocImagesCubit extends Cubit<PocImagesState> {
     this._pizzaStorageService,
     this._firestoreService,
     this._uploadLimitService,
+    this._heicConversionService,
   ) : super(PocImagesState());
 
   Future<void> pickSingleImage() async {
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
 
-      final file = await _imageProcessingService.pickSingleImage();
+      XFile? file = await _imageProcessingService.pickSingleImage();
 
       if (file == null) {
         emit(state.copyWith(isLoading: false));
@@ -67,14 +70,18 @@ class PocImagesCubit extends Cubit<PocImagesState> {
         return;
       }
 
-      final originalBytes = metadata.bytes!;
-      final originalSize = originalBytes.length;
+      // Pre-process: Convert HEIC to PNG if needed (after validation to keep metadata)
+      file = await _heicConversionService.convertIfNeeded(file) ?? file;
+
+      final originalSize = metadata.bytes!.length;
       final int fetchedQuality = _remoteConfigService.imageCompressionQuality;
       final settings = CompressionSettings(quality: fetchedQuality);
 
+      final processingBytes = await file.readAsBytes();
+
       final compressedFile = await _imageProcessingService.compressImage(
         file,
-        originalBytes,
+        processingBytes,
         settings: settings,
       );
 
