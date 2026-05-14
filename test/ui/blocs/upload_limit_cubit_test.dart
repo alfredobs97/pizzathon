@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pizzathon/data/services/auth_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
+import 'package:pizzathon/data/services/remote_config_service.dart';
 import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
 import 'package:pizzathon/domain/services/error_tracker_service.dart';
@@ -18,6 +19,8 @@ class MockErrorTrackerService extends Mock implements ErrorTrackerService {}
 
 class MockAuthService extends Mock implements AuthService {}
 
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+
 class MockUser extends Mock implements User {}
 
 void main() {
@@ -26,6 +29,7 @@ void main() {
   late MockFirestoreService mockFirestoreService;
   late MockErrorTrackerService mockErrorTrackerService;
   late MockAuthService mockAuthService;
+  late MockRemoteConfigService mockRemoteConfigService;
   late MockUser mockUser;
 
   const String userId = 'test_user_id';
@@ -37,6 +41,7 @@ void main() {
     mockFirestoreService = MockFirestoreService();
     mockErrorTrackerService = MockErrorTrackerService();
     mockAuthService = MockAuthService();
+    mockRemoteConfigService = MockRemoteConfigService();
     mockUser = MockUser();
 
     uploadLimitCubit = UploadLimitCubit(
@@ -44,6 +49,7 @@ void main() {
       mockFirestoreService,
       mockErrorTrackerService,
       mockAuthService,
+      mockRemoteConfigService,
     );
 
     registerFallbackValue(TrackedError(error: Exception()));
