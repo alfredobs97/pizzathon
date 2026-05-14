@@ -21,6 +21,7 @@ class ImageProcessingService {
   }) async {
     try {
       final compressedBytes = await FlutterImageCompress.compressWithList(
+        
         originalBytes,
         minHeight: settings.maxWidth,
         minWidth: settings.maxWidth,

@@ -9,6 +9,8 @@ import 'package:pizzathon/data/services/local_storage_service.dart';
 import 'package:pizzathon/data/services/pizza_storage_service.dart';
 import 'package:pizzathon/data/services/remote_config_service.dart';
 import 'package:pizzathon/data/services/rtdb_service.dart';
+import 'package:pizzathon/data/services/heic_conversion_service.dart';
+import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'package:pizzathon/data/services/sentry_bloc_observer.dart';
 import 'package:pizzathon/data/services/sentry_error_tracker_service.dart';
 import 'package:pizzathon/domain/entities/tracked_error.dart';
@@ -16,7 +18,6 @@ import 'package:pizzathon/domain/services/error_tracker_service.dart';
 import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/pizza_validation_service.dart';
-import 'package:pizzathon/data/services/upload_limit_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,6 +108,7 @@ void main() async {
               context.read<PizzaStorageService>(),
               context.read<FirestoreService>(),
               context.read<UploadLimitCacheService>(),
+              HeicConversionService(),
             ),
           ),
         ],
