@@ -73,7 +73,7 @@ class PrizesModal extends StatelessWidget {
                   const _ThirdPrizeCard(
                     title: 'LOTE\nPRODUCTOS\nITALIANOS',
                     subtitle: 'TOP #1-#10\nBEST PIZZA',
-                    imageUrl: 'https://i.ibb.co/hFLGx3hH/productos-1.png',
+                    imageUrl: 'https://i.ibb.co/Y4Y5B61s/premio-biribox.png',
                     logoUrl: 'https://i.ibb.co/V0HrVmnJ/biribox-3.png',
                   ),
                   const SizedBox(height: 32),
