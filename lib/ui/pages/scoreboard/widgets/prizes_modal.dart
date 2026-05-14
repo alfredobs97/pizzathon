@@ -37,7 +37,7 @@ class PrizesModal extends StatelessWidget {
                   'PREMIOS',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     color: theme.colorScheme.onPrimary,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 IconButton(
@@ -144,10 +144,10 @@ class _FirstPrizeCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 CachedNetworkImage(
                   imageUrl: imageUrl,
-                  height: 140,
+                  height: 174,
                   fit: BoxFit.contain,
                   placeholder: (context, url) => const SizedBox(
-                    height: 140,
+                    height: 174,
                     child: Center(child: CircularProgressIndicator()),
                   ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -241,7 +241,7 @@ class _SecondPrizeCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      height: 150,
+      height: 155,
       width: double.infinity,
       decoration: BoxDecoration(
         color: theme.colorScheme.onSecondaryContainer,
@@ -282,11 +282,11 @@ class _SecondPrizeCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 CachedNetworkImage(
-                  height: 100,
+                  height: 112,
                   imageUrl: imageUrl,
                   fit: BoxFit.contain,
                   placeholder: (context, url) => const SizedBox(
-                    height: 100,
+                    height: 110,
                     child: Center(child: CircularProgressIndicator()),
                   ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -294,7 +294,7 @@ class _SecondPrizeCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
             flex: 6,
             child: Column(
@@ -407,6 +407,7 @@ class _ThirdPrizeCard extends StatelessWidget {
                       const SizedBox(height: 80, child: Center(child: CircularProgressIndicator())),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
+                const SizedBox(height: 14),
               ],
             ),
           ),
