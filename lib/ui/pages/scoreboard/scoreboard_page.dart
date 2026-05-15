@@ -11,6 +11,7 @@ import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_cubit.dart';
 import 'package:pizzathon/ui/blocs/scoreboard/scoreboard_state.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
 import 'package:pizzathon/ui/pages/scoreboard/widgets/prizes_modal.dart';
+import 'package:pizzathon/ui/pages/scoreboard/widgets/ranking_countdown.dart';
 import 'package:pizzathon/ui/widgets/top_banner.dart';
 
 class ScoreboardPage extends StatelessWidget {
@@ -70,7 +71,7 @@ class _ScoreboardViewState extends State<ScoreboardView> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    // Disparar cuando falten 200px para llegar al final, 
+    // Disparar cuando falten 200px para llegar al final,
     // o si el scroll máximo es muy pequeño (pantalla larga).
     return currentScroll >= (maxScroll - 200);
   }
@@ -123,8 +124,10 @@ class _ScoreboardViewState extends State<ScoreboardView> {
                 controller: _scrollController,
                 slivers: [
                   const SliverToBoxAdapter(child: CountdownTopBanner()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
+                  const SliverToBoxAdapter(child: RankingAnxietyCountdown()),
                   const SliverToBoxAdapter(
-                    child: Padding(padding: EdgeInsets.only(top: 24.0), child: SponsorBanner()),
+                    child: Padding(padding: EdgeInsets.only(top: 8.0), child: SponsorBanner()),
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   SliverToBoxAdapter(
@@ -142,23 +145,28 @@ class _ScoreboardViewState extends State<ScoreboardView> {
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      if (index >= state.topEntries.length) {
-                        return const Center(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        if (index >= state.topEntries.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        final entry = state.topEntries[index];
+                        return Center(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 24.0),
-                            child: CircularProgressIndicator(),
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: _RankingCard(rank: entry.rank, entry: entry),
                           ),
                         );
-                      }
-                      final entry = state.topEntries[index];
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: _RankingCard(rank: entry.rank, entry: entry),
-                        ),
-                      );
-                    }, childCount: state.hasMore ? state.topEntries.length + 1 : state.topEntries.length),
+                      },
+                      childCount: state.hasMore
+                          ? state.topEntries.length + 1
+                          : state.topEntries.length,
+                    ),
                   ),
                 ],
               ),
