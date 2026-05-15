@@ -160,7 +160,9 @@ Widget build(BuildContext context) {
     child: InkWell(
       onTap: () async {
         await context.push('/capo/pizza', extra: pizza);
-        // El admin refrescará manualmente cuando quiera ver los cambios
+        if (context.mounted) {
+          context.read<AdminPizzasCubit>().refreshAll();
+        }
       },
       borderRadius: BorderRadius.circular(12),
 
