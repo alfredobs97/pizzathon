@@ -16,6 +16,7 @@ class AdminPizzaReviewCubit extends Cubit<AdminPizzaReviewState> {
         uid: userId,
         beforeDate: beforeDate,
         status: PizzaStatus.approved,
+        limit: 20,
       );
       emit(
         state.copyWith(status: AdminPizzaReviewStatus.historyLoaded, previousPizzas: result.pizzas),
