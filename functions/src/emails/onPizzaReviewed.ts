@@ -17,6 +17,7 @@ const pizzaStyleDisplayNames: Record<string, string> = {
   tegliaRomana: "Teglia romana",
   padellino: "Padellino",
   palaRomana: "Pala romana",
+  fritaMontanara: "Frita Montanara",
 };
 
 export const onPizzaReviewed = onDocumentUpdated(
