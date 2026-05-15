@@ -3,7 +3,7 @@ import {getFirestore} from "firebase-admin/firestore";
 import {getDatabase} from "firebase-admin/database";
 import * as logger from "firebase-functions/logger";
 
-export const updateScoreboard = onSchedule("0 * * * *", async (event) => {
+export const updateScoreboard = onSchedule("*/30 * * * *", async (event) => {
   const db = getFirestore();
   const rtdb = getDatabase();
   const userCollectionName = "users_2026_05";
