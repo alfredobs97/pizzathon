@@ -9,6 +9,7 @@ enum PizzaStyle {
   tegliaRomana,
   padellino,
   palaRomana,
+  fritaMontanara,
 }
 
 extension PizzaStyleExtension on PizzaStyle {
@@ -22,6 +23,7 @@ extension PizzaStyleExtension on PizzaStyle {
       case PizzaStyle.tegliaRomana: return 'Teglia romana';
       case PizzaStyle.padellino: return 'Padellino';
       case PizzaStyle.palaRomana: return 'Pala romana';
+      case PizzaStyle.fritaMontanara: return 'Frita Montanara';
     }
   }
 }
