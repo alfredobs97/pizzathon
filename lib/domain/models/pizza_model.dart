@@ -15,15 +15,24 @@ enum PizzaStyle {
 extension PizzaStyleExtension on PizzaStyle {
   String get displayName {
     switch (this) {
-      case PizzaStyle.contemporanea: return 'Contemporánea';
-      case PizzaStyle.napoletana: return 'Napoletana';
-      case PizzaStyle.newYork: return 'New York';
-      case PizzaStyle.tondaClasica: return 'Tonda clásica';
-      case PizzaStyle.tondaRomana: return 'Tonda romana';
-      case PizzaStyle.tegliaRomana: return 'Teglia romana';
-      case PizzaStyle.padellino: return 'Padellino';
-      case PizzaStyle.palaRomana: return 'Pala romana';
-      case PizzaStyle.fritaMontanara: return 'Frita Montanara';
+      case PizzaStyle.contemporanea:
+        return 'Contemporánea';
+      case PizzaStyle.napoletana:
+        return 'Napoletana';
+      case PizzaStyle.newYork:
+        return 'New York';
+      case PizzaStyle.tondaClasica:
+        return 'Tonda clásica';
+      case PizzaStyle.tondaRomana:
+        return 'Tonda romana';
+      case PizzaStyle.tegliaRomana:
+        return 'Teglia romana';
+      case PizzaStyle.padellino:
+        return 'Padellino';
+      case PizzaStyle.palaRomana:
+        return 'Pala romana';
+      case PizzaStyle.fritaMontanara:
+        return 'Frita Montanara';
     }
   }
 }
@@ -44,7 +53,7 @@ class PizzaModel {
   final String? thumbnailUrl;
   final DateTime createdAt;
   final PizzaStatus status;
-  
+
   // Technical details
   final PizzaStyle? pizzaStyle;
   final String? flours;
@@ -58,7 +67,7 @@ class PizzaModel {
   final String? otherIngredients;
   final int? score;
   final String? adminComment;
-  
+
   final Map<String, dynamic>? metadata;
 
   const PizzaModel({
@@ -84,37 +93,53 @@ class PizzaModel {
   });
 
   factory PizzaModel.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    return PizzaModel.fromMap(
+      data,
+      id: doc.id,
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+    );
+  }
+
+  factory PizzaModel.fromJson(Map<String, dynamic> json) {
+    return PizzaModel.fromMap(json);
+  }
+
+  factory PizzaModel.fromMap(Map<String, dynamic> data, {String? id, DateTime? createdAt}) {
     final imageUrlsData = data['imageUrls'];
-    final Map<String, String> urls = imageUrlsData is Map 
-        ? Map<String, String>.from(imageUrlsData) 
+    final Map<String, String> urls = imageUrlsData is Map
+        ? Map<String, String>.from(imageUrlsData)
         : {};
 
     PizzaStyle? style;
-    if (data['pizzaStyle'] != null) {
+    final styleData = data['pizzaStyle'];
+    if (styleData != null) {
       try {
         style = PizzaStyle.values.firstWhere(
-          (e) => e.name == data['pizzaStyle'] || e.displayName == data['pizzaStyle'],
+          (e) => e.name == styleData || e.displayName == styleData,
         );
       } catch (_) {}
     }
 
     PizzaStatus status = PizzaStatus.pending;
-    if (data['status'] != null) {
+    final statusData = data['status'];
+    if (statusData != null) {
       try {
         status = PizzaStatus.values.firstWhere(
-          (e) => e.name == data['status'],
+          (e) => e.name == statusData || e.displayName == statusData,
         );
       } catch (_) {}
     }
 
     return PizzaModel(
-      id: doc.id,
+      id: id ?? data['id'] ?? data['pizzaId'] ?? '',
       userId: data['userId'] ?? '',
       imageUrls: urls,
       thumbnailUrl: data['thumbnailUrl'],
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt:
+          createdAt ??
+          (data['createdAt'] is String ? DateTime.tryParse(data['createdAt']) : null) ??
+          DateTime.now(),
       status: status,
       pizzaStyle: style,
       flours: data['flours'],
@@ -132,13 +157,36 @@ class PizzaModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'imageUrls': imageUrls,
+      'thumbnailUrl': thumbnailUrl,
+      'createdAt': createdAt.toIso8601String(),
+      'status': status.name,
+      'pizzaStyle': pizzaStyle?.name,
+      'flours': flours,
+      'preferment': preferment,
+      'prefermentPercentage': prefermentPercentage,
+      'hydration': hydration,
+      'doughBallWeight': doughBallWeight,
+      'oven': oven,
+      'cookingTemperature': cookingTemperature,
+      'baseIngredient': baseIngredient,
+      'otherIngredients': otherIngredients,
+      'score': score,
+      'adminComment': adminComment,
+      'metadata': metadata,
+    };
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
       'pizzaId': id,
       'imageUrls': imageUrls,
       'thumbnailUrl': thumbnailUrl,
-      'createdAt': FieldValue.serverTimestamp(),
       'status': status.name,
       'pizzaStyle': pizzaStyle?.name,
       'flours': flours,
