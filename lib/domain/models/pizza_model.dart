@@ -132,6 +132,68 @@ class PizzaModel {
     );
   }
 
+  factory PizzaModel.fromJson(Map<String, dynamic> json) {
+    PizzaStyle? style;
+    if (json['pizzaStyle'] != null) {
+      try {
+        style = PizzaStyle.values.firstWhere((e) => e.name == json['pizzaStyle']);
+      } catch (_) {}
+    }
+
+    PizzaStatus status = PizzaStatus.pending;
+    if (json['status'] != null) {
+      try {
+        status = PizzaStatus.values.firstWhere((e) => e.name == json['status']);
+      } catch (_) {}
+    }
+
+    return PizzaModel(
+      id: json['id'] ?? '',
+      userId: json['userId'] ?? '',
+      imageUrls: Map<String, String>.from(json['imageUrls'] ?? {}),
+      thumbnailUrl: json['thumbnailUrl'],
+      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+      status: status,
+      pizzaStyle: style,
+      flours: json['flours'],
+      preferment: json['preferment'],
+      prefermentPercentage: json['prefermentPercentage'],
+      hydration: json['hydration'],
+      doughBallWeight: json['doughBallWeight'],
+      oven: json['oven'],
+      cookingTemperature: json['cookingTemperature'],
+      baseIngredient: json['baseIngredient'],
+      otherIngredients: json['otherIngredients'],
+      score: json['score'],
+      adminComment: json['adminComment'],
+      metadata: json['metadata'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'imageUrls': imageUrls,
+      'thumbnailUrl': thumbnailUrl,
+      'createdAt': createdAt.toIso8601String(),
+      'status': status.name,
+      'pizzaStyle': pizzaStyle?.name,
+      'flours': flours,
+      'preferment': preferment,
+      'prefermentPercentage': prefermentPercentage,
+      'hydration': hydration,
+      'doughBallWeight': doughBallWeight,
+      'oven': oven,
+      'cookingTemperature': cookingTemperature,
+      'baseIngredient': baseIngredient,
+      'otherIngredients': otherIngredients,
+      'score': score,
+      'adminComment': adminComment,
+      'metadata': metadata,
+    };
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,

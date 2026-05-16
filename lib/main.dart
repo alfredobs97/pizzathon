@@ -19,6 +19,8 @@ import 'package:pizzathon/data/services/image_metadata_service.dart';
 import 'package:pizzathon/data/services/image_processing_service.dart';
 import 'package:pizzathon/data/services/pizza_validation_service.dart';
 import 'package:pizzathon/ui/app_router.dart';
+import 'package:pizzathon/data/services/admin_selection_service.dart';
+import 'package:pizzathon/ui/blocs/admin_selected_pizzas/admin_selected_pizzas_cubit.dart';
 import 'package:pizzathon/ui/blocs/upload_limit/upload_limit_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -69,6 +71,12 @@ void main() async {
         RepositoryProvider(create: (context) => RemoteConfigService()..init()),
         RepositoryProvider<ErrorTrackerService>(create: (context) => errorTracker),
         RepositoryProvider(create: (context) => UploadLimitCacheService(prefs: prefs)),
+        RepositoryProvider(
+          create: (context) => AdminSelectionService(
+            firestore: FirebaseFirestore.instance,
+            cacheService: context.read<CacheService>(),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -97,8 +105,15 @@ void main() async {
               context.read<AuthService>(),
               context.read<RemoteConfigService>(),
             ),
-          ),          BlocProvider(
+          ),
+          BlocProvider(
+            create: (context) => AdminSelectedPizzasCubit(
+              context.read<AdminSelectionService>(),
+            ),
+          ),
+          BlocProvider(
             create: (context) => PocImagesCubit(
+
               ImageProcessingService(),
               context.read<RemoteConfigService>(),
               ImageMetadataService(),
