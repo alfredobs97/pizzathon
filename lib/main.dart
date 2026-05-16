@@ -71,11 +71,7 @@ void main() async {
         RepositoryProvider(create: (context) => RemoteConfigService()..init()),
         RepositoryProvider<ErrorTrackerService>(create: (context) => errorTracker),
         RepositoryProvider(create: (context) => UploadLimitCacheService(prefs: prefs)),
-        RepositoryProvider(
-          create: (context) => AdminSelectionService(
-            cacheService: context.read<CacheService>(),
-          ),
-        ),
+        RepositoryProvider(create: (context) => AdminSelectionService()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -106,13 +102,10 @@ void main() async {
             ),
           ),
           BlocProvider(
-            create: (context) => AdminSelectedPizzasCubit(
-              context.read<AdminSelectionService>(),
-            ),
+            create: (context) => AdminSelectedPizzasCubit(context.read<AdminSelectionService>()),
           ),
           BlocProvider(
             create: (context) => PocImagesCubit(
-
               ImageProcessingService(),
               context.read<RemoteConfigService>(),
               ImageMetadataService(),
@@ -144,9 +137,7 @@ class MainApp extends StatelessWidget {
       routerConfig: AppRouter().router,
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.noScaling,
-          ),
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
           child: child!,
         );
       },

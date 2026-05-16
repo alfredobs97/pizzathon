@@ -84,37 +84,52 @@ class PizzaModel {
   });
 
   factory PizzaModel.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    return PizzaModel.fromMap(
+      data,
+      id: doc.id,
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+    );
+  }
+
+  factory PizzaModel.fromJson(Map<String, dynamic> json) {
+    return PizzaModel.fromMap(json);
+  }
+
+  factory PizzaModel.fromMap(Map<String, dynamic> data, {String? id, DateTime? createdAt}) {
     final imageUrlsData = data['imageUrls'];
     final Map<String, String> urls = imageUrlsData is Map 
         ? Map<String, String>.from(imageUrlsData) 
         : {};
 
     PizzaStyle? style;
-    if (data['pizzaStyle'] != null) {
+    final styleData = data['pizzaStyle'];
+    if (styleData != null) {
       try {
         style = PizzaStyle.values.firstWhere(
-          (e) => e.name == data['pizzaStyle'] || e.displayName == data['pizzaStyle'],
+          (e) => e.name == styleData || e.displayName == styleData,
         );
       } catch (_) {}
     }
 
     PizzaStatus status = PizzaStatus.pending;
-    if (data['status'] != null) {
+    final statusData = data['status'];
+    if (statusData != null) {
       try {
         status = PizzaStatus.values.firstWhere(
-          (e) => e.name == data['status'],
+          (e) => e.name == statusData || e.displayName == statusData,
         );
       } catch (_) {}
     }
 
     return PizzaModel(
-      id: doc.id,
+      id: id ?? data['id'] ?? data['pizzaId'] ?? '',
       userId: data['userId'] ?? '',
       imageUrls: urls,
       thumbnailUrl: data['thumbnailUrl'],
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: createdAt ?? 
+                 (data['createdAt'] is String ? DateTime.tryParse(data['createdAt']) : null) ?? 
+                 DateTime.now(),
       status: status,
       pizzaStyle: style,
       flours: data['flours'],
@@ -129,44 +144,6 @@ class PizzaModel {
       score: data['score'],
       adminComment: data['adminComment'],
       metadata: data['metadata'],
-    );
-  }
-
-  factory PizzaModel.fromJson(Map<String, dynamic> json) {
-    PizzaStyle? style;
-    if (json['pizzaStyle'] != null) {
-      try {
-        style = PizzaStyle.values.firstWhere((e) => e.name == json['pizzaStyle']);
-      } catch (_) {}
-    }
-
-    PizzaStatus status = PizzaStatus.pending;
-    if (json['status'] != null) {
-      try {
-        status = PizzaStatus.values.firstWhere((e) => e.name == json['status']);
-      } catch (_) {}
-    }
-
-    return PizzaModel(
-      id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
-      imageUrls: Map<String, String>.from(json['imageUrls'] ?? {}),
-      thumbnailUrl: json['thumbnailUrl'],
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      status: status,
-      pizzaStyle: style,
-      flours: json['flours'],
-      preferment: json['preferment'],
-      prefermentPercentage: json['prefermentPercentage'],
-      hydration: json['hydration'],
-      doughBallWeight: json['doughBallWeight'],
-      oven: json['oven'],
-      cookingTemperature: json['cookingTemperature'],
-      baseIngredient: json['baseIngredient'],
-      otherIngredients: json['otherIngredients'],
-      score: json['score'],
-      adminComment: json['adminComment'],
-      metadata: json['metadata'],
     );
   }
 
@@ -200,7 +177,6 @@ class PizzaModel {
       'pizzaId': id,
       'imageUrls': imageUrls,
       'thumbnailUrl': thumbnailUrl,
-      'createdAt': FieldValue.serverTimestamp(),
       'status': status.name,
       'pizzaStyle': pizzaStyle?.name,
       'flours': flours,
