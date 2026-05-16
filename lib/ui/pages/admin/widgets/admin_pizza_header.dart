@@ -8,11 +8,7 @@ class AdminPizzaHeader extends StatelessWidget {
   final PizzaModel pizza;
   final String formattedDate;
 
-  const AdminPizzaHeader({
-    super.key,
-    required this.pizza,
-    required this.formattedDate,
-  });
+  const AdminPizzaHeader({super.key, required this.pizza, required this.formattedDate});
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +26,13 @@ class AdminPizzaHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BlocBuilder<AdminPizzaReviewCubit, AdminPizzaReviewState>(
-                    buildWhen: (previous, current) =>
-                        previous.styleCount != current.styleCount,
+                    buildWhen: (previous, current) => previous.styleCount != current.styleCount,
                     builder: (context, state) {
                       return RichText(
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text:
-                                  pizza.pizzaStyle?.displayName ?? 'Sin estilo',
+                              text: pizza.pizzaStyle?.displayName ?? 'Sin estilo',
                               style: theme.textTheme.displayLarge?.copyWith(
                                 color: theme.colorScheme.secondary,
                               ),
@@ -47,17 +41,13 @@ class AdminPizzaHeader extends StatelessWidget {
                               TextSpan(
                                 text: ' (${state.styleCount} de este estilo)',
                                 style: theme.textTheme.displayLarge?.copyWith(
-                                  color: theme.colorScheme.secondary.withValues(
-                                    alpha: 0.5,
-                                  ),
+                                  color: theme.colorScheme.secondary.withValues(alpha: 0.5),
                                 ),
                               ),
                             TextSpan(
                               text: ' • $formattedDate',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.secondary.withValues(
-                                  alpha: 0.7,
-                                ),
+                                color: theme.colorScheme.secondary.withValues(alpha: 0.7),
                               ),
                             ),
                           ],

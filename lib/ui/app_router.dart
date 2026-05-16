@@ -172,14 +172,23 @@ class AppRouter {
                   final pizza = state.extra as PizzaModel;
                   return _fadeTransition(
                     state,
-                    BlocProvider(
-                      create: (context) {
-                        final cubit = AdminPizzaReviewCubit(context.read<FirestoreService>());
-                        if (pizza.pizzaStyle != null) {
-                          cubit.loadStyleCount(pizza.pizzaStyle!, pizza.userId);
-                        }
-                        return cubit;
-                      },
+                    MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = AdminPizzaReviewCubit(context.read<FirestoreService>());
+                            if (pizza.pizzaStyle != null) {
+                              cubit.loadStyleCount(pizza.pizzaStyle!, pizza.userId);
+                            }
+                            return cubit;
+                          },
+                        ),
+                        BlocProvider(
+                          create: (context) =>
+                              AdminSelectedPizzasCubit(context.read<AdminSelectionService>())
+                                ..init(),
+                        ),
+                      ],
                       child: AdminPizzaDetailPage(pizza: pizza),
                     ),
                   );
