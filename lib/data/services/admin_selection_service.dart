@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/models/pizza_model.dart';
-import 'cache_service.dart';
 
 class AdminSelectionService {
   final FirebaseFirestore _firestore;
-  final CacheService _cacheService;
 
-  AdminSelectionService({FirebaseFirestore? firestore, required CacheService cacheService})
-    : _firestore = firestore ?? FirebaseFirestore.instance,
-      _cacheService = cacheService;
+  AdminSelectionService({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   CollectionReference _getSelectionsCollection(String adminId) {
     return _firestore
@@ -18,16 +15,8 @@ class AdminSelectionService {
   }
 
   Future<List<PizzaModel>> getSelectedPizzas(String adminId) async {
-    final cached = _cacheService.getAdminSelectedPizzas();
-    if (cached != null) return cached;
-
     final snapshot = await _getSelectionsCollection(adminId).get();
-    final pizzas = snapshot.docs
-        .map((doc) => PizzaModel.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
-
-    _cacheService.saveAdminSelectedPizzas(pizzas);
-    return pizzas;
+    return snapshot.docs.map((doc) => PizzaModel.fromDocument(doc)).toList();
   }
 
   Future<void> togglePizzaSelection(String adminId, PizzaModel pizza, bool isSelected) async {
@@ -38,20 +27,6 @@ class AdminSelectionService {
       await docRef.set(pizza.toJson());
     } else {
       await docRef.delete();
-    }
-
-    // Update local cache
-    final current = _cacheService.getAdminSelectedPizzas();
-    if (current != null) {
-      final updated = List<PizzaModel>.from(current);
-      if (isSelected) {
-        if (!updated.any((p) => p.id == pizza.id)) {
-          updated.add(pizza);
-        }
-      } else {
-        updated.removeWhere((p) => p.id == pizza.id);
-      }
-      _cacheService.saveAdminSelectedPizzas(updated);
     }
   }
 
@@ -64,7 +39,5 @@ class AdminSelectionService {
       batch.delete(doc.reference);
     }
     await batch.commit();
-
-    _cacheService.invalidateAdminSelectedPizzas();
   }
 }
