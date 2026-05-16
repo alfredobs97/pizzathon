@@ -73,7 +73,6 @@ void main() async {
         RepositoryProvider(create: (context) => UploadLimitCacheService(prefs: prefs)),
         RepositoryProvider(
           create: (context) => AdminSelectionService(
-            firestore: FirebaseFirestore.instance,
             cacheService: context.read<CacheService>(),
           ),
         ),

@@ -7,9 +7,9 @@ class AdminSelectionService {
   final CacheService _cacheService;
 
   AdminSelectionService({
-    required FirebaseFirestore firestore,
+    FirebaseFirestore? firestore,
     required CacheService cacheService,
-  })  : _firestore = firestore,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _cacheService = cacheService;
 
   CollectionReference _getSelectionsCollection(String adminId) {
