@@ -7,20 +7,19 @@ class AdminSelectionService {
   AdminSelectionService({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  CollectionReference _getSelectionsCollection(String adminId) {
-    return _firestore
-        .collection('admin_selections_2026_05')
-        .doc(adminId)
-        .collection('selected_pizzas');
+  CollectionReference _getSelectionsCollection() {
+    return _firestore.collection('admin_selections_2026_05');
   }
 
-  Future<List<PizzaModel>> getSelectedPizzas(String adminId) async {
-    final snapshot = await _getSelectionsCollection(adminId).get();
-    return snapshot.docs.map((doc) => PizzaModel.fromDocument(doc)).toList();
+  Future<List<PizzaModel>> getSelectedPizzas() async {
+    final snapshot = await _getSelectionsCollection().get();
+    return snapshot.docs
+        .map((doc) => PizzaModel.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 
-  Future<void> togglePizzaSelection(String adminId, PizzaModel pizza, bool isSelected) async {
-    final collection = _getSelectionsCollection(adminId);
+  Future<void> togglePizzaSelection(PizzaModel pizza, bool isSelected) async {
+    final collection = _getSelectionsCollection();
     final docRef = collection.doc(pizza.id);
 
     if (isSelected) {
@@ -30,8 +29,8 @@ class AdminSelectionService {
     }
   }
 
-  Future<void> clearSelection(String adminId) async {
-    final collection = _getSelectionsCollection(adminId);
+  Future<void> clearSelection() async {
+    final collection = _getSelectionsCollection();
     final snapshot = await collection.get();
 
     final batch = _firestore.batch();

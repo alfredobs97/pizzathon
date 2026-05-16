@@ -87,10 +87,7 @@ class PizzaCard extends StatelessWidget {
                                   color: isSelected ? Colors.amber : Colors.white,
                                 ),
                                 onPressed: () {
-                                  context.read<AdminSelectedPizzasCubit>().togglePizza(
-                                    user.uid,
-                                    pizza,
-                                  );
+                                  context.read<AdminSelectedPizzasCubit>().togglePizza(pizza);
                                 },
                               ),
                             );

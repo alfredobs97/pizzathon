@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pizzathon/data/services/admin_selection_service.dart';
 import 'package:pizzathon/data/services/cache_service.dart';
 import 'package:pizzathon/data/services/firestore_service.dart';
 import 'package:pizzathon/data/services/rtdb_service.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
 import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_cubit.dart';
+import 'package:pizzathon/ui/blocs/admin_selected_pizzas/admin_selected_pizzas_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
 import 'package:pizzathon/ui/blocs/auth_state.dart';
 import 'package:pizzathon/ui/blocs/enrollment_cubit.dart';
@@ -134,6 +136,10 @@ class AppRouter {
                         rtdbService: context.read<RtdbService>(),
                       )..loadPublicProfile(identifier),
                     ),
+                    BlocProvider(
+                      create: (context) =>
+                          AdminSelectedPizzasCubit(context.read<AdminSelectionService>())..init(),
+                    ),
                   ],
                   child: ProfilePage(publicIdentifier: identifier),
                 ),
@@ -146,8 +152,14 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: 'seleccionadas',
-                pageBuilder: (context, state) =>
-                    _fadeTransition(state, const AdminSelectedPizzasPage()),
+                pageBuilder: (context, state) => _fadeTransition(
+                  state,
+                  BlocProvider(
+                    create: (context) =>
+                        AdminSelectedPizzasCubit(context.read<AdminSelectionService>())..init(),
+                    child: const AdminSelectedPizzasPage(),
+                  ),
+                ),
               ),
               GoRoute(
                 path: 'pizza',
