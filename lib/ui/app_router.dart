@@ -16,6 +16,7 @@ import 'package:pizzathon/ui/blocs/profile/profile_cubit.dart';
 import 'package:pizzathon/ui/blocs/user_pizzas/user_pizzas_cubit.dart';
 import 'package:pizzathon/ui/pages/admin/admin_page.dart';
 import 'package:pizzathon/ui/pages/admin/admin_pizza_detail_page.dart';
+import 'package:pizzathon/ui/pages/admin/admin_selected_pizzas_page.dart';
 import 'package:pizzathon/ui/pages/home/home_page.dart';
 import 'package:pizzathon/ui/pages/landing_page/landing_page.dart';
 import 'package:pizzathon/ui/pages/not_found_page.dart';
@@ -34,6 +35,7 @@ class AppRouter {
   static const String scoreboardRoute = '/ranking';
   static const String adminRoute = '/capo';
   static const String adminPizzaDetailRoute = '/capo/pizza';
+  static const String adminSelectedPizzasRoute = '/capo/seleccionadas';
   static const String newPizzaRoute = '/nueva-pizza';
   static const String profileRoute = '/perfil';
   static const String publicProfileRoute = '/p/:userSlug';
@@ -143,6 +145,11 @@ class AppRouter {
             pageBuilder: (context, state) => _fadeTransition(state, const AdminPage()),
             routes: [
               GoRoute(
+                path: 'seleccionadas',
+                pageBuilder: (context, state) =>
+                    _fadeTransition(state, const AdminSelectedPizzasPage()),
+              ),
+              GoRoute(
                 path: 'pizza',
                 pageBuilder: (context, state) {
                   final pizza = state.extra as PizzaModel;
@@ -178,7 +185,9 @@ class AppRouter {
       }
 
       // private routes
-      if ((state.matchedLocation == adminRoute) && !isAdmin(context)) {
+      if ((state.matchedLocation == adminRoute ||
+              state.matchedLocation == adminSelectedPizzasRoute) &&
+          !isAdmin(context)) {
         return landingRoute;
       }
       if (state.matchedLocation == participantsRoute && !isAuth(context)) {
