@@ -102,6 +102,11 @@ class AppRouter {
                         rtdbService: context.read<RtdbService>(),
                       )..loadProfile(userId),
                     ),
+                    BlocProvider(
+                      create: (context) =>
+                          AdminSelectedPizzasCubit(context.read<AdminSelectionService>())..init(),
+                      child: const AdminSelectedPizzasPage(),
+                    ),
                   ],
                   child: const ProfilePage(),
                 ),
