@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pizzathon/ui/widgets/admin_selected_pizzas_fab.dart';
 import 'package:pizzathon/ui/widgets/app_drawer.dart';
 
 class AppShell extends StatelessWidget {
@@ -19,7 +18,6 @@ class AppShell extends StatelessWidget {
       key: scaffoldKey,
       endDrawer: const AppDrawer(),
       body: child,
-      floatingActionButton: const AdminSelectedPizzasFab(),
     );
   }
 }

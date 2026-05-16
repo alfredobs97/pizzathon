@@ -79,6 +79,12 @@ class AppDrawer extends StatelessWidget {
                         text: 'Admin Console',
                         onTap: () => context.go(AppRouter.adminRoute),
                       ),
+                      const SizedBox(height: 8),
+                      _DrawerItem(
+                        icon: Icons.star,
+                        text: 'Best Pizza',
+                        onTap: () => context.go(AppRouter.adminSelectedPizzasRoute),
+                      ),
                     ],
                   ],
                 ),

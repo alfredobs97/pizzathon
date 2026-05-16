@@ -20,7 +20,7 @@ class AdminSelectedPizzasPage extends StatelessWidget {
       backgroundColor: theme.colorScheme.onSurface,
       appBar: AppBar(
         title: Text(
-          'PIZZAS SELECCIONADAS',
+          'BEST PIZZA',
           style: GoogleFonts.climateCrisis(
             fontSize: 18,
             color: theme.colorScheme.primary,
@@ -32,27 +32,6 @@ class AdminSelectedPizzasPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          BlocBuilder<AdminSelectedPizzasCubit, AdminSelectedPizzasState>(
-            builder: (context, state) {
-              if (state.selectedPizzas.isEmpty || state.isLoading) return const SizedBox.shrink();
-              return TextButton.icon(
-                onPressed: () {
-                  final authState = context.read<AuthCubit>().state;
-                  if (authState is AuthAuthenticated) {
-                    context.read<AdminSelectedPizzasCubit>().clearSelection(authState.user.uid);
-                  }
-                },
-                icon: Icon(Icons.delete_sweep, color: theme.colorScheme.primary),
-                label: Text(
-                  'LIMPIAR',
-                  style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
       body: BlocBuilder<AdminSelectedPizzasCubit, AdminSelectedPizzasState>(
         builder: (context, state) {
