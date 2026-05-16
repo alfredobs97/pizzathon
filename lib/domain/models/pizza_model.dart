@@ -15,15 +15,24 @@ enum PizzaStyle {
 extension PizzaStyleExtension on PizzaStyle {
   String get displayName {
     switch (this) {
-      case PizzaStyle.contemporanea: return 'Contemporánea';
-      case PizzaStyle.napoletana: return 'Napoletana';
-      case PizzaStyle.newYork: return 'New York';
-      case PizzaStyle.tondaClasica: return 'Tonda clásica';
-      case PizzaStyle.tondaRomana: return 'Tonda romana';
-      case PizzaStyle.tegliaRomana: return 'Teglia romana';
-      case PizzaStyle.padellino: return 'Padellino';
-      case PizzaStyle.palaRomana: return 'Pala romana';
-      case PizzaStyle.fritaMontanara: return 'Frita Montanara';
+      case PizzaStyle.contemporanea:
+        return 'Contemporánea';
+      case PizzaStyle.napoletana:
+        return 'Napoletana';
+      case PizzaStyle.newYork:
+        return 'New York';
+      case PizzaStyle.tondaClasica:
+        return 'Tonda clásica';
+      case PizzaStyle.tondaRomana:
+        return 'Tonda romana';
+      case PizzaStyle.tegliaRomana:
+        return 'Teglia romana';
+      case PizzaStyle.padellino:
+        return 'Padellino';
+      case PizzaStyle.palaRomana:
+        return 'Pala romana';
+      case PizzaStyle.fritaMontanara:
+        return 'Frita Montanara';
     }
   }
 }
@@ -44,7 +53,7 @@ class PizzaModel {
   final String? thumbnailUrl;
   final DateTime createdAt;
   final PizzaStatus status;
-  
+
   // Technical details
   final PizzaStyle? pizzaStyle;
   final String? flours;
@@ -58,7 +67,7 @@ class PizzaModel {
   final String? otherIngredients;
   final int? score;
   final String? adminComment;
-  
+
   final Map<String, dynamic>? metadata;
 
   const PizzaModel({
@@ -98,8 +107,8 @@ class PizzaModel {
 
   factory PizzaModel.fromMap(Map<String, dynamic> data, {String? id, DateTime? createdAt}) {
     final imageUrlsData = data['imageUrls'];
-    final Map<String, String> urls = imageUrlsData is Map 
-        ? Map<String, String>.from(imageUrlsData) 
+    final Map<String, String> urls = imageUrlsData is Map
+        ? Map<String, String>.from(imageUrlsData)
         : {};
 
     PizzaStyle? style;
@@ -127,9 +136,10 @@ class PizzaModel {
       userId: data['userId'] ?? '',
       imageUrls: urls,
       thumbnailUrl: data['thumbnailUrl'],
-      createdAt: createdAt ?? 
-                 (data['createdAt'] is String ? DateTime.tryParse(data['createdAt']) : null) ?? 
-                 DateTime.now(),
+      createdAt:
+          createdAt ??
+          (data['createdAt'] is String ? DateTime.tryParse(data['createdAt']) : null) ??
+          DateTime.now(),
       status: status,
       pizzaStyle: style,
       flours: data['flours'],

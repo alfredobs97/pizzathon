@@ -16,9 +16,7 @@ class AdminSelectionService {
 
   Future<List<PizzaModel>> getSelectedPizzas(String adminId) async {
     final snapshot = await _getSelectionsCollection(adminId).get();
-    return snapshot.docs
-        .map((doc) => PizzaModel.fromDocument(doc))
-        .toList();
+    return snapshot.docs.map((doc) => PizzaModel.fromDocument(doc)).toList();
   }
 
   Future<void> togglePizzaSelection(String adminId, PizzaModel pizza, bool isSelected) async {
