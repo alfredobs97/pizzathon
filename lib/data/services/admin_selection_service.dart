@@ -6,15 +6,13 @@ class AdminSelectionService {
   final FirebaseFirestore _firestore;
   final CacheService _cacheService;
 
-  AdminSelectionService({
-    FirebaseFirestore? firestore,
-    required CacheService cacheService,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _cacheService = cacheService;
+  AdminSelectionService({FirebaseFirestore? firestore, required CacheService cacheService})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _cacheService = cacheService;
 
   CollectionReference _getSelectionsCollection(String adminId) {
     return _firestore
-        .collection('admin_selections')
+        .collection('admin_selections_2026_05')
         .doc(adminId)
         .collection('selected_pizzas');
   }
@@ -24,7 +22,9 @@ class AdminSelectionService {
     if (cached != null) return cached;
 
     final snapshot = await _getSelectionsCollection(adminId).get();
-    final pizzas = snapshot.docs.map((doc) => PizzaModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    final pizzas = snapshot.docs
+        .map((doc) => PizzaModel.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
 
     _cacheService.saveAdminSelectedPizzas(pizzas);
     return pizzas;
