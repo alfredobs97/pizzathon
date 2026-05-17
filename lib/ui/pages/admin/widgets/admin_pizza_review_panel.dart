@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_cubit.dart';
 import 'package:pizzathon/ui/blocs/admin_pizza_review/admin_pizza_review_state.dart';
+import 'package:pizzathon/ui/blocs/admin_selected_pizzas/admin_selected_pizzas_cubit.dart';
+import 'package:pizzathon/ui/blocs/admin_selected_pizzas/admin_selected_pizzas_state.dart';
 
 class AdminPizzaReviewPanel extends StatefulWidget {
   final PizzaModel pizza;
@@ -49,6 +52,8 @@ class _AdminPizzaReviewPanelState extends State<AdminPizzaReviewPanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            _buildBestPizzaToggle(context, widget.pizza),
+            const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -88,7 +93,6 @@ class _AdminPizzaReviewPanelState extends State<AdminPizzaReviewPanel> {
                 widget.onApprove(_selectedScore!, _commentController.text);
               }),
             ],
-
             const SizedBox(height: 24),
             if (isReviewed)
               Column(
@@ -137,6 +141,54 @@ class _AdminPizzaReviewPanelState extends State<AdminPizzaReviewPanel> {
               ),
             ],
           ],
+        );
+      },
+    );
+  }
+
+  Widget _buildBestPizzaToggle(BuildContext context, PizzaModel pizza) {
+    final theme = Theme.of(context);
+    return BlocBuilder<AdminSelectedPizzasCubit, AdminSelectedPizzasState>(
+      builder: (context, state) {
+        final isSelected = state.selectedPizzas.any((p) => p.id == pizza.id);
+        return GestureDetector(
+          onTap: () => context.read<AdminSelectedPizzasCubit>().togglePizza(pizza),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.amber.withValues(alpha: 0.1) : Colors.transparent,
+              border: Border.all(
+                color: isSelected ? Colors.amber : theme.colorScheme.secondary.withValues(alpha: 0.2),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isSelected ? Icons.star : Icons.star_border,
+                  color: isSelected ? Colors.amber : theme.colorScheme.secondary,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'BEST PIZZA',
+                    style: GoogleFonts.climateCrisis(
+                      fontSize: 16,
+                      color: isSelected ? Colors.amber : theme.colorScheme.secondary,
+                    ),
+                  ),
+                ),
+                Switch(
+                  value: isSelected,
+                  onChanged: (_) => context.read<AdminSelectedPizzasCubit>().togglePizza(pizza),
+                  activeThumbColor: Colors.amber,
+                  activeTrackColor: Colors.amber.withValues(alpha: 0.3),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
