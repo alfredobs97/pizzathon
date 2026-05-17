@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:pizzathon/domain/models/pizza_model.dart';
 import 'package:pizzathon/domain/models/user_extension.dart';
 import 'package:pizzathon/ui/blocs/auth_cubit.dart';
@@ -68,33 +69,55 @@ class PizzaCard extends StatelessWidget {
           builder: (context, state) {
             return switch (state) {
               AuthUnauthenticated() => const SizedBox.shrink(),
-              AuthAuthenticated(user: final user) =>
-                user.isAdmin
-                    ? Positioned(
-                        top: 8,
-                        right: 8,
-                        child: BlocBuilder<AdminSelectedPizzasCubit, AdminSelectedPizzasState>(
-                          builder: (context, state) {
-                            final bool isSelected = state.selectedPizzas.any(
-                              (p) => p.id == pizza.id,
-                            );
-                            return Material(
-                              color: Colors.black38,
-                              shape: const CircleBorder(),
-                              child: IconButton(
-                                icon: Icon(
-                                  isSelected ? Icons.star : Icons.star_border,
-                                  color: isSelected ? Colors.amber : Colors.white,
+              AuthAuthenticated(user: final user) => user.isAdmin
+                  ? Stack(
+                      children: [
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: BlocBuilder<AdminSelectedPizzasCubit, AdminSelectedPizzasState>(
+                            builder: (context, state) {
+                              final bool isSelected = state.selectedPizzas.any(
+                                (p) => p.id == pizza.id,
+                              );
+                              return Material(
+                                color: Colors.black38,
+                                shape: const CircleBorder(),
+                                child: IconButton(
+                                  icon: Icon(
+                                    isSelected ? Icons.star : Icons.star_border,
+                                    color: isSelected ? Colors.amber : Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    context.read<AdminSelectedPizzasCubit>().togglePizza(pizza);
+                                  },
                                 ),
-                                onPressed: () {
-                                  context.read<AdminSelectedPizzasCubit>().togglePizza(pizza);
-                                },
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      )
-                    : const SizedBox.shrink(),
+                        Positioned(
+                          bottom: 8,
+                          left: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black45,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              DateFormat('dd/MM/yyyy HH:mm').format(pizza.createdAt),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
               _ => const SizedBox.shrink(),
             };
           },
