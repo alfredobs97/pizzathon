@@ -86,12 +86,10 @@ class ScoreboardView extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               const SliverToBoxAdapter(child: CountdownTopBanner()),
-              const SliverToBoxAdapter(child: SizedBox(height: 8)),
-              const SliverToBoxAdapter(child: RankingAnxietyCountdown()),
               const SliverToBoxAdapter(
                 child: Padding(padding: EdgeInsets.only(top: 8.0), child: SponsorBanner()),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              const SliverToBoxAdapter(child: SizedBox(height: 8)),
               SliverToBoxAdapter(
                 child: Center(
                   child: Text(
@@ -105,7 +103,6 @@ class ScoreboardView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _SliverTabBarDelegate(
@@ -424,7 +421,12 @@ class _PizzaDetailsModal extends StatelessWidget {
                   const SizedBox(height: 24),
                   Text(
                     pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
-                    style: GoogleFonts.archivoBlack(fontSize: 32, color: darkBrown, height: 1.1),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: theme.colorScheme.secondary,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -0.85,
+                      fontSize: 24,
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -540,10 +542,10 @@ class _DetailItem extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             value,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.displaySmall?.copyWith(
               color: darkBrown,
-              fontWeight: FontWeight.w900,
-              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
         ],
