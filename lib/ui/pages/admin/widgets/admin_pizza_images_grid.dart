@@ -26,21 +26,27 @@ class AdminPizzaImagesGrid extends StatelessWidget {
             onTap: () {
               showDialog(
                 context: context,
-                builder: (_) => FullscreenImageDialog(imageUrl: images[index]),
+                builder: (_) => FullscreenImageDialog(
+                  imageUrl: images[index],
+                  heroTag: images[index],
+                ),
               );
             },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                images[index],
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                },
+            child: Hero(
+              tag: images[index],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  images[index],
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                ),
               ),
             ),
           );
