@@ -315,9 +315,11 @@ class _BestPizzaCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: darkBrown,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: -0.85,
+                          fontSize: 24,
                         ),
                       ),
                     ),
