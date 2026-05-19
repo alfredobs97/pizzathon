@@ -203,4 +203,12 @@ class PizzaModel {
       'metadata': metadata,
     };
   }
+
+  // general, porcion, a boca de horno, debajo.
+  List<String> get imagesInOrder => [
+    ?imageUrls['top'],
+    ?imageUrls['slice'],
+    ?imageUrls['front'],
+    ?imageUrls['bottom'],
+  ];
 }

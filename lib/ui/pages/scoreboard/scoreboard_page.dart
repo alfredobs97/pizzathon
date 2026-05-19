@@ -271,7 +271,7 @@ class _BestPizzaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final images = pizza.imageUrls.values.toList();
+    final images = pizza.imagesInOrder;
     final darkBrown = theme.colorScheme.secondary;
 
     return Material(
