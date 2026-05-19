@@ -290,7 +290,7 @@ class _BestPizzaCard extends StatelessWidget {
                 SizedBox(
                   height: 180,
                   child: CarouselView(
-                    itemExtent: 280,
+                    itemExtent: 220,
                     shrinkExtent: 150,
                     children: images.map((url) {
                       return CachedNetworkImage(
@@ -387,7 +387,7 @@ class _PizzaDetailsModal extends StatelessWidget {
                     SizedBox(
                       height: 300,
                       child: CarouselView(
-                        itemExtent: MediaQuery.of(context).size.width - 120,
+                        itemExtent: 300,
                         shrinkExtent: 150,
                         onTap: (index) {
                           showDialog(
