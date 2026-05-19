@@ -17,7 +17,6 @@ import 'package:pizzathon/ui/blocs/admin_selected_pizzas/admin_selected_pizzas_c
 import 'package:pizzathon/ui/blocs/admin_selected_pizzas/admin_selected_pizzas_state.dart';
 import 'package:pizzathon/ui/pages/profile/widgets/sponsor_banner.dart';
 import 'package:pizzathon/ui/pages/scoreboard/widgets/prizes_modal.dart';
-import 'package:pizzathon/ui/pages/scoreboard/widgets/ranking_countdown.dart';
 import 'package:pizzathon/ui/widgets/top_banner.dart';
 import 'package:pizzathon/ui/widgets/fullscreen_image_dialog.dart';
 
@@ -246,7 +245,7 @@ class _BestPizzaTabView extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 4),
           itemCount: state.selectedPizzas.length,
           itemBuilder: (context, index) {
             final pizza = state.selectedPizzas[index];
@@ -271,18 +270,18 @@ class _BestPizzaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final images = pizza.imageUrls.values.toList();
+    final images = pizza.imagesInOrder;
     final darkBrown = theme.colorScheme.secondary;
 
     return Material(
       color: theme.colorScheme.onSecondaryContainer,
-      borderRadius: BorderRadius.circular(32),
+      borderRadius: BorderRadius.circular(24),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _PizzaDetailsModal.show(context, pizza),
         child: Container(
           width: 320,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.only(top: 16, bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -290,7 +289,9 @@ class _BestPizzaCard extends StatelessWidget {
                 SizedBox(
                   height: 180,
                   child: CarouselView(
-                    itemExtent: 280,
+                    padding: EdgeInsets.only(left: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    itemExtent: 220,
                     shrinkExtent: 150,
                     children: images.map((url) {
                       return CachedNetworkImage(
@@ -309,7 +310,7 @@ class _BestPizzaCard extends StatelessWidget {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
+                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
                 child: Row(
                   children: [
                     Expanded(
@@ -359,7 +360,7 @@ class _PizzaDetailsModal extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.onSecondaryContainer,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -379,7 +380,7 @@ class _PizzaDetailsModal extends StatelessWidget {
           // Content
           Flexible(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -387,8 +388,10 @@ class _PizzaDetailsModal extends StatelessWidget {
                     SizedBox(
                       height: 300,
                       child: CarouselView(
-                        itemExtent: MediaQuery.of(context).size.width - 120,
+                        padding: EdgeInsets.only(left: 16),
+                        itemExtent: 300,
                         shrinkExtent: 150,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                         onTap: (index) {
                           showDialog(
                             context: context,
@@ -420,93 +423,103 @@ class _PizzaDetailsModal extends StatelessWidget {
                         }).toList(),
                       ),
                     ),
-                  const SizedBox(height: 24),
-                  Text(
-                    pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: theme.colorScheme.secondary,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: -0.85,
-                      fontSize: 24,
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: theme.colorScheme.secondary,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: -0.85,
+                            fontSize: 24,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // User Info
+                        FutureBuilder<UserModel?>(
+                          future: context.read<FirestoreService>().getUser(pizza.userId),
+                          builder: (context, snapshot) {
+                            final user = snapshot.data;
+                            return Row(
+                              children: [
+                                Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: user?.photoUrl != null && user!.photoUrl.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius: BorderRadius.circular(24),
+                                          child: CachedNetworkImage(
+                                            imageUrl: user.photoUrl,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : Icon(Icons.person, color: darkBrown),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user?.displayName ?? 'Cocinero',
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        color: darkBrown,
+                                        fontWeight: FontWeight.w900,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${user?.score ?? 0} PUNTOS',
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: darkBrown,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // Detail Rows
+                        _DetailItem(label: 'HARINAS', value: pizza.flours ?? 'N/A'),
+                        _DetailItem(label: 'PREFERMENTO', value: pizza.preferment ?? 'N/A'),
+                        _DetailItem(
+                          label: '% PREFERMENTO',
+                          value: pizza.prefermentPercentage?.toString() ?? 'N/A',
+                        ),
+                        _DetailItem(
+                          label: 'HIDRATACIÓN FINAL',
+                          value: pizza.hydration != null ? '${pizza.hydration}' : 'N/A',
+                        ),
+                        _DetailItem(
+                          label: 'PESO BOLA',
+                          value: pizza.doughBallWeight?.toString() ?? 'N/A',
+                        ),
+                        _DetailItem(label: 'HORNO', value: pizza.oven ?? 'N/A'),
+                        _DetailItem(
+                          label: 'TEMPERATURAS DE COCCIÓN',
+                          value: pizza.cookingTemperature?.toString() ?? 'N/A',
+                        ),
+                        _DetailItem(
+                          label: 'INGREDIENTE BASE',
+                          value: pizza.baseIngredient ?? 'N/A',
+                        ),
+                        _DetailItem(label: 'INGREDIENTES', value: pizza.otherIngredients ?? 'N/A'),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // User Info
-                  FutureBuilder<UserModel?>(
-                    future: context.read<FirestoreService>().getUser(pizza.userId),
-                    builder: (context, snapshot) {
-                      final user = snapshot.data;
-                      return Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: user?.photoUrl != null && user!.photoUrl.isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(24),
-                                    child: CachedNetworkImage(
-                                      imageUrl: user.photoUrl,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Icon(Icons.person, color: darkBrown),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user?.displayName ?? 'Cocinero',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: darkBrown,
-                                  fontWeight: FontWeight.w900,
-                                  height: 1.1,
-                                ),
-                              ),
-                              Text(
-                                '${user?.score ?? 0} PUNTOS',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: darkBrown,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Detail Rows
-                  _DetailItem(label: 'HARINAS', value: pizza.flours ?? 'N/A'),
-                  _DetailItem(label: 'PREFERMENTO', value: pizza.preferment ?? 'N/A'),
-                  _DetailItem(
-                    label: '% PREFERMENTO',
-                    value: pizza.prefermentPercentage?.toString() ?? 'N/A',
-                  ),
-                  _DetailItem(
-                    label: 'HIDRATACIÓN FINAL',
-                    value: pizza.hydration != null ? '${pizza.hydration}' : 'N/A',
-                  ),
-                  _DetailItem(
-                    label: 'PESO BOLA',
-                    value: pizza.doughBallWeight?.toString() ?? 'N/A',
-                  ),
-                  _DetailItem(label: 'HORNO', value: pizza.oven ?? 'N/A'),
-                  _DetailItem(
-                    label: 'TEMPERATURAS DE COCCIÓN',
-                    value: pizza.cookingTemperature?.toString() ?? 'N/A',
-                  ),
-                  _DetailItem(label: 'INGREDIENTE BASE', value: pizza.baseIngredient ?? 'N/A'),
-                  _DetailItem(label: 'INGREDIENTES', value: pizza.otherIngredients ?? 'N/A'),
                 ],
               ),
             ),
