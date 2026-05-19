@@ -117,7 +117,7 @@ class AdminPizzaHistoryDetailDialog extends StatelessWidget {
   }
 
   Widget _buildImagesGrid() {
-    final images = pizza.imageUrls.values.toList();
+    final images = pizza.imagesInOrder;
     if (images.isEmpty) return const SizedBox.shrink();
 
     return GridView.builder(
