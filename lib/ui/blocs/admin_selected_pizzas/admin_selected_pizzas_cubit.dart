@@ -13,7 +13,7 @@ class AdminSelectedPizzasCubit extends Cubit<AdminSelectedPizzasState> {
     emit(state.copyWith(isLoading: true));
     try {
       final pizzas = await _adminSelectionService.getSelectedPizzas();
-      emit(state.copyWith(selectedPizzas: pizzas, isLoading: false));
+      emit(state.copyWith(selectedPizzas: _sortPizzas(pizzas), isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false));
     }
@@ -31,7 +31,7 @@ class AdminSelectedPizzasCubit extends Cubit<AdminSelectedPizzasState> {
     }
 
     // Optimistic update
-    emit(state.copyWith(selectedPizzas: current));
+    emit(state.copyWith(selectedPizzas: _sortPizzas(current)));
 
     try {
       await _adminSelectionService.togglePizzaSelection(pizza, isAdding);
@@ -43,7 +43,7 @@ class AdminSelectedPizzasCubit extends Cubit<AdminSelectedPizzasState> {
       } else {
         rollback.add(pizza);
       }
-      emit(state.copyWith(selectedPizzas: rollback));
+      emit(state.copyWith(selectedPizzas: _sortPizzas(rollback)));
     }
   }
 
@@ -60,5 +60,18 @@ class AdminSelectedPizzasCubit extends Cubit<AdminSelectedPizzasState> {
     } catch (e) {
       emit(state.copyWith(selectedPizzas: previous));
     }
+  }
+
+  List<PizzaModel> _sortPizzas(List<PizzaModel> pizzas) {
+    int rank(PizzaAward? award) {
+      if (award == PizzaAward.general) return 0;
+      if (award == PizzaAward.category) return 1;
+      return 2;
+    }
+
+    return List.from(pizzas)..sort((a, b) {
+      final comp = rank(a.award).compareTo(rank(b.award));
+      return comp != 0 ? comp : b.createdAt.compareTo(a.createdAt);
+    });
   }
 }
