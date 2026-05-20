@@ -484,6 +484,7 @@ class _PizzaDetailsModal extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 16),
                   if (images.isNotEmpty)
                     SizedBox(
                       height: 300,
