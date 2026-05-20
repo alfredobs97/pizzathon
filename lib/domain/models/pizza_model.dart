@@ -46,6 +46,11 @@ enum PizzaStatus {
   const PizzaStatus(this.displayName);
 }
 
+enum PizzaAward {
+  general,
+  category;
+}
+
 class PizzaModel {
   final String id;
   final String userId;
@@ -53,6 +58,7 @@ class PizzaModel {
   final String? thumbnailUrl;
   final DateTime createdAt;
   final PizzaStatus status;
+  final PizzaAward? award;
 
   // Technical details
   final PizzaStyle? pizzaStyle;
@@ -77,6 +83,7 @@ class PizzaModel {
     this.thumbnailUrl,
     required this.createdAt,
     this.status = PizzaStatus.pending,
+    this.award,
     this.pizzaStyle,
     this.flours,
     this.preferment,
@@ -131,6 +138,14 @@ class PizzaModel {
       } catch (_) {}
     }
 
+    PizzaAward? award;
+    final awardData = data['award'];
+    if (awardData != null) {
+      try {
+        award = PizzaAward.values.firstWhere((e) => e.name == awardData);
+      } catch (_) {}
+    }
+
     return PizzaModel(
       id: id ?? data['id'] ?? data['pizzaId'] ?? '',
       userId: data['userId'] ?? '',
@@ -141,6 +156,7 @@ class PizzaModel {
           (data['createdAt'] is String ? DateTime.tryParse(data['createdAt']) : null) ??
           DateTime.now(),
       status: status,
+      award: award,
       pizzaStyle: style,
       flours: data['flours'],
       preferment: data['preferment'],
@@ -165,6 +181,7 @@ class PizzaModel {
       'thumbnailUrl': thumbnailUrl,
       'createdAt': createdAt.toIso8601String(),
       'status': status.name,
+      'award': award?.name,
       'pizzaStyle': pizzaStyle?.name,
       'flours': flours,
       'preferment': preferment,
@@ -188,6 +205,7 @@ class PizzaModel {
       'imageUrls': imageUrls,
       'thumbnailUrl': thumbnailUrl,
       'status': status.name,
+      'award': award?.name,
       'pizzaStyle': pizzaStyle?.name,
       'flours': flours,
       'preferment': preferment,
