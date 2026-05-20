@@ -279,17 +279,17 @@ class _BestPizzaCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _PizzaDetailsModal.show(context, pizza),
-        child: Container(
+        child: SizedBox(
           width: 320,
-          padding: const EdgeInsets.only(top: 16, bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
               if (images.isNotEmpty)
                 SizedBox(
                   height: 180,
                   child: CarouselView(
-                    padding: EdgeInsets.only(left: 16),
+                    padding: const EdgeInsets.only(left: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     itemExtent: 220,
                     shrinkExtent: 150,
@@ -310,24 +310,66 @@ class _BestPizzaCard extends StatelessWidget {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: theme.colorScheme.secondary,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: -0.85,
-                          fontSize: 24,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: darkBrown,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.85,
+                              fontSize: 24,
+                            ),
+                          ),
+                          if (pizza.award == PizzaAward.category)
+                            Text(
+                              'BEST ${pizza.pizzaStyle?.displayName.toUpperCase()}',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                     Icon(Icons.keyboard_arrow_down, color: darkBrown),
                   ],
                 ),
               ),
+              if (pizza.award == PizzaAward.general)
+                Container(
+                  width: double.infinity,
+                  color: darkBrown,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Premio',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        'BEST PIZZA PIZZATHON',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -356,8 +398,10 @@ class _PizzaDetailsModal extends StatelessWidget {
     final theme = Theme.of(context);
     final images = pizza.imagesInOrder;
     final darkBrown = theme.colorScheme.secondary;
+    final primary = theme.colorScheme.primary;
 
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: theme.colorScheme.onSecondaryContainer,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -365,17 +409,73 @@ class _PizzaDetailsModal extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Close button at top right
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8, right: 8),
-              child: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.close, color: darkBrown, size: 32),
+          // Header Banner for Awards
+          if (pizza.award == PizzaAward.general)
+            Container(
+              color: darkBrown,
+              padding: const EdgeInsets.fromLTRB(24, 8, 16, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Premio',
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'BEST PIZZA PIZZATHON',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.white, size: 32),
+                  ),
+                ],
+              ),
+            )
+          else if (pizza.award == PizzaAward.category)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 8, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'BEST ${pizza.pizzaStyle?.displayName.toUpperCase()}',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: primary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close, color: darkBrown, size: 32),
+                  ),
+                ],
+              ),
+            )
+          else
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 8),
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.close, color: darkBrown, size: 32),
+                ),
               ),
             ),
-          ),
 
           // Content
           Flexible(
@@ -388,7 +488,7 @@ class _PizzaDetailsModal extends StatelessWidget {
                     SizedBox(
                       height: 300,
                       child: CarouselView(
-                        padding: EdgeInsets.only(left: 16),
+                        padding: const EdgeInsets.only(left: 24),
                         itemExtent: 300,
                         shrinkExtent: 150,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -424,15 +524,15 @@ class _PizzaDetailsModal extends StatelessWidget {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           pizza.pizzaStyle?.displayName ?? 'Pizza Candidata',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          style: theme.textTheme.headlineSmall?.copyWith(
                             color: theme.colorScheme.secondary,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w900,
                             letterSpacing: -0.85,
                             fontSize: 24,
                           ),
