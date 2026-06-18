@@ -79,20 +79,6 @@ class MainSponsorSection extends StatelessWidget {
                   );
                 },
               ),
-              Link(
-                uri: Uri.parse('https://gourmet.spigaimpex.com/'),
-                target: LinkTarget.blank,
-                builder: (context, followLink) {
-                  return InkWell(
-                    hoverColor: Colors.transparent,
-                    onTap: followLink,
-                    child: CachedNetworkImage(
-                      imageUrl: 'https://i.ibb.co/WNRZRs3m/logo-spiga-gourmet-1.png',
-                      height: 85,
-                    ),
-                  );
-                },
-              ),
             ],
           ),
         ],
